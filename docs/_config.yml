@@ -22,7 +22,7 @@ title: barKoder Barcode Scanner SDK for React Native
 email: sales@barkoder.com
 description: >- # this means to ignore newlines until "baseurl:"
   The barKoder SDK React Native plugin grants an easy to use React Native solution with a great interface that can be integrated in both iOS and Android apps.
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/react-native-plugin" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Build settings
