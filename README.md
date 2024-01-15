@@ -1,9 +1,9 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [API](#api)
 - [README](#readme)
   - [barKoder Barcode Scanner SDK for React Native](#barkoder-barcode-scanner-sdk-for-react-native)
-- [READMEALL](#readmeall)
 - [Classes](#classes)
   - [Barkoder 1](#barkoder-1)
     - [Class: Barkoder](#class-barkoder)
@@ -54,6 +54,9 @@
     - [Namespace: Barkoder](#namespace-barkoder)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# API
+
 
 # README
 
@@ -180,9 +183,6 @@ Our SDK requires camera permission to be granted in order to use scanning featur
     <key>NSCameraUsageDescription</key>
  	 <string>Camera permission</string>
    ```
-
-# READMEALL
-
 
 # Classes
 
