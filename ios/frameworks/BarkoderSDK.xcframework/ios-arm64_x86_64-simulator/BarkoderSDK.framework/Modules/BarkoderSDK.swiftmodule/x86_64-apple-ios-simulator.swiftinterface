@@ -117,6 +117,8 @@ extension CoreFoundation.CGRect {
     case all_2d
     case dpm
     case vin
+    case dotcode
+    case all_1d
     public init?(rawValue: Swift.Int)
     public typealias RawValue = Swift.Int
     public var rawValue: Swift.Int {

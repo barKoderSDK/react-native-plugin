@@ -924,6 +924,8 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 resolver(decoderConfig.code32.enabled)
             case Telepen:
                 resolver(decoderConfig.telepen.enabled)
+			case Dotcode:
+				resolver(decoderConfig.dotcode.enabled)
             default:
                 self.handleBarkoderError(BarkoderReactNativeErrors.BARKODER_CONFIG_IS_NOT_VALID, rejecter: rejecter)
             }
@@ -1001,6 +1003,8 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 decoderConfig.code32.enabled = enabled
             case Telepen:
                 decoderConfig.telepen.enabled = enabled
+			case Dotcode:
+				decoderConfig.dotcode.enabled = enabled
             default:
                 return
             }

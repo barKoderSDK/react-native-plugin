@@ -178,7 +178,8 @@ export declare namespace Barkoder {
         datalogic25 = 23,
         coop25 = 24,
         code32 = 25,
-        telepen = 26
+        telepen = 26,
+        dotcode = 27
     }
     class BarkoderConfig {
         locationLineColor?: string;
@@ -227,6 +228,7 @@ export declare namespace Barkoder {
         coop25?: BarcodeConfig;
         code32?: BarcodeConfig;
         telepen?: BarcodeConfig;
+        dotcode?: BarcodeConfig;
         general?: GeneralSettings;
         constructor(config: Partial<DekoderConfig>);
         toMap(): {
@@ -315,6 +317,9 @@ export declare namespace Barkoder {
                 enabled: boolean | undefined;
             } | undefined;
             Telepen: {
+                enabled: boolean | undefined;
+            } | undefined;
+            Dotcode: {
                 enabled: boolean | undefined;
             } | undefined;
             general: {

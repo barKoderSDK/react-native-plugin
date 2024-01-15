@@ -29,10 +29,11 @@ Note that a trial license is only supposed to be utilized in a development or st
 
 Our support is completely free for integration or testing purposes and granted through the [barKoder Developer Portal](https://barkoder.com/login). After registering and logging into your account, you only need to submit a [Support Issue](https://barkoder.com/issues). Alternatively, you can contact us by email via support@barkoder.com
 
-
 ### How to use barkoder-react-native package in your project
+
 #### 1. Prepare environment
 Install the dependencies and [setup your environment](https://reactnative.dev/docs/environment-setup)
+
 #### 2. Add our barkoder-react-native package
 To add the **barkoder-react-native** package to your project, you have two options. You can either use the **barkoder-react-native** package from **npm** or from a local path.
 

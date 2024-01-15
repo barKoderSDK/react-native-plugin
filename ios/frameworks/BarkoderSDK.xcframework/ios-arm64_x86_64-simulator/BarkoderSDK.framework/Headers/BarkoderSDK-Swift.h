@@ -440,6 +440,8 @@ typedef SWIFT_ENUM(NSInteger, BarkoderConfigTemplate, open) {
   BarkoderConfigTemplateAll_2d = 5,
   BarkoderConfigTemplateDpm = 6,
   BarkoderConfigTemplateVin = 7,
+  BarkoderConfigTemplateDotcode = 8,
+  BarkoderConfigTemplateAll_1d = 9,
 };
 
 
@@ -962,6 +964,8 @@ typedef SWIFT_ENUM(NSInteger, BarkoderConfigTemplate, open) {
   BarkoderConfigTemplateAll_2d = 5,
   BarkoderConfigTemplateDpm = 6,
   BarkoderConfigTemplateVin = 7,
+  BarkoderConfigTemplateDotcode = 8,
+  BarkoderConfigTemplateAll_1d = 9,
 };
 
 

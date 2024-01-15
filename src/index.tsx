@@ -1302,7 +1302,8 @@ export namespace Barkoder {
     datalogic25,
     coop25,
     code32,
-    telepen
+    telepen,
+    dotcode
   }
 
   export class BarkoderConfig {
@@ -1377,6 +1378,7 @@ export namespace Barkoder {
     coop25?: BarcodeConfig;
     code32?: BarcodeConfig;
     telepen?: BarcodeConfig;
+    dotcode?: BarcodeConfig;
     general?: GeneralSettings;
 
     constructor(config: Partial<DekoderConfig>) {
@@ -1412,6 +1414,7 @@ export namespace Barkoder {
         'COOP 25': this.coop25?.toMap(),
         'Code 32': this.code32?.toMap(),   
         'Telepen': this.telepen?.toMap(), 
+        'Dotcode': this.dotcode?.toMap(),
         'general': this.general?.toMap()
       }
 
