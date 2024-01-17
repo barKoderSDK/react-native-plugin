@@ -768,12 +768,34 @@ class BarkoderReactNativeViewManager: RCTViewManager {
     }
     
     @objc
+    func isUpcEanDeblurEnabled(
+        _ node: NSNumber,
+        resolver: @escaping RCTPromiseResolveBlock,
+        rejecter: @escaping RCTPromiseRejectBlock
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            resolver(barkoderView.config?.decoderConfig?.upcEanDeblur)
+        }
+    }
+    
+    @objc
     func setUpcEanDeblurEnabled(
         _ node: NSNumber,
         arg: Bool
     ) {
         getBarkoderView(node: node) { barkoderView in
             barkoderView.config?.decoderConfig?.upcEanDeblur = arg
+        }
+    }
+    
+    @objc
+    func isMisshaped1DEnabled(
+        _ node: NSNumber,
+        resolver: @escaping RCTPromiseResolveBlock,
+        rejecter: @escaping RCTPromiseRejectBlock
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            resolver(barkoderView.config?.decoderConfig?.enableMisshaped1D)
         }
     }
     
@@ -848,6 +870,27 @@ class BarkoderReactNativeViewManager: RCTViewManager {
     ) {
         getBarkoderView(node: node) { barkoderView in
             resolver(barkoderView.config?.getMulticodeCachingDuration())
+        }
+    }
+    
+    @objc
+    func isVINRestrictionsEnabled(
+        _ node: NSNumber,
+        resolver: @escaping RCTPromiseResolveBlock,
+        rejecter: @escaping RCTPromiseRejectBlock
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            resolver(barkoderView.config?.decoderConfig?.enableVINRestrictions)
+        }
+    }
+    
+    @objc
+    func setEnableVINRestrictions(
+        _ node: NSNumber,
+        arg: Bool
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            barkoderView.config?.decoderConfig?.enableVINRestrictions = arg
         }
     }
 

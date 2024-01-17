@@ -332,8 +332,14 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "setDuplicatesDelayMs":
         setDuplicatesDelayMs(root, args.getInt(0));
         break;
+      case "getMulticodeCachingDuration":
+        getMulticodeCachingDuration(root, args.getInt(0));
+        break;
       case "setMulticodeCachingDuration":
         setMulticodeCachingDuration(root, args.getInt(0), args.getInt(1));
+        break;
+      case "getMulticodeCachingEnabled":
+        getMulticodeCachingEnabled(root, args.getInt(0));
         break;
       case "setMulticodeCachingEnabled":
         setMulticodeCachingEnabled(root, args.getInt(0), args.getBoolean(1));
@@ -344,8 +350,14 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "getDuplicatesDelayMs":
         getDuplicatesDelayMs(root, args.getInt(0));
         break;
+      case "isUpcEanDeblurEnabled":
+        isUpcEanDeblurEnabled(root, args.getInt(0));
+        break;
       case "setUpcEanDeblurEnabled":
         setUpcEanDeblurEnabled(root, args.getBoolean(0));
+        break;
+      case "isMisshaped1DEnabled":
+        isMisshaped1DEnabled(root, args.getInt(0));
         break;
       case "setEnableMisshaped1DEnabled":
         setEnableMisshaped1DEnabled(root, args.getBoolean(0));
@@ -361,6 +373,12 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "getThresholdBetweenDuplicatesScans":
         getThresholdBetweenDuplicatesScans(root, args.getInt(0));
+        break;
+      case "isVINRestrictionsEnabled":
+        isVINRestrictionsEnabled(root, args.getInt(0));
+        break;
+      case "setEnableVINRestrictions":
+        setEnableVINRestrictions(root, args.getBoolean(0));
         break;
     }
   }
@@ -779,6 +797,11 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     }
   }
 
+  private void getMulticodeCachingDuration(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    int multicodeCachingDuration = BarkoderConfig.GetMulticodeCachingDuration();
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, multicodeCachingDuration);
+  }
+
   private void setMulticodeCachingEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId, boolean multicodeCachingEnabled) {
     try {
       BarkoderConfig.SetMulticodeCachingEnabled(multicodeCachingEnabled);
@@ -789,6 +812,11 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
         null, BarkoderReactNativeErrors.MULTICODE_CACHING_IS_NOT_SET, ex.getMessage());
     }
+  }
+
+  private void getMulticodeCachingEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    boolean multicodeCachingEnabled = BarkoderConfig.IsMulticodeCachingEnabled();
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, multicodeCachingEnabled);
   }
 
   private void getMaximumResultsCount(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
@@ -805,8 +833,18 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.config.getDecoderConfig().upcEanDeblur = enabled;
   }
 
+  private void isUpcEanDeblurEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    boolean isUpcEanDeblurEnabled = bkdView.config.getDecoderConfig().upcEanDeblur;
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, isUpcEanDeblurEnabled);
+  }
+
   private void setEnableMisshaped1DEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
     bkdView.config.getDecoderConfig().enableMisshaped1D = enabled;
+  }
+
+  private void isMisshaped1DEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    boolean isMisshaped1DEnabled = bkdView.config.getDecoderConfig().enableMisshaped1D;
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, isMisshaped1DEnabled);
   }
 
   private void setBarcodeThumbnailOnResultEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -825,6 +863,15 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
   private void getThresholdBetweenDuplicatesScans(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     int thresholdBetweenDuplicatesScans = bkdView.config.getThresholdBetweenDuplicatesScans();
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, thresholdBetweenDuplicatesScans);
+  }
+
+  private void setEnableVINRestrictions(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getDecoderConfig().enableVINRestrictions = enabled;
+  }
+
+  private void isVINRestrictionsEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    boolean isVINRestrictionsEnabled = bkdView.config.getDecoderConfig().enableVINRestrictions;
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, isVINRestrictionsEnabled);
   }
 
   private void configureBarkoder(BarkoderReactBarkoderView bkdView, int promiseRequestId, String barkoderConfigAsJsonString) {

@@ -1,6 +1,6 @@
 {
   "name": "barkoder-react-native",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "React native support for Barkoder - a Barcode Scanner SDK for the modern enterprise.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -32,7 +32,10 @@
     "prepack": "bob build",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install && yarn example pods",
-    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build"
+    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build",
+    "typedoc": "npx typedoc --disableSources --plugin typedoc-plugin-markdown --theme markdown --out temp-docs ./src/index.tsx --exclude ./node_modules/** && npx concat-md --toc --decrease-title-levels --file-name-as-title --dir-name-as-title temp-docs > ./temp-docs/API.md",
+    "generatedocs": "npx typedoc --githubPages false --disableSources --plugin typedoc-plugin-markdown --theme markdown --out docs ./src/index.tsx --exclude ./node_modules/**",
+    "typedochtml": "npx typedoc --disableSources --out htmldocs ./src/index.tsx --exclude ./node_modules/**"
   },
   "keywords": [
     "react native",
@@ -75,13 +78,19 @@
     "@react-native-community/eslint-config": "^3.0.2",
     "@types/react": "~17.0.21",
     "@types/react-native": "0.70.0",
+    "concat-md": "^0.5.1",
     "del-cli": "^5.0.0",
+    "docgen-tool": "^3.6.0",
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "pod-install": "^0.1.0",
     "prettier": "^2.0.5",
     "react-native-builder-bob": "^0.20.0",
+    "rimraf": "^5.0.5",
+    "showdown": "^2.1.0",
+    "typedoc": "^0.25.7",
+    "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^4.5.2"
   },
   "resolutions": {

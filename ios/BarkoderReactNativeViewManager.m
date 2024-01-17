@@ -270,6 +270,21 @@ RCT_EXTERN_METHOD(getMulticodeCachingDuration:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(isUpcEanDeblurEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(isMisshaped1DEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(isVINRestrictionsEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setEnableVINRestrictions:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
 RCT_EXTERN_METHOD(configureBarkoder:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSString)arg

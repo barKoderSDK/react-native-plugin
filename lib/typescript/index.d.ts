@@ -105,7 +105,9 @@ export declare class Barkoder {
     getMaximumResultsCount(): Promise<number>;
     getDuplicatesDelayMs(): Promise<number>;
     setDatamatrixDpmModeEnabled(enabled: boolean): void;
+    isUpcEanDeblurEnabled(): Promise<boolean>;
     setUpcEanDeblurEnabled(enabled: boolean): void;
+    isMisshaped1DEnabled(): Promise<boolean>;
     setEnableMisshaped1DEnabled(enabled: boolean): void;
     setBarcodeThumbnailOnResultEnabled(enabled: boolean): void;
     setThresholdBetweenDuplicatesScans(thresholdBetweenDuplicatesScans: number): void;
@@ -113,6 +115,8 @@ export declare class Barkoder {
     isBarcodeThumbnailOnResultEnabled(): Promise<boolean>;
     getMulticodeCachingDuration(): Promise<number>;
     getMulticodeCachingEnabled(): Promise<boolean>;
+    isVINRestrictionsEnabled(): Promise<boolean>;
+    setEnableVINRestrictions(enabled: boolean): void;
     showLogMessages(show: boolean): void;
     private isIos;
     private isAndroid;

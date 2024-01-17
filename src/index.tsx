@@ -1120,8 +1120,50 @@ export class Barkoder {
     this._dispatchCommand('setDatamatrixDpmModeEnabled', [enabled]);
   }
 
+  isUpcEanDeblurEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isUpcEanDeblurEnabled', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isUpcEanDeblurEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
   setUpcEanDeblurEnabled(enabled: boolean) {
     this._dispatchCommand('setUpcEanDeblurEnabled', [enabled]);
+  }
+
+  isMisshaped1DEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isMisshaped1DEnabled', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isMisshaped1DEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
   }
 
   setEnableMisshaped1DEnabled(enabled: boolean) {
@@ -1218,6 +1260,31 @@ export class Barkoder {
     } else {
       throw new Error(OS_NOT_SUPPORTED);
     }
+  }
+
+  isVINRestrictionsEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isVINRestrictionsEnabled', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isVINRestrictionsEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  setEnableVINRestrictions(enabled: boolean) {
+    this._dispatchCommand('setEnableVINRestrictions', [enabled]);
   }
 
   showLogMessages(show: boolean) {
