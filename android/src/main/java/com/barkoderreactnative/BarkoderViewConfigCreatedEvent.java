@@ -4,6 +4,7 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.uimanager.events.RCTModernEventEmitter;
+import com.facebook.react.bridge.WritableMap;
 
 class BarkoderViewConfigCreatedEvent extends Event<BarkoderViewConfigCreatedEvent> {
 
@@ -18,14 +19,13 @@ class BarkoderViewConfigCreatedEvent extends Event<BarkoderViewConfigCreatedEven
     super(viewId);
   }
 
-  @Override
-  public void dispatch(RCTEventEmitter rctEventEmitter) {
-    super.dispatch(rctEventEmitter);
+  protected WritableMap getEventData() {
+    return serializeEventData();
   }
 
-  @Override
-  public void dispatchModern(RCTModernEventEmitter rctEventEmitter) {
-    rctEventEmitter.receiveEvent(getViewTag(), getEventName(), Arguments.createMap());
+  private WritableMap serializeEventData() {
+    WritableMap eventData = Arguments.createMap();
+    return eventData;
   }
 
   @Override
