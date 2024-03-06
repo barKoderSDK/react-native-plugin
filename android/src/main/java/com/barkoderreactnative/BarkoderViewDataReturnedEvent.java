@@ -5,6 +5,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.RCTModernEventEmitter;
+import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,13 +67,19 @@ class BarkoderViewDataReturnedEvent extends Event<BarkoderViewDataReturnedEvent>
   }
 
   @Override
-  public void dispatchModern(RCTModernEventEmitter rctEventEmitter) {
-    rctEventEmitter.receiveEvent(getViewTag(), getEventName(), payload);
-  }
-
-  @Override
   public boolean canCoalesce() {
     // Dispatch every event one by one every time
     return false;
   }
+
+  @Override
+  protected WritableMap getEventData() {
+    return serializeEventData();
+  }
+
+  private WritableMap serializeEventData() {
+    WritableMap eventData = payload;
+    return eventData;
+  }
+
 }
