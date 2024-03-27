@@ -18,7 +18,7 @@ You can check out our free demo app Barcode Scanner by barKoder available both v
 
 ### Documentation
 
-You can find full documentation about the barKoder Barcode Reader SDK plugin for React Native here: https://docs.barkoder.com/en/v1/react-installation
+You can find full documentation about the barKoder Barcode Reader SDK plugin for React Native here: [React Native Documentation](https://docs.barkoder.com/en/v1/react-installation)
 
 ### Trial License
 
