@@ -1649,6 +1649,10 @@ export namespace Barkoder {
     encodingCharacterSet?: string;
     upcEanDeblur?: number;
     enableMisshaped1D? : number;
+    maximumResultsCount?: number;
+    duplicatesDelayMs?: number;
+    multicodeCachingDuration?: number;
+    multicodeCachingEnabled?: boolean;
 
     constructor(config: Partial<GeneralSettings>) {
       Object.assign(this, config);
@@ -1665,7 +1669,11 @@ export namespace Barkoder {
         "formattingType": this.formattingType,
         "encodingCharacterSet": this.encodingCharacterSet,
         "upcEanDeblur": this.upcEanDeblur,
-        "enableMisshaped1D": this.enableMisshaped1D
+        "enableMisshaped1D": this.enableMisshaped1D,
+        "maximumResultsCount": this.maximumResultsCount,
+        "duplicatesDelayMs": this.duplicatesDelayMs,
+        "multicodeCachingDuration": this.multicodeCachingDuration,
+        "multicodeCachingEnabled": this.multicodeCachingEnabled
       }
 
       return map;

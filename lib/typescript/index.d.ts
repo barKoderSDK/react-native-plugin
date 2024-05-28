@@ -405,6 +405,10 @@ export declare namespace Barkoder {
         encodingCharacterSet?: string;
         upcEanDeblur?: number;
         enableMisshaped1D?: number;
+        maximumResultsCount?: number;
+        duplicatesDelayMs?: number;
+        multicodeCachingDuration?: number;
+        multicodeCachingEnabled?: boolean;
         constructor(config: Partial<GeneralSettings>);
         toMap(): {
             [key: string]: any;
