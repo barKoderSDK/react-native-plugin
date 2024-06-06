@@ -1881,7 +1881,8 @@
             "moduleName": "BarkoderSDK",
             "declAttributes": [
               "AccessControl",
-              "ObjC"
+              "ObjC",
+              "RawDocComment"
             ],
             "throwing": true,
             "funcSelfKind": "NonMutating"
@@ -2004,7 +2005,8 @@
             "moduleName": "BarkoderSDK",
             "declAttributes": [
               "AccessControl",
-              "ObjC"
+              "ObjC",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -2031,7 +2033,8 @@
             "moduleName": "BarkoderSDK",
             "declAttributes": [
               "AccessControl",
-              "ObjC"
+              "ObjC",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -2053,7 +2056,8 @@
             "moduleName": "BarkoderSDK",
             "declAttributes": [
               "AccessControl",
-              "ObjC"
+              "ObjC",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -2080,7 +2084,8 @@
             "moduleName": "BarkoderSDK",
             "declAttributes": [
               "AccessControl",
-              "ObjC"
+              "ObjC",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -2102,7 +2107,8 @@
             "moduleName": "BarkoderSDK",
             "declAttributes": [
               "AccessControl",
-              "ObjC"
+              "ObjC",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -3023,7 +3029,8 @@
             "declAttributes": [
               "Custom",
               "AccessControl",
-              "ObjC"
+              "ObjC",
+              "RawDocComment"
             ],
             "funcSelfKind": "NonMutating"
           },
@@ -4726,7 +4733,8 @@
             "static": true,
             "declAttributes": [
               "Final",
-              "ObjC"
+              "ObjC",
+              "RawDocComment"
             ],
             "isFromExtension": true,
             "funcSelfKind": "NonMutating"
@@ -6794,98 +6802,98 @@
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4520,
+      "offset": 5376,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4532,
+      "offset": 5388,
       "length": 2,
       "value": "99"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4544,
+      "offset": 5400,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4555,
+      "offset": 5411,
       "length": 2,
       "value": "99"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4655,
+      "offset": 5511,
       "length": 3,
       "value": "100"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4671,
+      "offset": 5527,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4685,
+      "offset": 5541,
       "length": 3,
       "value": "100"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4702,
+      "offset": 5558,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4808,
+      "offset": 5664,
       "length": 3,
       "value": "100"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 4830,
+      "offset": 5686,
       "length": 3,
       "value": "100"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 6072,
+      "offset": 6945,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 6660,
+      "offset": 7652,
       "length": 1,
       "value": "1"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 6664,
+      "offset": 7656,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Config\/BarkoderConfig.swift",
       "kind": "IntegerLiteral",
-      "offset": 6845,
+      "offset": 7893,
       "length": 1,
       "value": "0"
     },
@@ -7508,147 +7516,154 @@
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "Array",
-      "offset": 1764,
+      "offset": 1769,
       "length": 2,
       "value": "[]"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "IntegerLiteral",
-      "offset": 1830,
+      "offset": 1835,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 1870,
+      "offset": 1875,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 2479,
+      "offset": 2484,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 3646,
+      "offset": 3651,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 4953,
+      "offset": 4869,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 5008,
+      "offset": 4924,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 5372,
+      "offset": 5345,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 5532,
+      "offset": 5505,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 5686,
+      "offset": 5588,
+      "length": 4,
+      "value": "true"
+    },
+    {
+      "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
+      "kind": "BooleanLiteral",
+      "offset": 5801,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "IntegerLiteral",
-      "offset": 8828,
+      "offset": 8811,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 8969,
+      "offset": 8952,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 9071,
+      "offset": 9054,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "IntegerLiteral",
-      "offset": 10936,
+      "offset": 10919,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 11090,
+      "offset": 11073,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 11193,
+      "offset": 11176,
       "length": 5,
       "value": "false"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "IntegerLiteral",
-      "offset": 12003,
+      "offset": 11986,
       "length": 1,
       "value": "0"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 12057,
+      "offset": 12040,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "BooleanLiteral",
-      "offset": 12171,
+      "offset": 12154,
       "length": 4,
       "value": "true"
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "StringLiteral",
-      "offset": 13797,
+      "offset": 13742,
       "length": 6,
       "value": "\"beep\""
     },
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderView\/BarkoderView.swift",
       "kind": "StringLiteral",
-      "offset": 13820,
+      "offset": 13765,
       "length": 5,
       "value": "\"mp3\""
     },
@@ -7907,7 +7922,7 @@
     {
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/Extensions\/iBarkoder+GetVersion.swift",
       "kind": "StringLiteral",
-      "offset": 279,
+      "offset": 338,
       "length": 28,
       "value": "\"CFBundleShortVersionString\""
     },
@@ -8454,6 +8469,13 @@
       "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderOverlay\/NoActiveDecodersOverlay.swift",
       "kind": "BooleanLiteral",
       "offset": 1068,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/slobodanmarinkovik\/Documents\/Projects\/barkoder\/barkoder-ios\/BarkoderSDK\/BarkoderSDK\/BarkoderOverlay\/NoActiveDecodersOverlay.swift",
+      "kind": "BooleanLiteral",
+      "offset": 1597,
       "length": 5,
       "value": "false"
     }
