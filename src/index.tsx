@@ -1690,7 +1690,8 @@ export namespace Barkoder {
     coop25,
     code32,
     telepen,
-    dotcode
+    dotcode,
+    idDocument
   }
 
   export class BarkoderConfig {
@@ -1766,6 +1767,7 @@ export namespace Barkoder {
     code32?: BarcodeConfig;
     telepen?: BarcodeConfig;
     dotcode?: BarcodeConfig;
+    idDocument?: BarcodeConfig;
     general?: GeneralSettings;
 
     constructor(config: Partial<DekoderConfig>) {
@@ -1802,6 +1804,7 @@ export namespace Barkoder {
         'Code 32': this.code32?.toMap(),   
         'Telepen': this.telepen?.toMap(), 
         'Dotcode': this.dotcode?.toMap(),
+        'ID Document': this.idDocument?.toMap(),
         'general': this.general?.toMap()
       }
 
@@ -2015,6 +2018,11 @@ export namespace Barkoder {
     characterSet?: string | null;
     extra?: Record<string, any> | null;
     resultImageAsBase64?: string | null;
+    resultThumbnailAsBase64?: string | null;
+    mainImageAsBase64?: string | null;
+    documentImageAsBase64?: string | null;
+    signatureImageAsBase64?: string | null;
+    pictureImageAsBase64?: string | null;
 
     constructor(jsonString: string) {
       const resultMap: Record<string, any> = JSON.parse(jsonString);
@@ -2027,6 +2035,21 @@ export namespace Barkoder {
       this.extra = resultMap['extra'] ? JSON.parse(resultMap['extra']) : undefined;
       if (resultMap['resultImageAsBase64'] != null) {
         this.resultImageAsBase64 = "data:image/jpeg;base64," + resultMap['resultImageAsBase64'];
+      }
+      if (resultMap['resultThumbnailAsBase64'] != null) {
+        this.resultThumbnailAsBase64 = "data:image/jpeg;base64," + resultMap['resultThumbnailAsBase64'];
+      }
+      if (resultMap['mainImageAsBase64'] != null) {
+        this.mainImageAsBase64 = "data:image/jpeg;base64," + resultMap['mainImageAsBase64'];
+      }
+      if (resultMap['documentImageAsBase64'] != null) {
+        this.documentImageAsBase64 = "data:image/jpeg;base64," + resultMap['documentImageAsBase64'];
+      }
+      if (resultMap['signatureImageAsBase64'] != null) {
+        this.signatureImageAsBase64 = "data:image/jpeg;base64," + resultMap['signatureImageAsBase64'];
+      }
+      if (resultMap['pictureImageAsBase64'] != null) {
+        this.pictureImageAsBase64 = "data:image/jpeg;base64," + resultMap['pictureImageAsBase64'];
       }
     }
 

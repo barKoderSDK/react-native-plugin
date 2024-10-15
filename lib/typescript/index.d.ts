@@ -503,7 +503,8 @@ export declare namespace Barkoder {
         coop25 = 24,
         code32 = 25,
         telepen = 26,
-        dotcode = 27
+        dotcode = 27,
+        idDocument = 28
     }
     class BarkoderConfig {
         locationLineColor?: string;
@@ -553,6 +554,7 @@ export declare namespace Barkoder {
         code32?: BarcodeConfig;
         telepen?: BarcodeConfig;
         dotcode?: BarcodeConfig;
+        idDocument?: BarcodeConfig;
         general?: GeneralSettings;
         constructor(config: Partial<DekoderConfig>);
         toMap(): {
@@ -644,6 +646,9 @@ export declare namespace Barkoder {
                 enabled: boolean | undefined;
             } | undefined;
             Dotcode: {
+                enabled: boolean | undefined;
+            } | undefined;
+            'ID Document': {
                 enabled: boolean | undefined;
             } | undefined;
             general: {
@@ -743,6 +748,11 @@ export declare namespace Barkoder {
         characterSet?: string | null;
         extra?: Record<string, any> | null;
         resultImageAsBase64?: string | null;
+        resultThumbnailAsBase64?: string | null;
+        mainImageAsBase64?: string | null;
+        documentImageAsBase64?: string | null;
+        signatureImageAsBase64?: string | null;
+        pictureImageAsBase64?: string | null;
         constructor(jsonString: string);
     }
     class BarkoderError {

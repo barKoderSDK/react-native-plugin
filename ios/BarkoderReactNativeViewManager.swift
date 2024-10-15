@@ -967,8 +967,10 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 resolver(decoderConfig.code32.enabled)
             case Telepen:
                 resolver(decoderConfig.telepen.enabled)
-			case Dotcode:
-				resolver(decoderConfig.dotcode.enabled)
+            case Dotcode:
+                resolver(decoderConfig.dotcode.enabled)
+            case IDDocument:
+                resolver(decoderConfig.idDocument.enabled)
             default:
                 self.handleBarkoderError(BarkoderReactNativeErrors.BARKODER_CONFIG_IS_NOT_VALID, rejecter: rejecter)
             }
@@ -1046,8 +1048,10 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 decoderConfig.code32.enabled = enabled
             case Telepen:
                 decoderConfig.telepen.enabled = enabled
-			case Dotcode:
-				decoderConfig.dotcode.enabled = enabled
+            case Dotcode:
+                decoderConfig.dotcode.enabled = enabled
+            case IDDocument:
+                decoderConfig.idDocument.enabled = enabled
             default:
                 return
             }
@@ -1288,7 +1292,7 @@ extension BarkoderReactNativeViewManager: BarkoderResultDelegate {
     
     func scanningFinished(_ decoderResults: [DecoderResult], thumbnails: [UIImage]?, image: UIImage?) {
         guard let eventEmitter = self.bridge.module(for: BarkoderEmitter.self) as? BarkoderEmitter,
-              let barkoderResultsToJsonString = Util.barkoderResultsToJsonString(decoderResults, image: image) else {
+              let barkoderResultsToJsonString = Util.barkoderResultsToJsonString(decoderResults, thumbnails: thumbnails, image: image) else {
             return
         }
 
@@ -1350,7 +1354,7 @@ class Util {
         Int(hexColor.replacingOccurrences(of: "#", with: ""), radix: 16)
     }
     
-    static func barkoderResultsToJsonString(_ decoderResults: [DecoderResult], image: UIImage?) -> String? {
+    static func barkoderResultsToJsonString(_ decoderResults: [DecoderResult], thumbnails: [UIImage]?, image: UIImage?) -> String? {
         guard let decoderResult = decoderResults.first else {
             return nil
         }
@@ -1374,6 +1378,35 @@ class Util {
            let imageData = image.pngData() {
             resultJson["resultImageAsBase64"] = imageData.base64EncodedString()
         }
+      
+      if let thumbnail = thumbnails?.first?.pngData() {
+        resultJson["resultThumbnailAsBase64"] = thumbnail.base64EncodedString()
+      }
+      
+      if let images = decoderResult.images {
+        for image in images {
+          switch image.name {
+          case "main":
+            if let imageData = image.image.pngData() {
+              resultJson["mainImageAsBase64"] = imageData.base64EncodedString()
+            }
+          case "document":
+            if let imageData = image.image.pngData() {
+              resultJson["documentImageAsBase64"] = imageData.base64EncodedString()
+            }
+          case "signature":
+            if let imageData = image.image.pngData() {
+              resultJson["signatureImageAsBase64"] = imageData.base64EncodedString()
+            }
+          case "picture":
+            if let imageData = image.image.pngData() {
+              resultJson["pictureImageAsBase64"] = imageData.base64EncodedString()
+            }
+          default:
+            break
+          }
+        }
+      }
         
         do {
             let jsonData = try JSONSerialization.data(
