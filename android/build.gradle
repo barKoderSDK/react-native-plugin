@@ -63,7 +63,8 @@ repositories {
 rootProject.allprojects {
   repositories {
     flatDir {
-      dirs project(':barkoder-react-native').file('barkoder')
+        dirs 'barkoder'
+
     }
   }
 }
@@ -73,7 +74,7 @@ dependencies {
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
-  implementation(name: 'barkoder', ext: 'aar')
+  implementation files('barkoder/barkoder.aar')
 }
 
 if (isNewArchitectureEnabled()) {

@@ -12,6 +12,10 @@ RCT_EXTERN_METHOD(startScanning: (nonnull NSNumber *)node
                   rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(stopScanning: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(pauseScanning: (nonnull NSNumber *)node)
+RCT_EXTERN_METHOD(scanImage: (nonnull NSNumber *)node
+                  arg:(nonnull NSString)arg
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(startCamera: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(isFlashAvailable:
                   (nonnull NSNumber *)node
@@ -239,7 +243,32 @@ RCT_EXTERN_METHOD(getDuplicatesDelayMs:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(isDatamatrixDpmModeEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(setDatamatrixDpmModeEnabled:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(isQrDpmModeEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setQrDpmModeEnabled:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(isQrMicroDpmModeEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setQrMicroDpmModeEnabled:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(isIdDocumentMasterChecksumEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setIdDocumentMasterChecksumEnabled:
                   (nonnull NSNumber *)node
                   arg:(nonnull BOOL)arg)
 RCT_EXTERN_METHOD(setUpcEanDeblurEnabled:

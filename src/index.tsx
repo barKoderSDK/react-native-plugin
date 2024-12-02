@@ -138,18 +138,22 @@ export class Barkoder {
     // 0 will be special case for scanning results
     if (nativeEvent.promiseRequestId == 0) {
       if (this._resultCallback) {
-        this._resultCallback(new Barkoder.BarkoderResult(nativeEvent.payload));
+        // Parse the payload as JSON before passing to BarkoderResult
+        const parsedPayload = typeof nativeEvent.payload === 'string'
+          ? JSON.parse(nativeEvent.payload)
+          : nativeEvent.payload;
+
+        this._resultCallback(new Barkoder.BarkoderResult(parsedPayload));
       }
     } else if (this._promisesMap.has(nativeEvent.promiseRequestId)) {
-      let [resolve, reject] = this._promisesMap.get(
-        nativeEvent.promiseRequestId
-      )!;
+      let [resolve, reject] = this._promisesMap.get(nativeEvent.promiseRequestId)!;
       this._promisesMap.delete(nativeEvent.promiseRequestId);
 
-      if (nativeEvent.error)
+      if (nativeEvent.error) {
         reject(new Barkoder.BarkoderError(nativeEvent.error));
-      else
+      } else {
         resolve(nativeEvent.payload);
+      }
     }
   }
 
@@ -158,7 +162,7 @@ export class Barkoder {
     this._eventEmitter.removeAllListeners(BARKODER_RESULT_EVENT_NAME);
     this._eventEmitter.addListener(BARKODER_RESULT_EVENT_NAME, (event: { data: string }) => {
       const { data } = event;
-      const result = new Barkoder.BarkoderResult(data);
+      const result = new Barkoder.BarkoderResult(JSON.parse(data));
 
       if (this._resultCallback) {
         this._resultCallback(result);
@@ -236,7 +240,7 @@ export class Barkoder {
    * Starts the camera for barcode scanning.
    */
   startCamera() {
-    this._dispatchCommand('startCamera');
+    this._dispatchCommand('startCamera', []);
   }
 
   /**
@@ -246,7 +250,7 @@ export class Barkoder {
     this._resultCallback = null;
     this._eventEmitter.removeAllListeners(BARKODER_RESULT_EVENT_NAME);
 
-    this._dispatchCommand('stopScanning');
+    this._dispatchCommand('stopScanning', []);
   }
 
   /**
@@ -280,7 +284,31 @@ export class Barkoder {
 
     this._eventEmitter.removeAllListeners(BARKODER_RESULT_EVENT_NAME);
 
-    this._dispatchCommand('pauseScanning');
+    this._dispatchCommand('pauseScanning', []);
+  }
+
+  /**
+ * Scan barcodes from base64 string image
+ * @param base64 - image string.
+ * @param resultsCallback - The callback function to handle barcode scanning events.
+ */
+  scanImage(base64: String, resultsCallback: ResultCallback) {
+    if (this.isAndroid()) {
+      this._resultCallback = resultsCallback;
+
+      // 0 will be special case for scanning results
+      this._dispatchCommand('scanImage', [0, base64]);
+    } else if (this.isIos()) {
+      this._resultCallback = resultsCallback;
+
+      this.startScanningEventEmmitter();
+
+      NativeModules.BarkoderReactNativeViewManager.scanImage(
+        findNodeHandle(this._barkoderViewRef.current), base64
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
   }
 
   /**
@@ -1331,7 +1359,7 @@ export class Barkoder {
       );
     } else {
       throw new Error(OS_NOT_SUPPORTED);
-    }  
+    }
   }
 
   /**
@@ -1385,11 +1413,135 @@ export class Barkoder {
   }
 
   /**
+* Retrieves whether Direct Part Marking (DPM) mode for Datamatrix barcodes is enabled
+* @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether DPM mode for Datamatrix barcodes is enabled.
+*/
+  isDatamatrixDpmModeEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isDatamatrixDpmModeEnabled', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isDatamatrixDpmModeEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
    * Sets whether the Direct Part Marking (DPM) mode for Datamatrix barcodes is enabled.
    * @param enabled - True to enable DPM mode, false to disable it.
    */
   setDatamatrixDpmModeEnabled(enabled: boolean) {
     this._dispatchCommand('setDatamatrixDpmModeEnabled', [enabled]);
+  }
+
+  /**
+* Retrieves whether Direct Part Marking (DPM) mode for QR barcodes is enabled
+* @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether DPM mode for QR barcodes is enabled.
+*/
+  isQrDpmModeEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isQrDpmModeEnabled', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isQrDpmModeEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+ * Sets whether the Direct Part Marking (DPM) mode for QR barcodes is enabled.
+ * @param enabled - True to enable DPM mode, false to disable it.
+ */
+  setQrDpmModeEnabled(enabled: boolean) {
+    this._dispatchCommand('setQrDpmModeEnabled', [enabled]);
+  }
+
+  /**
+* Retrieves whether Direct Part Marking (DPM) mode for QR Micro barcodes is enabled
+* @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether DPM mode for QR Micro barcodes is enabled.
+*/
+  isQrMicroDpmModeEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isQrMicroDpmModeEnabled', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isQrMicroDpmModeEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+* Sets whether the Direct Part Marking (DPM) mode for QR Micro barcodes is enabled.
+* @param enabled - True to enable DPM mode, false to disable it.
+*/
+  setQrMicroDpmModeEnabled(enabled: boolean) {
+    this._dispatchCommand('setQrMicroDpmModeEnabled', [enabled]);
+  }
+
+  /**
+* Retrieves whether Master checksum is enabled when scanning ID Documents 
+* @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether Master checksum is enabled when scanning ID Documents 
+*/
+  isIdDocumentMasterChecksumEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isIdDocumentMasterChecksumEnabled', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isIdDocumentMasterChecksumEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+* Sets whether Master checksum should be requiered when scanning ID Documents
+* @param enabled - True to enable Master checksum, false to disable it.
+*/
+  setIdDocumentMasterChecksumEnabled(enabled: boolean) {
+    this._dispatchCommand('setIdDocumentMasterChecksumEnabled', [enabled]);
   }
 
   /**
@@ -1741,8 +1893,8 @@ export namespace Barkoder {
   export class DekoderConfig {
     aztec?: BarcodeConfig;
     aztecCompact?: BarcodeConfig;
-    qr?: BarcodeConfig;
-    qrMicro?: BarcodeConfig;
+    qr?: BarcodeConfigWithDpmMode;
+    qrMicro?: BarcodeConfigWithDpmMode;
     code128?: BarcodeConfigWithLength;
     code93?: BarcodeConfigWithLength;
     code39?: Code39BarcodeConfig;
@@ -1756,7 +1908,7 @@ export namespace Barkoder {
     ean8?: BarcodeConfig;
     pdf417?: BarcodeConfig;
     pdf417Micro?: BarcodeConfig;
-    datamatrix?: DatamatrixBarcodeConfig;
+    datamatrix?: BarcodeConfigWithDpmMode;
     code25?: BarcodeConfig;
     interleaved25?: BarcodeConfig;
     itf14?: BarcodeConfig;
@@ -1767,7 +1919,7 @@ export namespace Barkoder {
     code32?: BarcodeConfig;
     telepen?: BarcodeConfig;
     dotcode?: BarcodeConfig;
-    idDocument?: BarcodeConfig;
+    idDocument?: IdDocumentBarcodeConfig;
     general?: GeneralSettings;
 
     constructor(config: Partial<DekoderConfig>) {
@@ -1801,8 +1953,8 @@ export namespace Barkoder {
         'Matrix 25': this.matrix25?.toMap(),
         'Datalogic 25': this.datalogic25?.toMap(),
         'COOP 25': this.coop25?.toMap(),
-        'Code 32': this.code32?.toMap(),   
-        'Telepen': this.telepen?.toMap(), 
+        'Code 32': this.code32?.toMap(),
+        'Telepen': this.telepen?.toMap(),
         'Dotcode': this.dotcode?.toMap(),
         'ID Document': this.idDocument?.toMap(),
         'general': this.general?.toMap()
@@ -1934,13 +2086,13 @@ export namespace Barkoder {
     }
   }
 
-  export class DatamatrixBarcodeConfig {
+  export class BarcodeConfigWithDpmMode {
     enabled?: boolean;
     dpmMode?: number;
     private minLength?: number;
     private maxLength?: number;
 
-    constructor(config: Partial<DatamatrixBarcodeConfig>) {
+    constructor(config: Partial<BarcodeConfigWithDpmMode>) {
       Object.assign(this, config);
     }
 
@@ -1961,6 +2113,29 @@ export namespace Barkoder {
     }
   }
 
+  export enum IdDocumentMasterChecksumType {
+    disabled,
+    enabled,
+  }
+
+  export class IdDocumentBarcodeConfig {
+    enabled?: boolean;
+    masterChecksum?: IdDocumentMasterChecksumType;
+
+    constructor(config: Partial<IdDocumentBarcodeConfig>) {
+      Object.assign(this, config);
+    }
+
+    toMap() {
+      let map: { [key: string]: any } = {
+        "enabled": this.enabled,
+        "masterChecksum": this.masterChecksum
+      }
+
+      return map;
+    }
+  }
+
   export class GeneralSettings {
     threadsLimit?: number;
     decodingSpeed?: DecodingSpeed;
@@ -1971,7 +2146,7 @@ export namespace Barkoder {
     formattingType?: FormattingType;
     encodingCharacterSet?: string;
     upcEanDeblur?: number;
-    enableMisshaped1D? : number;
+    enableMisshaped1D?: number;
     maximumResultsCount?: number;
     duplicatesDelayMs?: number;
     multicodeCachingDuration?: number;
@@ -2011,48 +2186,54 @@ export namespace Barkoder {
   }
 
   export class BarkoderResult {
-    barcodeType: BarcodeType;
+    decoderResults: DecoderResult[];
+    resultThumbnailsAsBase64?: string[] | null;
+    resultImageAsBase64?: string | null;
+
+    constructor(resultMap: Record<string, any>) {
+      if (Array.isArray(resultMap['decoderResults'])) {
+        this.decoderResults = resultMap['decoderResults'].map((result: any) => new DecoderResult(result));
+      } else {
+        this.decoderResults = [];
+      }
+
+      this.resultThumbnailsAsBase64 = Array.isArray(resultMap['resultThumbnailsAsBase64'])
+        ? resultMap['resultThumbnailsAsBase64']
+          .map(thumbnail => this.convertToBase64(thumbnail))
+          .filter((thumbnail): thumbnail is string => thumbnail !== null)
+        : null;
+
+      this.resultImageAsBase64 = this.convertToBase64(resultMap['resultImageAsBase64']);
+    }
+
+    private convertToBase64(data: string | null | undefined): string | null {
+      return data ? `data:image/jpeg;base64,${data}` : null;
+    }
+  }
+
+  export class DecoderResult {
+    barcodeType: number;
     barcodeTypeName: string;
     binaryDataAsBase64: string;
     textualData: string;
     characterSet?: string | null;
     extra?: Record<string, any> | null;
-    resultImageAsBase64?: string | null;
-    resultThumbnailAsBase64?: string | null;
-    mainImageAsBase64?: string | null;
-    documentImageAsBase64?: string | null;
-    signatureImageAsBase64?: string | null;
-    pictureImageAsBase64?: string | null;
+    mrzImagesAsBase64?: { name: string; base64: string }[];
 
-    constructor(jsonString: string) {
-      const resultMap: Record<string, any> = JSON.parse(jsonString);
-
+    constructor(resultMap: Record<string, any>) {
       this.barcodeType = resultMap['barcodeType'];
       this.barcodeTypeName = resultMap['barcodeTypeName'];
       this.binaryDataAsBase64 = resultMap['binaryDataAsBase64'];
       this.textualData = resultMap['textualData'];
-      this.characterSet = resultMap['characterSet'];
-      this.extra = resultMap['extra'] ? JSON.parse(resultMap['extra']) : undefined;
-      if (resultMap['resultImageAsBase64'] != null) {
-        this.resultImageAsBase64 = "data:image/jpeg;base64," + resultMap['resultImageAsBase64'];
-      }
-      if (resultMap['resultThumbnailAsBase64'] != null) {
-        this.resultThumbnailAsBase64 = "data:image/jpeg;base64," + resultMap['resultThumbnailAsBase64'];
-      }
-      if (resultMap['mainImageAsBase64'] != null) {
-        this.mainImageAsBase64 = "data:image/jpeg;base64," + resultMap['mainImageAsBase64'];
-      }
-      if (resultMap['documentImageAsBase64'] != null) {
-        this.documentImageAsBase64 = "data:image/jpeg;base64," + resultMap['documentImageAsBase64'];
-      }
-      if (resultMap['signatureImageAsBase64'] != null) {
-        this.signatureImageAsBase64 = "data:image/jpeg;base64," + resultMap['signatureImageAsBase64'];
-      }
-      if (resultMap['pictureImageAsBase64'] != null) {
-        this.pictureImageAsBase64 = "data:image/jpeg;base64," + resultMap['pictureImageAsBase64'];
-      }
+      this.characterSet = resultMap['characterSet'] || null;
+      this.extra = 'extra' in resultMap ? JSON.parse(resultMap['extra']) : null;
+      this.mrzImagesAsBase64 = Array.isArray(resultMap['mrzImagesAsBase64'])
+        ? resultMap['mrzImagesAsBase64'].map((image: { name: string; base64: string }) => ({
+          name: image.name,
+          base64: `data:image/jpeg;base64,${image.base64}`,
+        }))
+        : [];
     }
-
   }
 
   export class BarkoderError {

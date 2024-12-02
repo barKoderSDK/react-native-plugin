@@ -28,7 +28,7 @@ export declare class BarkoderView extends React.Component<BarkoderReactNativePro
     private startConfigurationEmitter;
     private _onDataReturned;
     private _onBarkoderConfigCreated;
-    render(): React.JSX.Element;
+    render(): JSX.Element;
 }
 interface ResultCallback {
     (result: Barkoder.BarkoderResult): void;
@@ -80,6 +80,12 @@ export declare class Barkoder {
      * Temporarily suspends the barcode scanning process, pausing the camera feed without completely stopping the scanning session.
      */
     pauseScanning(): void;
+    /**
+   * Scan barcodes from base64 string image
+   * @param base64 - image string.
+   * @param resultsCallback - The callback function to handle barcode scanning events.
+   */
+    scanImage(base64: String, resultsCallback: ResultCallback): void;
     /**
      * Retrieves the resolution for barcode scanning.
      * @returns A promise that resolves with the Barkoder resolution.
@@ -373,10 +379,45 @@ export declare class Barkoder {
      */
     getDuplicatesDelayMs(): Promise<number>;
     /**
+  * Retrieves whether Direct Part Marking (DPM) mode for Datamatrix barcodes is enabled
+  * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether DPM mode for Datamatrix barcodes is enabled.
+  */
+    isDatamatrixDpmModeEnabled(): Promise<boolean>;
+    /**
      * Sets whether the Direct Part Marking (DPM) mode for Datamatrix barcodes is enabled.
      * @param enabled - True to enable DPM mode, false to disable it.
      */
     setDatamatrixDpmModeEnabled(enabled: boolean): void;
+    /**
+  * Retrieves whether Direct Part Marking (DPM) mode for QR barcodes is enabled
+  * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether DPM mode for QR barcodes is enabled.
+  */
+    isQrDpmModeEnabled(): Promise<boolean>;
+    /**
+   * Sets whether the Direct Part Marking (DPM) mode for QR barcodes is enabled.
+   * @param enabled - True to enable DPM mode, false to disable it.
+   */
+    setQrDpmModeEnabled(enabled: boolean): void;
+    /**
+  * Retrieves whether Direct Part Marking (DPM) mode for QR Micro barcodes is enabled
+  * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether DPM mode for QR Micro barcodes is enabled.
+  */
+    isQrMicroDpmModeEnabled(): Promise<boolean>;
+    /**
+  * Sets whether the Direct Part Marking (DPM) mode for QR Micro barcodes is enabled.
+  * @param enabled - True to enable DPM mode, false to disable it.
+  */
+    setQrMicroDpmModeEnabled(enabled: boolean): void;
+    /**
+  * Retrieves whether Master checksum is enabled when scanning ID Documents
+  * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether Master checksum is enabled when scanning ID Documents
+  */
+    isIdDocumentMasterChecksumEnabled(): Promise<boolean>;
+    /**
+  * Sets whether Master checksum should be requiered when scanning ID Documents
+  * @param enabled - True to enable Master checksum, false to disable it.
+  */
+    setIdDocumentMasterChecksumEnabled(enabled: boolean): void;
     /**
      * Gets the value indicating whether deblurring is enabled for UPC/EAN barcodes.
      * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether the deblurring feature for UPC/EAN barcodes is enabled.
@@ -528,8 +569,8 @@ export declare namespace Barkoder {
     class DekoderConfig {
         aztec?: BarcodeConfig;
         aztecCompact?: BarcodeConfig;
-        qr?: BarcodeConfig;
-        qrMicro?: BarcodeConfig;
+        qr?: BarcodeConfigWithDpmMode;
+        qrMicro?: BarcodeConfigWithDpmMode;
         code128?: BarcodeConfigWithLength;
         code93?: BarcodeConfigWithLength;
         code39?: Code39BarcodeConfig;
@@ -543,7 +584,7 @@ export declare namespace Barkoder {
         ean8?: BarcodeConfig;
         pdf417?: BarcodeConfig;
         pdf417Micro?: BarcodeConfig;
-        datamatrix?: DatamatrixBarcodeConfig;
+        datamatrix?: BarcodeConfigWithDpmMode;
         code25?: BarcodeConfig;
         interleaved25?: BarcodeConfig;
         itf14?: BarcodeConfig;
@@ -554,7 +595,7 @@ export declare namespace Barkoder {
         code32?: BarcodeConfig;
         telepen?: BarcodeConfig;
         dotcode?: BarcodeConfig;
-        idDocument?: BarcodeConfig;
+        idDocument?: IdDocumentBarcodeConfig;
         general?: GeneralSettings;
         constructor(config: Partial<DekoderConfig>);
         toMap(): {
@@ -565,10 +606,10 @@ export declare namespace Barkoder {
                 enabled: boolean | undefined;
             } | undefined;
             QR: {
-                enabled: boolean | undefined;
+                [key: string]: any;
             } | undefined;
             'QR Micro': {
-                enabled: boolean | undefined;
+                [key: string]: any;
             } | undefined;
             'Code 128': {
                 enabled: boolean | undefined;
@@ -649,7 +690,7 @@ export declare namespace Barkoder {
                 enabled: boolean | undefined;
             } | undefined;
             'ID Document': {
-                enabled: boolean | undefined;
+                [key: string]: any;
             } | undefined;
             general: {
                 [key: string]: any;
@@ -708,16 +749,28 @@ export declare namespace Barkoder {
         };
         setLengthRange(minLength: number, maxLength: number): void;
     }
-    class DatamatrixBarcodeConfig {
+    class BarcodeConfigWithDpmMode {
         enabled?: boolean;
         dpmMode?: number;
         private minLength?;
         private maxLength?;
-        constructor(config: Partial<DatamatrixBarcodeConfig>);
+        constructor(config: Partial<BarcodeConfigWithDpmMode>);
         toMap(): {
             [key: string]: any;
         };
         setLengthRange(minLength: number, maxLength: number): void;
+    }
+    enum IdDocumentMasterChecksumType {
+        disabled = 0,
+        enabled = 1
+    }
+    class IdDocumentBarcodeConfig {
+        enabled?: boolean;
+        masterChecksum?: IdDocumentMasterChecksumType;
+        constructor(config: Partial<IdDocumentBarcodeConfig>);
+        toMap(): {
+            [key: string]: any;
+        };
     }
     class GeneralSettings {
         threadsLimit?: number;
@@ -741,19 +794,24 @@ export declare namespace Barkoder {
         setROI(x: number, y: number, width: number, height: number): void;
     }
     class BarkoderResult {
-        barcodeType: BarcodeType;
+        decoderResults: DecoderResult[];
+        resultThumbnailsAsBase64?: string[] | null;
+        resultImageAsBase64?: string | null;
+        constructor(resultMap: Record<string, any>);
+        private convertToBase64;
+    }
+    class DecoderResult {
+        barcodeType: number;
         barcodeTypeName: string;
         binaryDataAsBase64: string;
         textualData: string;
         characterSet?: string | null;
         extra?: Record<string, any> | null;
-        resultImageAsBase64?: string | null;
-        resultThumbnailAsBase64?: string | null;
-        mainImageAsBase64?: string | null;
-        documentImageAsBase64?: string | null;
-        signatureImageAsBase64?: string | null;
-        pictureImageAsBase64?: string | null;
-        constructor(jsonString: string);
+        mrzImagesAsBase64?: {
+            name: string;
+            base64: string;
+        }[];
+        constructor(resultMap: Record<string, any>);
     }
     class BarkoderError {
         code: string;

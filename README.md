@@ -31,6 +31,26 @@ Our support is completely free for integration or testing purposes and granted t
 
 ### How to use barkoder-react-native package in your project
 
+#### Note: React version 0.76+
+
+The New Architecture, featuring the JavaScript Interface (JSI), is now the default. This allows direct, synchronous communication between JavaScript and native modules, improving performance and enabling modern React features like Concurrent React, Suspense, and Transitions. However barKoder plugin is not compatible with the new Android Architecture
+
+#### How to disable the default setting
+
+1. Open the android/gradle.properties file
+2. Toggle the newArchEnabled flag from true to false
+
+gradle.properties:
+   ```
+ # Use this property to enable support to the new architecture.
+# This will allow you to use TurboModules and the Fabric render in
+# your application. You should enable this flag either if you want
+# to write custom TurboModules/Fabric components OR use libraries that
+# are providing them.
+-newArchEnabled=true
++newArchEnabled=false
+   ```
+
 #### 1. Prepare environment
 Install the dependencies and [setup your environment](https://reactnative.dev/docs/environment-setup)
 

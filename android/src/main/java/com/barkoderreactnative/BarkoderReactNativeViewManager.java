@@ -18,6 +18,9 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.EventDispatcher;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 import org.json.JSONObject;
 
@@ -74,6 +77,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setFlashEnabled", BarkoderReactNativeCommands.SET_FLASH_AVAILABLE);
     commandsMap.put("startCamera", BarkoderReactNativeCommands.START_CAMERA);
     commandsMap.put("startScanning", BarkoderReactNativeCommands.START_SCANNING);
+    commandsMap.put("scanImage", BarkoderReactNativeCommands.SCAN_IMAGE);
     commandsMap.put("stopScanning", BarkoderReactNativeCommands.STOP_SCANNING);
     commandsMap.put("pauseScanning", BarkoderReactNativeCommands.PAUSE_SCANNING);
     commandsMap.put("getLocationLineColorHex", BarkoderReactNativeCommands.GET_LOCATION_LINE_COLOR_HEX);
@@ -84,14 +88,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setRoiLineColor", BarkoderReactNativeCommands.SET_ROI_LINE_COLOR);
     commandsMap.put("getRoiLineWidth", BarkoderReactNativeCommands.GET_ROI_LINE_WIDTH);
     commandsMap.put("setRoiLineWidth", BarkoderReactNativeCommands.SET_ROI_LINE_WIDTH);
-    commandsMap.put("getRoiOverlayBackgroundColorHex", BarkoderReactNativeCommands.GET_ROI_OVERLAY_BACKGROUND_COLOR_HEX);
+    commandsMap.put("getRoiOverlayBackgroundColorHex",
+        BarkoderReactNativeCommands.GET_ROI_OVERLAY_BACKGROUND_COLOR_HEX);
     commandsMap.put("setRoiOverlayBackgroundColor", BarkoderReactNativeCommands.SET_ROI_OVERLAY_BACKGROUND_COLOR);
     commandsMap.put("isCloseSessionOnResultEnabled", BarkoderReactNativeCommands.IS_CLOSE_SESSION_ON_RESULT_ENABLED);
     commandsMap.put("setCloseSessionOnResultEnabled", BarkoderReactNativeCommands.SET_CLOSE_SESSION_ON_RESULT_ENABLED);
     commandsMap.put("isImageResultEnabled", BarkoderReactNativeCommands.IS_IMAGE_RESULT_ENABLED);
     commandsMap.put("setImageResultEnabled", BarkoderReactNativeCommands.SET_IMAGE_RESULT_ENABLED);
     commandsMap.put("isLocationInImageResultEnabled", BarkoderReactNativeCommands.IS_LOCATION_IN_IMAGE_RESULT_ENABLED);
-    commandsMap.put("setLocationInImageResultEnabled", BarkoderReactNativeCommands.SET_LOCATION_IN_IMAGE_RESULT_ENABLED);
+    commandsMap.put("setLocationInImageResultEnabled",
+        BarkoderReactNativeCommands.SET_LOCATION_IN_IMAGE_RESULT_ENABLED);
     commandsMap.put("getRegionOfInterest", BarkoderReactNativeCommands.GET_REGION_OF_INTEREST);
     commandsMap.put("setRegionOfInterest", BarkoderReactNativeCommands.SET_REGION_OF_INTEREST);
     commandsMap.put("getThreadsLimit", BarkoderReactNativeCommands.GET_THREADS_LIMIT);
@@ -135,8 +141,20 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("getDuplicatesDelayMs", BarkoderReactNativeCommands.GET_DUPLICATES_DELAY_MS);
     commandsMap.put("setUpcEanDeblurEnabled", BarkoderReactNativeCommands.SET_UPC_EAN_DEBLUR_ENABLED);
     commandsMap.put("setEnableMisshaped1DEnabled", BarkoderReactNativeCommands.SET_ENABLE_MISSHAPED_1D_ENABLED);
-    commandsMap.put("setBarcodeThumbnailOnResultEnabled", BarkoderReactNativeCommands.SET_BARCODE_THUMBNAIL_ON_RESULT_ENABLED);
-    commandsMap.put("setThresholdBetweenDuplicatesScans", BarkoderReactNativeCommands.SET_THRESHOLD_BETWEEN_DUPLICATES_SCANS);
+    commandsMap.put("setBarcodeThumbnailOnResultEnabled",
+        BarkoderReactNativeCommands.SET_BARCODE_THUMBNAIL_ON_RESULT_ENABLED);
+    commandsMap.put("setThresholdBetweenDuplicatesScans",
+        BarkoderReactNativeCommands.SET_THRESHOLD_BETWEEN_DUPLICATES_SCANS);
+    commandsMap.put("setDatamatrixDpmModeEnabled", BarkoderReactNativeCommands.SET_DATAMATRIX_DPM_MODE);
+    commandsMap.put("setQrDpmModeEnabled", BarkoderReactNativeCommands.SET_QR_DPM_MODE);
+    commandsMap.put("setQrMicroDpmModeEnabled", BarkoderReactNativeCommands.SET_QRMICRO_DPM_MODE);
+    commandsMap.put("isDatamatrixDpmModeEnabled", BarkoderReactNativeCommands.GET_DATAMATRIX_DPM_MODE);
+    commandsMap.put("isQrDpmModeEnabled", BarkoderReactNativeCommands.GET_QR_DPM_MODE);
+    commandsMap.put("isQrMicroDpmModeEnabled", BarkoderReactNativeCommands.GET_QRMICRO_DPM_MODE);
+    commandsMap.put("setIdDocumentMasterChecksumEnabled",
+        BarkoderReactNativeCommands.SET_IDDOCUMENT_MASTERCHECKSUM_ENABLED);
+    commandsMap.put("isIdDocumentMasterChecksumEnabled",
+        BarkoderReactNativeCommands.GET_IDDOCUMENT_MASTERCHECKSUM_ENABLED);
 
     return commandsMap;
   }
@@ -165,6 +183,10 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "startScanning":
         startScanning(root, args.getInt(0));
+        break;
+      case "scanImage":
+        String base64Image = args.getString(1);
+        scanImage(root, base64Image, args.getInt(0));
         break;
       case "stopScanning":
         stopScanning(root);
@@ -225,7 +247,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "setRegionOfInterest":
         setRegionOfInterest(root, args.getInt(0),
-          args.getDouble(1), args.getDouble(2), args.getDouble(3), args.getDouble(4));
+            args.getDouble(1), args.getDouble(2), args.getDouble(3), args.getDouble(4));
         break;
       case "getThreadsLimit":
         getThreadsLimit(root, args.getInt(0));
@@ -286,6 +308,18 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "setBarcodeTypeLengthRange":
         setBarcodeTypeLengthRange(root, args.getInt(0), args.getInt(1), args.getInt(2), args.getInt(3));
+        break;
+      case "setDatamatrixDpmModeEnabled":
+        setDatamatrixDpmModeEnabled(root, args.getBoolean(0));
+        break;
+      case "setQrDpmModeEnabled":
+        setQrDpmModeEnabled(root, args.getBoolean(0));
+        break;
+      case "setQrMicroDpmModeEnabled":
+        setQrMicroDpmModeEnabled(root, args.getBoolean(0));
+        break;
+      case "setIdDocumentMasterChecksumEnabled":
+        setIdDocumentMasterChecksumEnabled(root, args.getBoolean(0));
         break;
       case "getMsiChecksumType":
         getMsiChecksumType(root, args.getInt(0));
@@ -377,6 +411,18 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "isVINRestrictionsEnabled":
         isVINRestrictionsEnabled(root, args.getInt(0));
         break;
+      case "isIdDocumentMasterChecksumEnabled":
+        isIdDocumentMasterChecksumEnabled(root, args.getInt(0));
+        break;
+      case "isDatamatrixDpmModeEnabled":
+        isDatamatrixDpmModeEnabled(root, args.getInt(0));
+        break;
+      case "isQrDpmModeEnabled":
+        isQrDpmModeEnabled(root, args.getInt(0));
+        break;
+      case "isQrMicroDpmModeEnabled":
+        isQrMicroDpmModeEnabled(root, args.getInt(0));
+        break;
       case "setEnableVINRestrictions":
         setEnableVINRestrictions(root, args.getBoolean(0));
         break;
@@ -388,22 +434,22 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     HashMap<String, Object> exportedCustomDirectEventTypeConstants = MapBuilder.newHashMap();
 
     exportedCustomDirectEventTypeConstants.put(BarkoderViewDataReturnedEvent.EVENT_NAME,
-      MapBuilder.of("registrationName", "onDataReturned"));
+        MapBuilder.of("registrationName", "onDataReturned"));
 
     exportedCustomDirectEventTypeConstants.put(BarkoderViewConfigCreatedEvent.EVENT_NAME,
-      MapBuilder.of("registrationName", "onBarkoderConfigCreated"));
+        MapBuilder.of("registrationName", "onBarkoderConfigCreated"));
 
     return exportedCustomDirectEventTypeConstants;
   }
 
-  //region Methods
+  // region Methods
 
   private void getMaxZoomFactor(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     SoftReference<EventDispatcher> dispatcherRef = new SoftReference<>(eventDispatcher);
     int bkdViewId = bkdView.getId();
 
-    bkdView.getMaxZoomFactor(maxZoomFactor ->
-      dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId, maxZoomFactor));
+    bkdView.getMaxZoomFactor(
+        maxZoomFactor -> dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId, maxZoomFactor));
   }
 
   private void setZoomFactor(BarkoderReactBarkoderView bkdView, double zoomFactor) {
@@ -414,8 +460,8 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     SoftReference<EventDispatcher> dispatcherRef = new SoftReference<>(eventDispatcher);
     int bkdViewId = bkdView.getId();
 
-    bkdView.isFlashAvailable(isAvailable ->
-      dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId, isAvailable));
+    bkdView.isFlashAvailable(
+        isAvailable -> dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId, isAvailable));
   }
 
   private void setFlashEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -432,8 +478,30 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
     bkdView.startScanning((results, thumbnails, resultImage) -> {
       dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId,
-        Util.barkoderResultsToJsonString(results, resultImage));
+          Util.barkoderResultsToJsonString(results, thumbnails, resultImage));
     });
+  }
+
+  private void scanImage(BarkoderReactBarkoderView bkdView, String base64Image, int promiseRequestId) {
+    SoftReference<EventDispatcher> dispatcherRef = new SoftReference<>(eventDispatcher);
+    int bkdViewId = bkdView.getId();
+
+    byte[] imageData = android.util.Base64.decode(base64Image, android.util.Base64.DEFAULT);
+    if (imageData == null) {
+      dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId, "Failed to decode image data.");
+      return;
+    }
+
+    Bitmap image = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+    if (image == null) {
+      dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId, "Failed to create bitmap from image data.");
+      return;
+    }
+
+    BarkoderHelper.scanImage(image, bkdView.config, (results, thumbnails, resultImage) -> {
+      dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId,
+          Util.barkoderResultsToJsonString(results, thumbnails, resultImage));
+    }, bkdView.getContext());
   }
 
   private void stopScanning(BarkoderReactBarkoderView bkdView) {
@@ -454,16 +522,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       bkdView.config.setLocationLineColor(Util.hexColorToIntColor(hexColor));
 
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        true);
+          true);
     } catch (IllegalArgumentException ex) {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
+          null, BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
     }
   }
 
   private void getLocationLineWidth(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.getLocationLineWidth());
+        bkdView.config.getLocationLineWidth());
   }
 
   private void setLocationLineWidth(BarkoderReactBarkoderView bkdView, double width) {
@@ -480,16 +548,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       bkdView.config.setRoiLineColor(Util.hexColorToIntColor(hexColor));
 
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        true);
+          true);
     } catch (IllegalArgumentException ex) {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
+          null, BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
     }
   }
 
   private void getRoiLineWidth(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.getRoiLineWidth());
+        bkdView.config.getRoiLineWidth());
   }
 
   private void setRoiLineWidth(BarkoderReactBarkoderView bkdView, double width) {
@@ -506,16 +574,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       bkdView.config.setRoiOverlayBackgroundColor(Util.hexColorToIntColor(hexColor));
 
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        true);
+          true);
     } catch (IllegalArgumentException ex) {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
+          null, BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
     }
   }
 
   private void isCloseSessionOnResultEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.isCloseSessionOnResultEnabled());
+        bkdView.config.isCloseSessionOnResultEnabled());
   }
 
   private void setCloseSessionOnResultEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -524,7 +592,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isImageResultEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.isImageResultEnabled());
+        bkdView.config.isImageResultEnabled());
   }
 
   private void setImageResultEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -533,7 +601,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isLocationInImageResultEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.isLocationInImageResultEnabled());
+        bkdView.config.isLocationInImageResultEnabled());
   }
 
   private void setLocationInImageResultEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -550,24 +618,25 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     roiAsArray.pushDouble(roiRect.height);
 
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      roiAsArray);
+        roiAsArray);
   }
 
-  private void setRegionOfInterest(BarkoderReactBarkoderView bkdView, int promiseRequestId, double left, double top, double width, double height) {
+  private void setRegionOfInterest(BarkoderReactBarkoderView bkdView, int promiseRequestId, double left, double top,
+      double width, double height) {
     try {
       bkdView.config.setRegionOfInterest((float) left, (float) top, (float) width, (float) height);
 
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        true);
+          true);
     } catch (IllegalArgumentException ex) {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.ROI_NOT_SET, ex.getMessage());
+          null, BarkoderReactNativeErrors.ROI_NOT_SET, ex.getMessage());
     }
   }
 
   private void getThreadsLimit(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      BarkoderConfig.GetThreadsLimit());
+        BarkoderConfig.GetThreadsLimit());
   }
 
   private void setThreadsLimit(BarkoderReactBarkoderView bkdView, int promiseRequestId, int threadsLimit) {
@@ -575,16 +644,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       BarkoderConfig.SetThreadsLimit(threadsLimit);
 
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        true);
+          true);
     } catch (IllegalArgumentException ex) {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.THREADS_LIMIT_NOT_SET, ex.getMessage());
+          null, BarkoderReactNativeErrors.THREADS_LIMIT_NOT_SET, ex.getMessage());
     }
   }
 
   private void isLocationInPreviewEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.isLocationInPreviewEnabled());
+        bkdView.config.isLocationInPreviewEnabled());
   }
 
   private void setLocationInPreviewEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -593,7 +662,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isPinchToZoomEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.isPinchToZoomEnabled());
+        bkdView.config.isPinchToZoomEnabled());
   }
 
   private void setPinchToZoomEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -602,7 +671,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isRegionOfInterestVisible(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.isRegionOfInterestVisible());
+        bkdView.config.isRegionOfInterestVisible());
   }
 
   private void setRegionOfInterestVisible(BarkoderReactBarkoderView bkdView, boolean visible) {
@@ -611,7 +680,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void getBarkoderResolution(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.getBarkoderResolution().ordinal());
+        bkdView.config.getBarkoderResolution().ordinal());
   }
 
   private void setBarkoderResolution(BarkoderReactBarkoderView bkdView, int barkoderResolutionOrdinal) {
@@ -622,7 +691,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isBeepOnSuccessEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.isBeepOnSuccessEnabled());
+        bkdView.config.isBeepOnSuccessEnabled());
   }
 
   private void setBeepOnSuccessEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -631,7 +700,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isVibrateOnSuccessEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.isVibrateOnSuccessEnabled());
+        bkdView.config.isVibrateOnSuccessEnabled());
   }
 
   private void setVibrateOnSuccessEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -640,7 +709,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void getVersion(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      Barkoder.GetVersion());
+        Barkoder.GetVersion());
   }
 
   private void showLogMessages(boolean show) {
@@ -649,34 +718,35 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   @SuppressWarnings("ConstantConditions")
   private void isBarcodeTypeEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId, int barcodeTypeOrdinal) {
-    final Barkoder.SpecificConfig specificConfig =
-      Util.getSpecificConfigRefFromBarcodeTypeOrdinal(barcodeTypeOrdinal, bkdView.config.getDecoderConfig());
+    final Barkoder.SpecificConfig specificConfig = Util.getSpecificConfigRefFromBarcodeTypeOrdinal(barcodeTypeOrdinal,
+        bkdView.config.getDecoderConfig());
 
     // Intentional noinspection for NPE
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      specificConfig.enabled);
+        specificConfig.enabled);
   }
 
   @SuppressWarnings("ConstantConditions")
   private void setBarcodeTypeEnabled(BarkoderReactBarkoderView bkdView, int barcodeTypeOrdinal, boolean enabled) {
-    final Barkoder.SpecificConfig specificConfig =
-      Util.getSpecificConfigRefFromBarcodeTypeOrdinal(barcodeTypeOrdinal, bkdView.config.getDecoderConfig());
+    final Barkoder.SpecificConfig specificConfig = Util.getSpecificConfigRefFromBarcodeTypeOrdinal(barcodeTypeOrdinal,
+        bkdView.config.getDecoderConfig());
 
     // Intentional noinspection for NPE
     specificConfig.enabled = enabled;
   }
 
   @SuppressWarnings("ConstantConditions")
-  private void getBarcodeTypeLengthRange(BarkoderReactBarkoderView bkdView, int promiseRequestId, int barcodeTypeOrdinal) {
+  private void getBarcodeTypeLengthRange(BarkoderReactBarkoderView bkdView, int promiseRequestId,
+      int barcodeTypeOrdinal) {
     if (barcodeTypeOrdinal == Barkoder.BarcodeType.Code128.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Code93.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Code39.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Codabar.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Code11.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Msi.ordinal()) {
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Code93.ordinal() ||
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Code39.ordinal() ||
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Codabar.ordinal() ||
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Code11.ordinal() ||
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Msi.ordinal()) {
 
       final Barkoder.SpecificConfig specificConfig = Util.getSpecificConfigRefFromBarcodeTypeOrdinal(barcodeTypeOrdinal,
-        bkdView.config.getDecoderConfig());
+          bkdView.config.getDecoderConfig());
 
       WritableArray rangeAsArray = Arguments.createArray();
       rangeAsArray.pushInt(specificConfig.minimumLength);
@@ -684,43 +754,44 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
       // Intentional noinspection for NPE
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        rangeAsArray);
+          rangeAsArray);
     } else {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.BARCODE_TYPE_NOT_SUPPORTED, null);
+          null, BarkoderReactNativeErrors.BARCODE_TYPE_NOT_SUPPORTED, null);
     }
   }
 
   @SuppressWarnings("ConstantConditions")
-  private void setBarcodeTypeLengthRange(BarkoderReactBarkoderView bkdView, int promiseRequestId, int barcodeTypeOrdinal,
-                                         int min, int max) {
+  private void setBarcodeTypeLengthRange(BarkoderReactBarkoderView bkdView, int promiseRequestId,
+      int barcodeTypeOrdinal,
+      int min, int max) {
 
     if (barcodeTypeOrdinal == Barkoder.BarcodeType.Code128.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Code93.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Code39.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Codabar.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Code11.ordinal() ||
-      barcodeTypeOrdinal == Barkoder.BarcodeType.Msi.ordinal()) {
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Code93.ordinal() ||
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Code39.ordinal() ||
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Codabar.ordinal() ||
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Code11.ordinal() ||
+        barcodeTypeOrdinal == Barkoder.BarcodeType.Msi.ordinal()) {
 
       final Barkoder.SpecificConfig specificConfig = Util.getSpecificConfigRefFromBarcodeTypeOrdinal(barcodeTypeOrdinal,
-        bkdView.config.getDecoderConfig());
+          bkdView.config.getDecoderConfig());
 
       if (specificConfig.setLengthRange(min, max) == 0) {
         dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-          true);
+            true);
       } else {
         dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-          null, BarkoderReactNativeErrors.LENGTH_RANGE_NOT_VALID, null);
+            null, BarkoderReactNativeErrors.LENGTH_RANGE_NOT_VALID, null);
       }
     } else {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.BARCODE_TYPE_NOT_SUPPORTED, null);
+          null, BarkoderReactNativeErrors.BARCODE_TYPE_NOT_SUPPORTED, null);
     }
   }
 
   private void getMsiChecksumType(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.getDecoderConfig().Msi.checksumType.ordinal());
+        bkdView.config.getDecoderConfig().Msi.checksumType.ordinal());
   }
 
   private void setMsiChecksumType(BarkoderReactBarkoderView bkdView, int checksumTypeOrdinal) {
@@ -730,7 +801,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void getCode39ChecksumType(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.getDecoderConfig().Code39.checksumType.ordinal());
+        bkdView.config.getDecoderConfig().Code39.checksumType.ordinal());
   }
 
   private void setCode39ChecksumType(BarkoderReactBarkoderView bkdView, int checksumTypeOrdinal) {
@@ -740,7 +811,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void getCode11ChecksumType(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.getDecoderConfig().Code11.checksumType.ordinal());
+        bkdView.config.getDecoderConfig().Code11.checksumType.ordinal());
   }
 
   private void setCode11ChecksumType(BarkoderReactBarkoderView bkdView, int checksumTypeOrdinal) {
@@ -750,7 +821,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void getEncodingCharacterSet(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.getDecoderConfig().encodingCharacterSet);
+        bkdView.config.getDecoderConfig().encodingCharacterSet);
   }
 
   private void setEncodingCharacterSet(BarkoderReactBarkoderView bkdView, String characterSet) {
@@ -759,7 +830,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void getDecodingSpeed(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.getDecoderConfig().decodingSpeed.ordinal());
+        bkdView.config.getDecoderConfig().decodingSpeed.ordinal());
   }
 
   private void setDecodingSpeed(BarkoderReactBarkoderView bkdView, int decodingSpeedOrdinal) {
@@ -769,7 +840,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void getFormattingType(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-      bkdView.config.getDecoderConfig().formattingType.ordinal());
+        bkdView.config.getDecoderConfig().formattingType.ordinal());
   }
 
   private void setFormattingType(BarkoderReactBarkoderView bkdView, int formattingTypeOrdinal) {
@@ -785,48 +856,54 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.config.getDecoderConfig().duplicatesDelayMs = duplicatesDelayMs;
   }
 
-  private void setMulticodeCachingDuration(BarkoderReactBarkoderView bkdView, int promiseRequestId, int multicodeCachingDuration) {
+  private void setMulticodeCachingDuration(BarkoderReactBarkoderView bkdView, int promiseRequestId,
+      int multicodeCachingDuration) {
     try {
       BarkoderConfig.SetMulticodeCachingDuration(multicodeCachingDuration);
 
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        true);
+          true);
     } catch (IllegalArgumentException ex) {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.MULTICODE_CACHING_IS_NOT_SET, ex.getMessage());
+          null, BarkoderReactNativeErrors.MULTICODE_CACHING_IS_NOT_SET, ex.getMessage());
     }
   }
 
   private void getMulticodeCachingDuration(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     int multicodeCachingDuration = BarkoderConfig.GetMulticodeCachingDuration();
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, multicodeCachingDuration);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        multicodeCachingDuration);
   }
 
-  private void setMulticodeCachingEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId, boolean multicodeCachingEnabled) {
+  private void setMulticodeCachingEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId,
+      boolean multicodeCachingEnabled) {
     try {
       BarkoderConfig.SetMulticodeCachingEnabled(multicodeCachingEnabled);
 
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        true);
+          true);
     } catch (IllegalArgumentException ex) {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.MULTICODE_CACHING_IS_NOT_SET, ex.getMessage());
+          null, BarkoderReactNativeErrors.MULTICODE_CACHING_IS_NOT_SET, ex.getMessage());
     }
   }
 
   private void getMulticodeCachingEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     boolean multicodeCachingEnabled = BarkoderConfig.IsMulticodeCachingEnabled();
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, multicodeCachingEnabled);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        multicodeCachingEnabled);
   }
 
   private void getMaximumResultsCount(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     int maximumResultsCount = bkdView.config.getDecoderConfig().maximumResultsCount;
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, maximumResultsCount);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        maximumResultsCount);
   }
 
   private void getDuplicatesDelayMs(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     int duplicatesDelayMs = bkdView.config.getDecoderConfig().duplicatesDelayMs;
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, duplicatesDelayMs);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        duplicatesDelayMs);
   }
 
   private void setUpcEanDeblurEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -835,7 +912,8 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isUpcEanDeblurEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     boolean isUpcEanDeblurEnabled = bkdView.config.getDecoderConfig().upcEanDeblur;
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, isUpcEanDeblurEnabled);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        isUpcEanDeblurEnabled);
   }
 
   private void setEnableMisshaped1DEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -844,7 +922,8 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isMisshaped1DEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     boolean isMisshaped1DEnabled = bkdView.config.getDecoderConfig().enableMisshaped1D;
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, isMisshaped1DEnabled);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        isMisshaped1DEnabled);
   }
 
   private void setBarcodeThumbnailOnResultEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -853,16 +932,19 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isBarcodeThumbnailOnResultEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     boolean thumbnailOnResulEnabled = bkdView.config.getThumbnailOnResulEnabled();
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, thumbnailOnResulEnabled);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        thumbnailOnResulEnabled);
   }
 
-  private void setThresholdBetweenDuplicatesScans(BarkoderReactBarkoderView bkdView, int thresholdBetweenDuplicatesScans) {
+  private void setThresholdBetweenDuplicatesScans(BarkoderReactBarkoderView bkdView,
+      int thresholdBetweenDuplicatesScans) {
     bkdView.config.setThresholdBetweenDuplicatesScans(thresholdBetweenDuplicatesScans);
   }
 
   private void getThresholdBetweenDuplicatesScans(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     int thresholdBetweenDuplicatesScans = bkdView.config.getThresholdBetweenDuplicatesScans();
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, thresholdBetweenDuplicatesScans);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        thresholdBetweenDuplicatesScans);
   }
 
   private void setEnableVINRestrictions(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -871,10 +953,60 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void isVINRestrictionsEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     boolean isVINRestrictionsEnabled = bkdView.config.getDecoderConfig().enableVINRestrictions;
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, isVINRestrictionsEnabled);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        isVINRestrictionsEnabled);
   }
 
-  private void configureBarkoder(BarkoderReactBarkoderView bkdView, int promiseRequestId, String barkoderConfigAsJsonString) {
+  private void setDatamatrixDpmModeEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getDecoderConfig().Datamatrix.dpmMode = enabled;
+  }
+
+  private void setQrDpmModeEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getDecoderConfig().QR.dpmMode = enabled;
+  }
+
+  private void setQrMicroDpmModeEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getDecoderConfig().QRMicro.dpmMode = enabled;
+  }
+
+  private void isDatamatrixDpmModeEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    boolean isDatamatrixDpmModeEnabled = bkdView.config.getDecoderConfig().Datamatrix.dpmMode;
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        isDatamatrixDpmModeEnabled);
+  }
+
+  private void isQrDpmModeEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    boolean isQRDpmModeEnabled = bkdView.config.getDecoderConfig().QR.dpmMode;
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        isQRDpmModeEnabled);
+  }
+
+  private void isQrMicroDpmModeEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    boolean isQrMicroDpmModeEnabled = bkdView.config.getDecoderConfig().QRMicro.dpmMode;
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        isQrMicroDpmModeEnabled);
+  }
+
+  private void setIdDocumentMasterChecksumEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    if (enabled) {
+      bkdView.config.getDecoderConfig().IDDocument.masterChecksumType = Barkoder.StandardChecksumType.Enabled;
+    } else {
+      bkdView.config.getDecoderConfig().IDDocument.masterChecksumType = Barkoder.StandardChecksumType.Disabled;
+    }
+
+  }
+
+  private void isIdDocumentMasterChecksumEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    boolean isIdDocumentMasterChecksumEnabled = bkdView.config
+        .getDecoderConfig().IDDocument.masterChecksumType == Barkoder.StandardChecksumType.Enabled;
+
+    // Dispatch the result
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        isIdDocumentMasterChecksumEnabled);
+  }
+
+  private void configureBarkoder(BarkoderReactBarkoderView bkdView, int promiseRequestId,
+      String barkoderConfigAsJsonString) {
     try {
       JSONObject configAsJson = new JSONObject(barkoderConfigAsJsonString);
 
@@ -898,31 +1030,31 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       BarkoderHelper.applyJsonToConfig(bkdView.config, configAsJson);
 
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        true);
+          true);
     } catch (Exception ex) {
       dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        null, BarkoderReactNativeErrors.BARKODER_CONFIG_IS_NOT_VALID, ex.getMessage());
+          null, BarkoderReactNativeErrors.BARKODER_CONFIG_IS_NOT_VALID, ex.getMessage());
     }
   }
 
-  //endregion Methods
+  // endregion Methods
 
-  //region Helper f-ons
+  // region Helper f-ons
 
   private void configureBarkoderView(BarkoderReactBarkoderView bkdView, String licenseKey) {
-    bkdView.config = new BarkoderConfig(bkdView.getContext(), licenseKey, licenseCheckResult ->
-      BarkoderLog.i(TAG, "LICENSE RESULT: " + licenseCheckResult.message));
+    bkdView.config = new BarkoderConfig(bkdView.getContext(), licenseKey,
+        licenseCheckResult -> BarkoderLog.i(TAG, "LICENSE RESULT: " + licenseCheckResult.message));
   }
 
   private void dispatchDataReturnedEvent(SoftReference<EventDispatcher> dispatcherRef,
-                                         int bkdViewId, int promiseRequestId, Object payloadValue) {
+      int bkdViewId, int promiseRequestId, Object payloadValue) {
 
     dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId, payloadValue, null, null);
   }
 
   private void dispatchDataReturnedEvent(SoftReference<EventDispatcher> dispatcherRef, int bkdViewId,
-                                         int promiseRequestId, Object payloadValue,
-                                         BarkoderReactNativeErrors customError, String exceptionMessage) {
+      int promiseRequestId, Object payloadValue,
+      BarkoderReactNativeErrors customError, String exceptionMessage) {
     mainThreadHandler.post(() -> {
       EventDispatcher dispatcher = dispatcherRef.get();
       if (dispatcher != null && promiseRequestId >= 0) {
@@ -930,7 +1062,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
           dispatcher.dispatchEvent(new BarkoderViewDataReturnedEvent(bkdViewId, promiseRequestId, payloadValue));
         else
           dispatcher.dispatchEvent(new BarkoderViewDataReturnedEvent(bkdViewId, promiseRequestId,
-            customError, exceptionMessage));
+              customError, exceptionMessage));
       }
     });
   }
@@ -944,5 +1076,5 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     });
   }
 
-  //endregion Helper f-ons
+  // endregion Helper f-ons
 }

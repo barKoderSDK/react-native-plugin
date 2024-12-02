@@ -84,6 +84,34 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             barkoderView.pauseScanning()
         }
     }
+  
+  @objc
+  func scanImage(
+    _ node: NSNumber,
+    arg: NSString,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    
+    getBarkoderView(node: node) { barkoderView in
+      let base64Image = arg as String
+      
+      guard let imageData = Data(base64Encoded: base64Image, options: .ignoreUnknownCharacters) else {
+        return
+      }
+      
+      guard let image = UIImage(data: imageData) else {
+        return
+      }
+      
+      //      DispatchQueue.main.async {
+      guard let config = barkoderView.config else { return }
+      
+      BarkoderHelper.scanImage(image, bkdConfig: config, resultDelegate: self)
+      //      }
+    }
+    
+  }
     
     @objc
     func startCamera(_ node: NSNumber) {
@@ -756,6 +784,17 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             resolver(barkoderView.config?.decoderConfig?.duplicatesDelayMs)
         }
     }
+  
+  @objc
+  func isDatamatrixDpmModeEnabled(
+      _ node: NSNumber,
+      resolver: @escaping RCTPromiseResolveBlock,
+      rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+          resolver(barkoderView.config?.decoderConfig?.datamatrix.dpmMode == 1 ? true : false)
+      }
+  }
     
     @objc
     func setDatamatrixDpmModeEnabled(
@@ -766,6 +805,69 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             barkoderView.config?.decoderConfig?.datamatrix.dpmMode = arg ? 1 : 0
         }
     }
+  
+  @objc
+  func isQrDpmModeEnabled(
+      _ node: NSNumber,
+      resolver: @escaping RCTPromiseResolveBlock,
+      rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+          resolver(barkoderView.config?.decoderConfig?.qr.dpmMode == 1 ? true : false)
+      }
+  }
+  
+  @objc
+  func setQrDpmModeEnabled(
+      _ node: NSNumber,
+      arg: Bool
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+        barkoderView.config?.decoderConfig?.qr.dpmMode = arg ? 1 : 0
+      }
+  }
+  
+  @objc
+  func isQrMicroDpmModeEnabled(
+      _ node: NSNumber,
+      resolver: @escaping RCTPromiseResolveBlock,
+      rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+          resolver(barkoderView.config?.decoderConfig?.qrMicro.dpmMode == 1 ? true : false)
+      }
+  }
+  
+  @objc
+  func setQrMicroDpmModeEnabled(
+      _ node: NSNumber,
+      arg: Bool
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+        barkoderView.config?.decoderConfig?.qrMicro.dpmMode = arg ? 1 : 0
+      }
+  }
+  
+  @objc
+  func isIdDocumentMasterChecksumEnabled(
+      _ node: NSNumber,
+      resolver: @escaping RCTPromiseResolveBlock,
+      rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+          resolver(barkoderView.config?.decoderConfig?.idDocument.masterChecksum.rawValue == 1 ? true : false)
+      }
+  }
+  
+  @objc
+  func setIdDocumentMasterChecksumEnabled(
+      _ node: NSNumber,
+      arg: Bool
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+          barkoderView.config?.decoderConfig?.idDocument.masterChecksum = StandardChecksum(rawValue: arg == true ? 1 : 0)
+      }
+  }
     
     @objc
     func isUpcEanDeblurEnabled(
@@ -893,6 +995,9 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             barkoderView.config?.decoderConfig?.enableVINRestrictions = arg
         }
     }
+  
+  
+  
 
     @objc
     func isBarcodeTypeEnabled(
@@ -1354,73 +1459,80 @@ class Util {
         Int(hexColor.replacingOccurrences(of: "#", with: ""), radix: 16)
     }
     
-    static func barkoderResultsToJsonString(_ decoderResults: [DecoderResult], thumbnails: [UIImage]?, image: UIImage?) -> String? {
-        guard let decoderResult = decoderResults.first else {
-            return nil
-        }
-        
-        var resultJson = [String: Any]()
-
-        resultJson["barcodeType"] = decoderResult.barcodeType.rawValue
-        resultJson["barcodeTypeName"] = decoderResult.barcodeTypeName
-        resultJson["binaryDataAsBase64"] = Data(decoderResult.binaryData).base64EncodedString()
-        resultJson["textualData"] = decoderResult.textualData
-        resultJson["characterSet"] = decoderResult.characterSet
-
-        if let extraAsDictionary = decoderResult.extra as? [String: Any],
-           !extraAsDictionary.isEmpty,
-           let jsonData = try? JSONSerialization.data(withJSONObject: extraAsDictionary, options: []),
-           let jsonString = String(data: jsonData, encoding: .utf8) {
-            resultJson["extra"] = jsonString
-        }
-        
-        if let image = image,
-           let imageData = image.pngData() {
-            resultJson["resultImageAsBase64"] = imageData.base64EncodedString()
-        }
+  static func barkoderResultsToJsonString(_ decoderResults: [DecoderResult], thumbnails: [UIImage]?, image: UIImage?) -> String? {
+    var resultsJsonArray = [[String: Any]]()
+    
+    // Process each decoder result separately
+    for decoderResult in decoderResults {
+      var resultJson = [String: Any]()
       
-      if let thumbnail = thumbnails?.first?.pngData() {
-        resultJson["resultThumbnailAsBase64"] = thumbnail.base64EncodedString()
+      resultJson["barcodeType"] = decoderResult.barcodeType.rawValue
+      resultJson["barcodeTypeName"] = decoderResult.barcodeTypeName
+      resultJson["binaryDataAsBase64"] = Data(decoderResult.binaryData).base64EncodedString()
+      resultJson["textualData"] = decoderResult.textualData
+      resultJson["characterSet"] = decoderResult.characterSet
+      
+      if let extraAsDictionary = decoderResult.extra as? [String: Any],
+         !extraAsDictionary.isEmpty,
+         let jsonData = try? JSONSerialization.data(withJSONObject: extraAsDictionary, options: []),
+         let jsonString = String(data: jsonData, encoding: .utf8) {
+        resultJson["extra"] = jsonString
       }
       
-      if let images = decoderResult.images {
-        for image in images {
-          switch image.name {
-          case "main":
-            if let imageData = image.image.pngData() {
-              resultJson["mainImageAsBase64"] = imageData.base64EncodedString()
+      // Add mrzImages
+      if decoderResult.barcodeTypeName == "MRZ" {
+        if let images = decoderResult.images {
+          var mrzImagesArray = [[String: Any]]()
+          
+          for image in images {
+            if let imageName = image.name, let imageData = image.image.pngData() {
+              switch imageName {
+              case "main", "document", "signature", "picture":
+                let imageInfo: [String: Any] = [
+                  "name": imageName,
+                  "base64": imageData.base64EncodedString()
+                ]
+                mrzImagesArray.append(imageInfo)
+              default:
+                break
+              }
             }
-          case "document":
-            if let imageData = image.image.pngData() {
-              resultJson["documentImageAsBase64"] = imageData.base64EncodedString()
-            }
-          case "signature":
-            if let imageData = image.image.pngData() {
-              resultJson["signatureImageAsBase64"] = imageData.base64EncodedString()
-            }
-          case "picture":
-            if let imageData = image.image.pngData() {
-              resultJson["pictureImageAsBase64"] = imageData.base64EncodedString()
-            }
-          default:
-            break
           }
+          resultJson["mrzImagesAsBase64"] = mrzImagesArray
         }
       }
-        
-        do {
-            let jsonData = try JSONSerialization.data(
-                withJSONObject: resultJson,
-                options: JSONSerialization.WritingOptions()
-            ) as NSData
-            
-            let jsonString = NSString(data: jsonData as Data, encoding: String.Encoding.utf8.rawValue) as? String
-
-            return jsonString
-        } catch _ {
-            return nil
-        }
-
+      
+      resultsJsonArray.append(resultJson)
     }
+    
+    // Process thumbnails and main image outside the loop
+    var barkoderResultJson: [String: Any] = ["decoderResults": resultsJsonArray]
+    
+    if let thumbnails = thumbnails {
+      let thumbnailsBase64Array = thumbnails.compactMap { thumbnail in
+        thumbnail.pngData()?.base64EncodedString()
+      }
+      barkoderResultJson["resultThumbnailsAsBase64"] = thumbnailsBase64Array
+    }
+    
+    if let image = image,
+       let imageData = image.pngData() {
+      barkoderResultJson["resultImageAsBase64"] = imageData.base64EncodedString()
+    }
+    
+    do {
+      let jsonData = try JSONSerialization.data(
+        withJSONObject: barkoderResultJson,
+        options: JSONSerialization.WritingOptions()
+      ) as NSData
+      
+      let jsonString = NSString(data: jsonData as Data, encoding: String.Encoding.utf8.rawValue) as? String
+      
+      return jsonString
+    } catch _ {
+      return nil
+    }
+    
+  }
     
 }

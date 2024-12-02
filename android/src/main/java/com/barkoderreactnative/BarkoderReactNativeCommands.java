@@ -70,4 +70,13 @@ class BarkoderReactNativeCommands {
   public static final int SET_ENABLE_MISSHAPED_1D_ENABLED = 66;
   public static final int SET_BARCODE_THUMBNAIL_ON_RESULT_ENABLED = 67;
   public static final int SET_THRESHOLD_BETWEEN_DUPLICATES_SCANS = 68;
+  public static final int SCAN_IMAGE = 69;
+  public static final int SET_DATAMATRIX_DPM_MODE = 70;
+  public static final int SET_QR_DPM_MODE = 71;
+  public static final int SET_QRMICRO_DPM_MODE = 72;
+  public static final int GET_DATAMATRIX_DPM_MODE = 73;
+  public static final int GET_QR_DPM_MODE = 74;
+  public static final int GET_QRMICRO_DPM_MODE = 75;
+  public static final int SET_IDDOCUMENT_MASTERCHECKSUM_ENABLED = 76;
+  public static final int GET_IDDOCUMENT_MASTERCHECKSUM_ENABLED = 77;
 }
