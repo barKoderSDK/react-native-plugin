@@ -21,6 +21,7 @@ import com.facebook.react.uimanager.events.EventDispatcher;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import com.facebook.react.uimanager.UIManagerHelper;
 
 import org.json.JSONObject;
 
@@ -39,13 +40,19 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
   @Override
   public BarkoderReactBarkoderView createViewInstance(ThemedReactContext reactContext) {
     mainThreadHandler = new Handler(Looper.getMainLooper());
-    eventDispatcher = reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher();
 
     Activity currentActivity = reactContext.getCurrentActivity();
 
     BarkoderLog.d(TAG, "createViewInstance: " + currentActivity);
+    // Create the view instance
+    BarkoderReactBarkoderView barkoderView = new BarkoderReactBarkoderView(
+        currentActivity != null ? currentActivity : reactContext);
 
-    return new BarkoderReactBarkoderView(currentActivity != null ? currentActivity : reactContext);
+    // Use the view instance to get the event dispatcher
+    int reactTag = barkoderView.getId();
+    eventDispatcher = UIManagerHelper.getEventDispatcherForReactTag(reactContext, reactTag);
+
+    return barkoderView;
   }
 
   @Override
@@ -57,14 +64,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
   @SuppressWarnings("unused")
   @ReactProp(name = "licenseKey")
   public void setLicenseKey(BarkoderReactBarkoderView view, String licenseKey) {
-    configureBarkoderView(view, licenseKey);
+    // Wait until the view is fully initialized
+    view.post(() -> {
+      configureBarkoderView(view, licenseKey);
+      SoftReference<EventDispatcher> dispatcherRef = new SoftReference<>(eventDispatcher);
+      int bkdViewId = view.getId();
 
-    SoftReference<EventDispatcher> dispatcherRef = new SoftReference<>(eventDispatcher);
-    int bkdViewId = view.getId();
-
-    BarkoderLog.i(TAG, "dispatchConfigCreatedEvent");
-
-    dispatchConfigCreatedEvent(dispatcherRef, bkdViewId);
+      BarkoderLog.i(TAG, "dispatchConfigCreatedEvent");
+      // Dispatch event after initialization
+      dispatchConfigCreatedEvent(dispatcherRef, bkdViewId);
+    });
   }
 
   @Override
@@ -155,6 +164,24 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         BarkoderReactNativeCommands.SET_IDDOCUMENT_MASTERCHECKSUM_ENABLED);
     commandsMap.put("isIdDocumentMasterChecksumEnabled",
         BarkoderReactNativeCommands.GET_IDDOCUMENT_MASTERCHECKSUM_ENABLED);
+    commandsMap.put("setUPCEexpandToUPCA",
+        BarkoderReactNativeCommands.SET_UPCE_EXPAND_TO_UPCA);
+    commandsMap.put("setUPCE1expandToUPCA",
+        BarkoderReactNativeCommands.SET_UPCE1_EXPAND_TO_UPCA);
+    commandsMap.put("setCustomOption",
+        BarkoderReactNativeCommands.SET_CUSTOM_OPTION);
+        commandsMap.put("setScanningIndicatorAnimation",
+        BarkoderReactNativeCommands.SET_SCANNING_INDICATOR_ANIMATION);
+        commandsMap.put("getScanningIndicatorAnimation",
+        BarkoderReactNativeCommands.GET_SCANNING_INDICATOR_ANIMATION);
+         commandsMap.put("setScanningIndicatorWidth",
+        BarkoderReactNativeCommands.SET_SCANNING_INDICATOR_WIDTH);
+         commandsMap.put("getScanningIndicatorWidth",
+        BarkoderReactNativeCommands.GET_SCANNING_INDICATOR_WIDTH);
+           commandsMap.put("setScanningIndicatorColor", BarkoderReactNativeCommands.SET_SCANNING_INDICATOR_COLOR);
+    commandsMap.put("getScanningIndicatorColorHex", BarkoderReactNativeCommands.GET_SCANNING_INDICATOR_COLOR_HEX);
+    commandsMap.put("setScanningIndicatorAlwaysVisible", BarkoderReactNativeCommands.SET_SCANNING_INDICATOR_VISIBLE_ALWAYS);
+    commandsMap.put("isScanningIndicatorAlwaysVisible", BarkoderReactNativeCommands.IS_SCANNING_INDICATOR_VISIBLE_ALWAYS);
 
     return commandsMap;
   }
@@ -420,12 +447,46 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "isQrDpmModeEnabled":
         isQrDpmModeEnabled(root, args.getInt(0));
         break;
+      case "setScanningIndicatorAnimation":
+        setScanningIndicatorAnimation(root, args.getInt(0));
+        break;
+        case "getScanningIndicatorAnimation":
+        getScanningIndicatorAnimation(root, args.getInt(0));
+        break;
+        case "setScanningIndicatorWidth":
+        setScanningIndicatorWidth(root, args.getInt(0));
+        break;
+        case "getScanningIndicatorWidth":
+        getScanningIndicatorWidth(root, args.getInt(0));
+        break;
+      case "getScanningIndicatorColorHex":
+        getScanningIndicatorColorHex(root, args.getInt(0));
+        break;
+      case "setScanningIndicatorColor":
+        setScanningIndicatorColor(root, args.getInt(0), args.getString(1));
+        break;
       case "isQrMicroDpmModeEnabled":
         isQrMicroDpmModeEnabled(root, args.getInt(0));
         break;
       case "setEnableVINRestrictions":
         setEnableVINRestrictions(root, args.getBoolean(0));
         break;
+      case "setUPCEexpandToUPCA":
+        setUPCEexpandToUPCA(root, args.getBoolean(0));
+        break;
+      case "setUPCE1expandToUPCA":
+        setUPCE1expandToUPCA(root, args.getBoolean(0));
+        break;
+      case "setCustomOption":
+         setCustomOption(root, args.getString(0), args.getInt(1));
+        break;
+      case "setScanningIndicatorAlwaysVisible":
+         setScanningIndicatorAlwaysVisible(root, args.getBoolean(0));
+        break;
+      case "isScanningIndicatorAlwaysVisible":
+         isScanningIndicatorAlwaysVisible(root, args.getInt(0));
+        break;
+              
     }
   }
 
@@ -951,6 +1012,14 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.config.getDecoderConfig().enableVINRestrictions = enabled;
   }
 
+  private void setUPCEexpandToUPCA(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getDecoderConfig().UpcE.expandToUPCA = enabled;
+  }
+
+  private void setUPCE1expandToUPCA(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getDecoderConfig().UpcE1.expandToUPCA = enabled;
+  }
+
   private void isVINRestrictionsEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     boolean isVINRestrictionsEnabled = bkdView.config.getDecoderConfig().enableVINRestrictions;
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
@@ -987,6 +1056,10 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         isQrMicroDpmModeEnabled);
   }
 
+  private void setCustomOption(BarkoderReactBarkoderView bkdView, String string, int number) {
+    Barkoder.SetCustomOption(bkdView.config.getDecoderConfig(), string, number);
+  }
+
   private void setIdDocumentMasterChecksumEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
     if (enabled) {
       bkdView.config.getDecoderConfig().IDDocument.masterChecksumType = Barkoder.StandardChecksumType.Enabled;
@@ -1003,6 +1076,52 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     // Dispatch the result
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
         isIdDocumentMasterChecksumEnabled);
+  }
+
+   private void setScanningIndicatorAnimation(BarkoderReactBarkoderView bkdView, int scanningIndicatorMode) {
+    bkdView.config.setScanningIndicatorAnimation(scanningIndicatorMode);
+  }
+
+   private void getScanningIndicatorAnimation(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+     int scanningIndicatorAnimationMode = bkdView.config.getScanningIndicatorAnimation();
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        scanningIndicatorAnimationMode);
+  }
+
+   private void setScanningIndicatorWidth(BarkoderReactBarkoderView bkdView, int scanningIndicatorWidth) {
+    bkdView.config.setScanningIndicatorWidth(scanningIndicatorWidth);
+  }
+
+   private void getScanningIndicatorWidth(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        bkdView.config.getScanningIndicatorWidth());
+  }
+
+
+  private void setScanningIndicatorColor(BarkoderReactBarkoderView bkdView, int promiseRequestId, String hexColor) {
+    try {
+      bkdView.config.setScanningIndicatorColor(Util.hexColorToIntColor(hexColor));
+
+      dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+          true);
+    } catch (IllegalArgumentException ex) {
+      dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+          null, BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
+    }
+  }
+
+    private void getScanningIndicatorColorHex(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    String hexColor = String.format("#%08X", bkdView.config.getScanningIndicatorColor());
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, hexColor);
+  }
+
+  private void setScanningIndicatorAlwaysVisible(BarkoderReactBarkoderView bkdView, boolean enabled){
+    bkdView.config.setScanningIndicatorAlwaysVisible(enabled);
+  }
+
+  private void isScanningIndicatorAlwaysVisible(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        bkdView.config.isScanningIndicatorAlwaysVisible());
   }
 
   private void configureBarkoder(BarkoderReactBarkoderView bkdView, int promiseRequestId,
@@ -1025,6 +1144,11 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       if (configAsJson.has("locationLineColor")) {
         String colorAsHex = configAsJson.getString("locationLineColor");
         configAsJson.put("locationLineColor", Util.hexColorToIntColor(colorAsHex));
+      }
+
+      if (configAsJson.has("scanningIndicatorColor")) {
+        String colorAsHex = configAsJson.getString("scanningIndicatorColor");
+        configAsJson.put("scanningIndicatorColor", Util.hexColorToIntColor(colorAsHex));
       }
 
       BarkoderHelper.applyJsonToConfig(bkdView.config, configAsJson);
@@ -1058,11 +1182,12 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     mainThreadHandler.post(() -> {
       EventDispatcher dispatcher = dispatcherRef.get();
       if (dispatcher != null && promiseRequestId >= 0) {
-        if (customError == null)
+        if (customError == null) {
           dispatcher.dispatchEvent(new BarkoderViewDataReturnedEvent(bkdViewId, promiseRequestId, payloadValue));
-        else
+        } else {
           dispatcher.dispatchEvent(new BarkoderViewDataReturnedEvent(bkdViewId, promiseRequestId,
               customError, exceptionMessage));
+        }
       }
     });
   }

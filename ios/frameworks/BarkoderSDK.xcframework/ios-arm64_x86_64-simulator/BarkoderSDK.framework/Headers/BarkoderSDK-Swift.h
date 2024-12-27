@@ -323,6 +323,20 @@ SWIFT_CLASS("_TtC11BarkoderSDK14BarkoderConfig")
 @property (nonatomic) float roiLineWidth;
 /// Retrieves/Sets the background color of the overlay within the Region of Interest (ROI) for barcode scanning on the camera feed
 @property (nonatomic, strong) UIColor * _Nonnull roiOverlayBackgroundColor;
+/// Retrieves/Sets the color of the scanning indicator for barcode scanning on the camera feed
+@property (nonatomic, strong) UIColor * _Nonnull scanningIndicatorColor;
+/// Retrieves/Sets the width of the scanning indicator for barcode scanning on the camera feed
+/// note:
+/// Default value is 2.0
+@property (nonatomic) float scanningIndicatorWidth;
+/// Retrieves/Sets the animation of the scanning indicator for barcode scanning on the camera feed
+/// note:
+/// Default value is 0
+@property (nonatomic) NSInteger scanningIndicatorAnimation;
+/// Retrieves/Sets the scanning indicator to be always shown for barcode scanning on the camera feed
+/// note:
+/// Default value is false
+@property (nonatomic) BOOL scanningIndicatorAlwaysVisible;
 /// Retrieves/Sets the visibility of the Region of Interest (ROI) on the camera preview
 /// note:
 /// Default value is true
@@ -365,7 +379,7 @@ SWIFT_CLASS("_TtC11BarkoderSDK14BarkoderConfig")
 @property (nonatomic, strong) Config * _Nullable decoderConfig;
 /// Retrieve/Sets the resolution for barcode scanning
 /// note:
-/// Default value is BarkoderView.BarkoderResolution.normal
+/// Default value is BarkoderView.BarkoderResolution.HD
 @property (nonatomic) enum BarkoderResolution barkoderResolution;
 /// Retrieve/Sets whether to enable barcode thumbnail on result
 /// note:
@@ -526,13 +540,26 @@ SWIFT_CLASS("_TtC11BarkoderSDK12BarkoderView")
 - (void)getMaxZoomFactor:(void (^ _Nonnull)(float))completion;
 /// Checks whether the device has a built-in flash (torch) that can be used for illumination during barcode scanning
 - (void)isFlashAvailable:(void (^ _Nonnull)(BOOL))completion;
+/// Adjusts the camera’s exposure dynamically based on the provided intensity, cycling through predefined compensation values.
+/// \param intensity A value between 0 and 10, where 0 disables dynamic exposure. Default value is 0
+///
+- (void)setDynamicExposureWithIntensity:(NSInteger)intensity;
+/// Configures the camera to use the center of the viewfinder for focus and exposure, enabling or disabling centric adjustments.
+/// \param enabled [true, false]. Default value is false.
+///
+- (void)setCentricFocusAndExposureWithEnabled:(BOOL)enabled;
 - (void)cameraFrameReceivedWithSampleBuffer:(CMSampleBufferRef _Nonnull)sampleBuffer;
 - (void)layoutSubviews;
 @end
 
+/// Represents the resolution settings for the BarkoderView.
 typedef SWIFT_ENUM(NSInteger, BarkoderResolution, open) {
-  BarkoderResolutionNormal = 0,
-  BarkoderResolutionHigh = 1,
+/// High Definition resolution (1280x720).
+  BarkoderResolutionHD = 0,
+/// Full High Definition resolution (1920x1080).
+  BarkoderResolutionFHD = 1,
+/// Ultra High (4K) Definition resolution (3840x2160).
+  BarkoderResolutionUHD = 2,
 };
 
 
@@ -877,6 +904,20 @@ SWIFT_CLASS("_TtC11BarkoderSDK14BarkoderConfig")
 @property (nonatomic) float roiLineWidth;
 /// Retrieves/Sets the background color of the overlay within the Region of Interest (ROI) for barcode scanning on the camera feed
 @property (nonatomic, strong) UIColor * _Nonnull roiOverlayBackgroundColor;
+/// Retrieves/Sets the color of the scanning indicator for barcode scanning on the camera feed
+@property (nonatomic, strong) UIColor * _Nonnull scanningIndicatorColor;
+/// Retrieves/Sets the width of the scanning indicator for barcode scanning on the camera feed
+/// note:
+/// Default value is 2.0
+@property (nonatomic) float scanningIndicatorWidth;
+/// Retrieves/Sets the animation of the scanning indicator for barcode scanning on the camera feed
+/// note:
+/// Default value is 0
+@property (nonatomic) NSInteger scanningIndicatorAnimation;
+/// Retrieves/Sets the scanning indicator to be always shown for barcode scanning on the camera feed
+/// note:
+/// Default value is false
+@property (nonatomic) BOOL scanningIndicatorAlwaysVisible;
 /// Retrieves/Sets the visibility of the Region of Interest (ROI) on the camera preview
 /// note:
 /// Default value is true
@@ -919,7 +960,7 @@ SWIFT_CLASS("_TtC11BarkoderSDK14BarkoderConfig")
 @property (nonatomic, strong) Config * _Nullable decoderConfig;
 /// Retrieve/Sets the resolution for barcode scanning
 /// note:
-/// Default value is BarkoderView.BarkoderResolution.normal
+/// Default value is BarkoderView.BarkoderResolution.HD
 @property (nonatomic) enum BarkoderResolution barkoderResolution;
 /// Retrieve/Sets whether to enable barcode thumbnail on result
 /// note:
@@ -1080,13 +1121,26 @@ SWIFT_CLASS("_TtC11BarkoderSDK12BarkoderView")
 - (void)getMaxZoomFactor:(void (^ _Nonnull)(float))completion;
 /// Checks whether the device has a built-in flash (torch) that can be used for illumination during barcode scanning
 - (void)isFlashAvailable:(void (^ _Nonnull)(BOOL))completion;
+/// Adjusts the camera’s exposure dynamically based on the provided intensity, cycling through predefined compensation values.
+/// \param intensity A value between 0 and 10, where 0 disables dynamic exposure. Default value is 0
+///
+- (void)setDynamicExposureWithIntensity:(NSInteger)intensity;
+/// Configures the camera to use the center of the viewfinder for focus and exposure, enabling or disabling centric adjustments.
+/// \param enabled [true, false]. Default value is false.
+///
+- (void)setCentricFocusAndExposureWithEnabled:(BOOL)enabled;
 - (void)cameraFrameReceivedWithSampleBuffer:(CMSampleBufferRef _Nonnull)sampleBuffer;
 - (void)layoutSubviews;
 @end
 
+/// Represents the resolution settings for the BarkoderView.
 typedef SWIFT_ENUM(NSInteger, BarkoderResolution, open) {
-  BarkoderResolutionNormal = 0,
-  BarkoderResolutionHigh = 1,
+/// High Definition resolution (1280x720).
+  BarkoderResolutionHD = 0,
+/// Full High Definition resolution (1920x1080).
+  BarkoderResolutionFHD = 1,
+/// Ultra High (4K) Definition resolution (3840x2160).
+  BarkoderResolutionUHD = 2,
 };
 
 

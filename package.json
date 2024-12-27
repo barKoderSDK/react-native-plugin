@@ -1,6 +1,6 @@
 {
   "name": "barkoder-react-native",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "description": "React native support for Barkoder - a Barcode Scanner SDK for the modern enterprise.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

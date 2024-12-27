@@ -79,4 +79,16 @@ class BarkoderReactNativeCommands {
   public static final int GET_QRMICRO_DPM_MODE = 75;
   public static final int SET_IDDOCUMENT_MASTERCHECKSUM_ENABLED = 76;
   public static final int GET_IDDOCUMENT_MASTERCHECKSUM_ENABLED = 77;
+  public static final int SET_UPCE_EXPAND_TO_UPCA = 78;
+  public static final int SET_UPCE1_EXPAND_TO_UPCA = 79;
+  public static final int SET_CUSTOM_OPTION = 80;
+  public static final int SET_SCANNING_INDICATOR_ANIMATION = 81;
+  public static final int GET_SCANNING_INDICATOR_ANIMATION = 82;
+  public static final int SET_SCANNING_INDICATOR_WIDTH = 83;
+  public static final int GET_SCANNING_INDICATOR_WIDTH = 84;
+  public static final int SET_SCANNING_INDICATOR_COLOR = 85;
+  public static final int GET_SCANNING_INDICATOR_COLOR_HEX = 86;
+  public static final int IS_SCANNING_INDICATOR_VISIBLE_ALWAYS = 87;
+  public static final int SET_SCANNING_INDICATOR_VISIBLE_ALWAYS = 88;
+  
 }

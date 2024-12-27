@@ -63,18 +63,24 @@ repositories {
 rootProject.allprojects {
   repositories {
     flatDir {
-        dirs 'barkoder'
+        dirs project(':barkoder-react-native').file('barkoder')
 
     }
   }
 }
 
+def isLocal = System.getenv("local_build")?.toBoolean() ?: false
+
 dependencies {
   // For < 0.71, this will be from the local maven repo
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
-  //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native:+"
-  implementation files('barkoder/barkoder.aar')
+     implementation "com.facebook.react:react-native:+"
+
+     if (isLocal) {
+        implementation files('barkoder/barkoder.aar')
+    } else {
+        implementation(name: 'barkoder', ext: 'aar')
+    }
 }
 
 if (isNewArchitectureEnabled()) {

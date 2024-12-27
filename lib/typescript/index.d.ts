@@ -478,6 +478,63 @@ export declare class Barkoder {
      * @param enabled - A boolean indicating whether to enable VIN restrictions.
      */
     setEnableVINRestrictions(enabled: boolean): void;
+    /**
+   * Sets whether the UPC-E barcodes should be expanded to UPC-A format.
+   * @param enabled - A boolean indicating whether to enable the expansion for UPC-E barcodes.
+   */
+    setUPCEexpandToUPCA(enabled: boolean): void;
+    /**
+   * Sets whether the UPC-E1 barcodes should be expanded to UPC-A format.
+   * @param enabled - A boolean indicating whether to enable the expansion for UPC-E1 barcodes.
+   */
+    setUPCE1expandToUPCA(enabled: boolean): void;
+    /**
+   * Retrieves the hexadecimal color code representing the line color of the scanning indicator on the camera preview.
+   * @returns A promise that resolves with the scanning indicator line color in hexadecimal format.
+   */
+    getScanningIndicatorColorHex(): Promise<string>;
+    /**
+     * Sets the color of the lines outlining the scanning indicator for barcode scanning on the camera feed.
+     * @param hexColor - The hexadecimal representation of the color.
+     * @returns A promise that resolves with a boolean indicating whether the color was successfully set.
+     */
+    setScanningIndicatorColor(hexColor: String): Promise<boolean>;
+    /**
+   * Retrieves the current width setting for the scanning indicator on the camera preview.
+   * @returns A promise that resolves with the scanning indicator width.
+   */
+    getScanningIndicatorWidth(): Promise<number>;
+    /**
+     * Sets the width of the scanning indicator for barcode scanning on the camera feed.
+     * @param lineWidth - The width of the scanning indicator to set.
+     */
+    setScanningIndicatorWidth(lineWidth: number): void;
+    /**
+  * Retrieves the current animation setting for the scanning indicator on the camera preview.
+  * @returns A promise that resolves the scanning indicator animaiton.
+  */
+    getScanningIndicatorAnimation(): Promise<number>;
+    /**
+     * Sets the animation of the scanning indicator for barcode scanning on the camera feed.
+     * @param animation - The animation of the scanning indicator to set.
+     */
+    setScanningIndicatorAnimation(animation: number): void;
+    /**
+  * Retrieves if the scanning indicator is set to be always visible on the camera preview.
+  * @returns A promise that resolves the scanning indicator always visible state.
+  */
+    isScanningIndicatorAlwaysVisible(): Promise<boolean>;
+    /**
+     * Sets the scanning indicator to be always shown on the camera feed.
+     * @param value - A boolean indicating whether the scanning indicator should always remain visible.
+     */
+    setScanningIndicatorAlwaysVisible(value: boolean): void;
+    /**
+   * Setting custom option.
+   * @param string - string value
+   * @param int - int value
+   */
+    setCustomOption(string: String, int: number): void;
     showLogMessages(show: boolean): void;
     private isIos;
     private isAndroid;
@@ -486,7 +543,8 @@ export declare namespace Barkoder {
     enum DecodingSpeed {
         fast = 0,
         normal = 1,
-        slow = 2
+        slow = 2,
+        rigorous = 3
     }
     enum FormattingType {
         disabled = 0,
@@ -553,6 +611,10 @@ export declare namespace Barkoder {
         roiLineColor?: string;
         roiLineWidth?: number;
         roiOverlayBackgroundColor?: string;
+        scanningIndicatorColor?: string;
+        scanningIndicatorWidth?: number;
+        scanningIndicatorAnimation?: number;
+        scanningIndicatorAlwaysVisible?: boolean;
         closeSessionOnResultEnabled?: boolean;
         imageResultEnabled?: boolean;
         locationInImageResultEnabled?: boolean;

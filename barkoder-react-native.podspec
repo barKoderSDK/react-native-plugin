@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => "11.0" }
   s.source       = { :git => "https://barkoder.com.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm,swift}"
+  s.source_files = "ios/Sources/**/*.{h,m,mm,swift}"
   s.vendored_frameworks = "ios/frameworks/Barkoder.xcframework", "ios/frameworks/BarkoderSDK.xcframework"
 
   s.dependency "React-Core"

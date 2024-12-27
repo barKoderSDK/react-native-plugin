@@ -1759,6 +1759,182 @@ export class Barkoder {
     this._dispatchCommand('setEnableVINRestrictions', [enabled]);
   }
 
+  /**
+ * Sets whether the UPC-E barcodes should be expanded to UPC-A format.
+ * @param enabled - A boolean indicating whether to enable the expansion for UPC-E barcodes.
+ */
+  setUPCEexpandToUPCA(enabled: boolean) {
+    this._dispatchCommand('setUPCEexpandToUPCA', [enabled]);
+  }
+
+  /**
+ * Sets whether the UPC-E1 barcodes should be expanded to UPC-A format.
+ * @param enabled - A boolean indicating whether to enable the expansion for UPC-E1 barcodes.
+ */
+  setUPCE1expandToUPCA(enabled: boolean) {
+    this._dispatchCommand('setUPCE1expandToUPCA', [enabled]);
+  }
+
+  /**
+ * Retrieves the hexadecimal color code representing the line color of the scanning indicator on the camera preview.
+ * @returns A promise that resolves with the scanning indicator line color in hexadecimal format.
+ */
+  getScanningIndicatorColorHex(): Promise<string> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<string>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('getScanningIndicatorColorHex', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getScanningIndicatorColorHex(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Sets the color of the lines outlining the scanning indicator for barcode scanning on the camera feed.
+   * @param hexColor - The hexadecimal representation of the color.
+   * @returns A promise that resolves with a boolean indicating whether the color was successfully set.
+   */
+  setScanningIndicatorColor(hexColor: String): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('setScanningIndicatorColor', [promiseRequestId, hexColor]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.setScanningIndicatorColor(
+        findNodeHandle(this._barkoderViewRef.current),
+        hexColor
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+ * Retrieves the current width setting for the scanning indicator on the camera preview.
+ * @returns A promise that resolves with the scanning indicator width.
+ */
+  getScanningIndicatorWidth(): Promise<number> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<number>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('getScanningIndicatorWidth', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getScanningIndicatorWidth(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Sets the width of the scanning indicator for barcode scanning on the camera feed.
+   * @param lineWidth - The width of the scanning indicator to set.
+   */
+  setScanningIndicatorWidth(lineWidth: number) {
+    this._dispatchCommand('setScanningIndicatorWidth', [lineWidth]);
+  }
+
+  /**
+* Retrieves the current animation setting for the scanning indicator on the camera preview.
+* @returns A promise that resolves the scanning indicator animaiton.
+*/
+  getScanningIndicatorAnimation(): Promise<number> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<number>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('getScanningIndicatorAnimation', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getScanningIndicatorAnimation(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Sets the animation of the scanning indicator for barcode scanning on the camera feed.
+   * @param animation - The animation of the scanning indicator to set.
+   */
+  setScanningIndicatorAnimation(animation: number) {
+    this._dispatchCommand('setScanningIndicatorAnimation', [animation]);
+  }
+
+  /**
+* Retrieves if the scanning indicator is set to be always visible on the camera preview.
+* @returns A promise that resolves the scanning indicator always visible state.
+*/
+  isScanningIndicatorAlwaysVisible(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isScanningIndicatorAlwaysVisible', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isScanningIndicatorAlwaysVisible(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Sets the scanning indicator to be always shown on the camera feed.
+   * @param value - A boolean indicating whether the scanning indicator should always remain visible.
+   */
+  setScanningIndicatorAlwaysVisible(value: boolean) {
+    this._dispatchCommand('setScanningIndicatorAlwaysVisible', [value]);
+  }
+
+  /**
+ * Setting custom option.
+ * @param string - string value
+ * @param int - int value
+ */
+  setCustomOption(string: String, int: number) {
+    this._dispatchCommand('setCustomOption', [string, int]);
+  }
+
   showLogMessages(show: boolean) {
     this._dispatchCommand('showLogMessages', [show]);
   }
@@ -1779,6 +1955,7 @@ export namespace Barkoder {
     fast,
     normal,
     slow,
+    rigorous,
   }
 
   export enum FormattingType {
@@ -1852,6 +2029,10 @@ export namespace Barkoder {
     roiLineColor?: string;
     roiLineWidth?: number;
     roiOverlayBackgroundColor?: string;
+    scanningIndicatorColor?: string;
+    scanningIndicatorWidth?: number;
+    scanningIndicatorAnimation?: number;
+    scanningIndicatorAlwaysVisible?: boolean;
     closeSessionOnResultEnabled?: boolean;
     imageResultEnabled?: boolean;
     locationInImageResultEnabled?: boolean;
@@ -1874,6 +2055,10 @@ export namespace Barkoder {
         "roiLineColor": this.roiLineColor,
         "roiLineWidth": this.roiLineWidth,
         "roiOverlayBackgroundColor": this.roiOverlayBackgroundColor,
+        "scanningIndicatorColor": this.scanningIndicatorColor,
+        "scanningIndicatorWidth": this.scanningIndicatorWidth,
+        "scanningIndicatorAnimation": this.scanningIndicatorAnimation,
+        "scanningIndicatorAlwaysVisible": this.scanningIndicatorAlwaysVisible,
         "closeSessionOnResultEnabled": this.closeSessionOnResultEnabled,
         "imageResultEnabled": this.imageResultEnabled,
         "locationInImageResultEnabled": this.locationInImageResultEnabled,
