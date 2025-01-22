@@ -1096,6 +1096,12 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 resolver(decoderConfig.dotcode.enabled)
             case IDDocument:
                 resolver(decoderConfig.idDocument.enabled)
+            case Databar14:
+                resolver(decoderConfig.databar14.enabled)
+            case DatabarLimited:
+                resolver(decoderConfig.databarLimited.enabled)
+            case DatabarExpanded:
+                resolver(decoderConfig.databarExpanded.enabled)
             default:
                 self.handleBarkoderError(BarkoderReactNativeErrors.BARKODER_CONFIG_IS_NOT_VALID, rejecter: rejecter)
             }
@@ -1177,6 +1183,12 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 decoderConfig.dotcode.enabled = enabled
             case IDDocument:
                 decoderConfig.idDocument.enabled = enabled
+            case Databar14:
+                decoderConfig.databar14.enabled = enabled
+            case DatabarLimited:
+                decoderConfig.databarLimited.enabled = enabled
+            case DatabarExpanded:
+                decoderConfig.databarExpanded.enabled = enabled
             default:
                 return
             }
@@ -1457,6 +1469,36 @@ class BarkoderReactNativeViewManager: RCTViewManager {
       barkoderView.config?.decoderConfig?.setcustomOption(arg as String, value: intvalue.int32Value)
     }
   }
+  
+  @objc
+  func setDynamicExposure(
+      _ node: NSNumber,
+      arg: NSNumber
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+        barkoderView.setDynamicExposure(Int(truncating: arg))
+      }
+  }
+  
+  @objc
+  func setCentricFocusAndExposure(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.setCentricFocusAndExposure(arg)
+    }
+  }
+  
+  @objc
+  func setEnableComposite(
+      _ node: NSNumber,
+      arg: NSNumber
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+        barkoderView.config?.decoderConfig?.enableComposite = Int32(truncating: arg)
+      }
+  }
         
 }
 
@@ -1586,7 +1628,8 @@ class Util {
     }
     
     static func parseColor(hexColor: String) -> Int? {
-        Int(hexColor.replacingOccurrences(of: "#", with: ""), radix: 16)
+      let hex = hexColor.replacingOccurrences(of: "#", with: "")
+      return Int("FF" + hex, radix: 16)
     }
     
   static func barkoderResultsToJsonString(_ decoderResults: [DecoderResult], thumbnails: [UIImage]?, image: UIImage?) -> String? {

@@ -535,6 +535,21 @@ export declare class Barkoder {
    * @param int - int value
    */
     setCustomOption(string: String, int: number): void;
+    /**
+     * Sets the camera's exposure dynamically based on the provided intensity, cycling through predefined compensation values.
+     * @param intesnity - The integer value for the exposure intensity.
+     */
+    setDynamicExposure(intesnity: number): void;
+    /**
+     * Sets the camera to use the center of the viewfinder for focus and exposure.
+     * @param value - A boolean indicating whether the center of the viewfinder should be used.
+     */
+    setCentricFocusAndExposure(value: boolean): void;
+    /**
+     * Sets wheter Composite Mode should be enabled when scanning.
+     * @param value - The integer value if composite mode should be enabled.
+     */
+    setEnableComposite(value: number): void;
     showLogMessages(show: boolean): void;
     private isIos;
     private isAndroid;
@@ -571,8 +586,9 @@ export declare namespace Barkoder {
         double = 2
     }
     enum BarkoderResolution {
-        normal = 0,
-        high = 1
+        HD = 0,
+        FHD = 1,
+        UHD = 2
     }
     enum BarcodeType {
         aztec = 0,
@@ -603,7 +619,10 @@ export declare namespace Barkoder {
         code32 = 25,
         telepen = 26,
         dotcode = 27,
-        idDocument = 28
+        idDocument = 28,
+        databar14 = 29,
+        databarLimited = 30,
+        databarExpanded = 31
     }
     class BarkoderConfig {
         locationLineColor?: string;
@@ -658,6 +677,9 @@ export declare namespace Barkoder {
         telepen?: BarcodeConfig;
         dotcode?: BarcodeConfig;
         idDocument?: IdDocumentBarcodeConfig;
+        databar14?: BarcodeConfig;
+        databarLimited?: BarcodeConfig;
+        databarExpanded?: BarcodeConfig;
         general?: GeneralSettings;
         constructor(config: Partial<DekoderConfig>);
         toMap(): {
@@ -753,6 +775,15 @@ export declare namespace Barkoder {
             } | undefined;
             'ID Document': {
                 [key: string]: any;
+            } | undefined;
+            'Databar 14': {
+                enabled: boolean | undefined;
+            } | undefined;
+            'Databar Limited': {
+                enabled: boolean | undefined;
+            } | undefined;
+            'Databar Expanded': {
+                enabled: boolean | undefined;
             } | undefined;
             general: {
                 [key: string]: any;

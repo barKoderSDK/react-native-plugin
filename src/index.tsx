@@ -1935,6 +1935,30 @@ export class Barkoder {
     this._dispatchCommand('setCustomOption', [string, int]);
   }
 
+  /**
+   * Sets the camera's exposure dynamically based on the provided intensity, cycling through predefined compensation values.
+   * @param intesnity - The integer value for the exposure intensity.
+   */
+  setDynamicExposure(intesnity: number) {
+    this._dispatchCommand('setDynamicExposure', [intesnity]);
+  }
+
+  /**
+   * Sets the camera to use the center of the viewfinder for focus and exposure.
+   * @param value - A boolean indicating whether the center of the viewfinder should be used.
+   */
+  setCentricFocusAndExposure(value: boolean) {
+    this._dispatchCommand('setCentricFocusAndExposure', [value]);
+  }
+
+  /**
+   * Sets wheter Composite Mode should be enabled when scanning.
+   * @param value - The integer value if composite mode should be enabled.
+   */
+  setEnableComposite(value: number) {
+    this._dispatchCommand('setEnableComposite', [value]);
+  }
+
   showLogMessages(show: boolean) {
     this._dispatchCommand('showLogMessages', [show]);
   }
@@ -1987,8 +2011,9 @@ export namespace Barkoder {
   }
 
   export enum BarkoderResolution {
-    normal,
-    high,
+    HD,
+    FHD,
+    UHD,
   }
 
   export enum BarcodeType {
@@ -2020,7 +2045,10 @@ export namespace Barkoder {
     code32,
     telepen,
     dotcode,
-    idDocument
+    idDocument,
+    databar14,         
+    databarLimited,
+    databarExpanded 
   }
 
   export class BarkoderConfig {
@@ -2105,6 +2133,9 @@ export namespace Barkoder {
     telepen?: BarcodeConfig;
     dotcode?: BarcodeConfig;
     idDocument?: IdDocumentBarcodeConfig;
+    databar14?: BarcodeConfig;         
+    databarLimited?: BarcodeConfig;
+    databarExpanded?: BarcodeConfig;
     general?: GeneralSettings;
 
     constructor(config: Partial<DekoderConfig>) {
@@ -2142,6 +2173,9 @@ export namespace Barkoder {
         'Telepen': this.telepen?.toMap(),
         'Dotcode': this.dotcode?.toMap(),
         'ID Document': this.idDocument?.toMap(),
+        'Databar 14': this.databar14?.toMap(),
+        'Databar Limited': this.databarLimited?.toMap(),
+        'Databar Expanded': this.databarExpanded?.toMap(),
         'general': this.general?.toMap()
       }
 

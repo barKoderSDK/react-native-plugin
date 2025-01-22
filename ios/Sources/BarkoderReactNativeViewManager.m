@@ -359,6 +359,14 @@ RCT_EXTERN_METHOD(setCustomOption:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSString)arg
                   intvalue:(nonnull NSNumber)intvalue)
-
+RCT_EXTERN_METHOD(setDynamicExposure:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setCentricFocusAndExposure:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setEnableComposite:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
 
 @end

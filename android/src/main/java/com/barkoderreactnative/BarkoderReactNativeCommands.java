@@ -90,5 +90,8 @@ class BarkoderReactNativeCommands {
   public static final int GET_SCANNING_INDICATOR_COLOR_HEX = 86;
   public static final int IS_SCANNING_INDICATOR_VISIBLE_ALWAYS = 87;
   public static final int SET_SCANNING_INDICATOR_VISIBLE_ALWAYS = 88;
+  public static final int SET_DYNAMIC_EXPOSURE = 89;
+  public static final int SET_CENTRIC_FOCUS_AND_EXPOSURE = 90;
+  public static final int SET_ENABLE_COMPOSITE = 91;
   
 }
