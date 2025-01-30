@@ -185,6 +185,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setDynamicExposure", BarkoderReactNativeCommands.SET_DYNAMIC_EXPOSURE);
     commandsMap.put("setCentricFocusAndExposure", BarkoderReactNativeCommands.SET_CENTRIC_FOCUS_AND_EXPOSURE);
     commandsMap.put("setEnableComposite", BarkoderReactNativeCommands.SET_ENABLE_COMPOSITE);
+    commandsMap.put("setVideoStabilization", BarkoderReactNativeCommands.SET_VIDEO_STABILIZATION);
 
     return commandsMap;
   }
@@ -497,6 +498,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "setEnableComposite":
         setEnableComposite(root, args.getInt(0));
+        break;
+      case "setVideoStabilization":
+        setVideoStabilization(root, args.getBoolean(0));
         break;
     }
   }
@@ -1145,6 +1149,10 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void setEnableComposite(BarkoderReactBarkoderView bkdView, int value) {
     bkdView.config.getDecoderConfig().enableComposite = value;
+  }
+
+  private void setVideoStabilization(BarkoderReactBarkoderView bkdView, boolean value){
+    bkdView.setVideoStabilization(value);
   }
 
   private void configureBarkoder(BarkoderReactBarkoderView bkdView, int promiseRequestId,

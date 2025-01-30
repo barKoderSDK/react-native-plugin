@@ -93,5 +93,5 @@ class BarkoderReactNativeCommands {
   public static final int SET_DYNAMIC_EXPOSURE = 89;
   public static final int SET_CENTRIC_FOCUS_AND_EXPOSURE = 90;
   public static final int SET_ENABLE_COMPOSITE = 91;
-  
+  public static final int SET_VIDEO_STABILIZATION = 92;
 }

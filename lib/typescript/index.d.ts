@@ -550,6 +550,11 @@ export declare class Barkoder {
      * @param value - The integer value if composite mode should be enabled.
      */
     setEnableComposite(value: number): void;
+    /**
+     * Enable or disable video stabilization for smoother video capture.
+     * @param value - A boolean indicating whether video stabilization should be enabled/disabled.
+     */
+    setVideoStabilization(value: boolean): void;
     showLogMessages(show: boolean): void;
     private isIos;
     private isAndroid;

@@ -368,5 +368,8 @@ RCT_EXTERN_METHOD(setCentricFocusAndExposure:
 RCT_EXTERN_METHOD(setEnableComposite:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setVideoStabilization:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
 
 @end

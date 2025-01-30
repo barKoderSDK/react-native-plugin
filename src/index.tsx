@@ -1959,6 +1959,14 @@ export class Barkoder {
     this._dispatchCommand('setEnableComposite', [value]);
   }
 
+  /**
+   * Enable or disable video stabilization for smoother video capture.
+   * @param value - A boolean indicating whether video stabilization should be enabled/disabled.
+   */
+  setVideoStabilization(value: boolean) {
+      this._dispatchCommand('setVideoStabilization', [value]);
+  }
+
   showLogMessages(show: boolean) {
     this._dispatchCommand('showLogMessages', [show]);
   }

@@ -1499,6 +1499,16 @@ class BarkoderReactNativeViewManager: RCTViewManager {
         barkoderView.config?.decoderConfig?.enableComposite = Int32(truncating: arg)
       }
   }
+  
+  @objc
+  func setVideoStabilization(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.setVideoStabilization(arg)
+    }
+  }
         
 }
 
