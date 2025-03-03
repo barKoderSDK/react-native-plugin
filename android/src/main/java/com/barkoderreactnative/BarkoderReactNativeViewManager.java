@@ -9,6 +9,7 @@ import com.barkoder.BarkoderConfig;
 import com.barkoder.BarkoderHelper;
 import com.barkoder.BarkoderLog;
 import com.barkoder.enums.BarkoderResolution;
+import com.barkoder.enums.BarkoderCameraPosition;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableArray;
@@ -178,7 +179,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         BarkoderReactNativeCommands.SET_SCANNING_INDICATOR_WIDTH);
          commandsMap.put("getScanningIndicatorWidth",
         BarkoderReactNativeCommands.GET_SCANNING_INDICATOR_WIDTH);
-           commandsMap.put("setScanningIndicatorColor", BarkoderReactNativeCommands.SET_SCANNING_INDICATOR_COLOR);
+         commandsMap.put("setScanningIndicatorColor", BarkoderReactNativeCommands.SET_SCANNING_INDICATOR_COLOR);
     commandsMap.put("getScanningIndicatorColorHex", BarkoderReactNativeCommands.GET_SCANNING_INDICATOR_COLOR_HEX);
     commandsMap.put("setScanningIndicatorAlwaysVisible", BarkoderReactNativeCommands.SET_SCANNING_INDICATOR_VISIBLE_ALWAYS);
     commandsMap.put("isScanningIndicatorAlwaysVisible", BarkoderReactNativeCommands.IS_SCANNING_INDICATOR_VISIBLE_ALWAYS);
@@ -186,7 +187,7 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setCentricFocusAndExposure", BarkoderReactNativeCommands.SET_CENTRIC_FOCUS_AND_EXPOSURE);
     commandsMap.put("setEnableComposite", BarkoderReactNativeCommands.SET_ENABLE_COMPOSITE);
     commandsMap.put("setVideoStabilization", BarkoderReactNativeCommands.SET_VIDEO_STABILIZATION);
-
+    commandsMap.put("setCamera", BarkoderReactNativeCommands.SET_CAMERA);
     return commandsMap;
   }
 
@@ -501,6 +502,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "setVideoStabilization":
         setVideoStabilization(root, args.getBoolean(0));
+        break;
+      case "setCamera":
+        setCamera(root, args.getInt(0), args.getInt(1));
         break;
     }
   }
@@ -1153,6 +1157,17 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void setVideoStabilization(BarkoderReactBarkoderView bkdView, boolean value){
     bkdView.setVideoStabilization(value);
+  }
+
+  private void setCamera(BarkoderReactBarkoderView bkdView, int promiseRequestId, int value) {
+    if (value < 0 || value >= BarkoderCameraPosition.values().length) {
+        dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, null, BarkoderReactNativeErrors.INVALID_CAMERA_POSITION, "Invalid camera position value");
+        return;
+    }
+
+    BarkoderCameraPosition cameraPosition = BarkoderCameraPosition.values()[value];
+    bkdView.setCamera(cameraPosition);
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, true);
   }
 
   private void configureBarkoder(BarkoderReactBarkoderView bkdView, int promiseRequestId,

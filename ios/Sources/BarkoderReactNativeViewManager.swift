@@ -1509,6 +1509,27 @@ class BarkoderReactNativeViewManager: RCTViewManager {
       barkoderView.setVideoStabilization(arg)
     }
   }
+  
+  @objc
+  func setCamera(
+    _ node: NSNumber,
+    arg: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    
+    guard let cameraPosition = BarkoderView.BarkoderCameraPosition(rawValue: Int(truncating: arg as NSNumber)) else {
+      self.handleBarkoderError(BarkoderReactNativeErrors.INVALID_CAMERA_POSITION, rejecter: rejecter)
+      
+      return
+    }
+    
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.setCamera(cameraPosition)
+      
+      resolver(true)
+    }
+  }
         
 }
 

@@ -555,6 +555,11 @@ export declare class Barkoder {
      * @param value - A boolean indicating whether video stabilization should be enabled/disabled.
      */
     setVideoStabilization(value: boolean): void;
+    /**
+     * Sets the camera to be used for scanning (back/front).
+     * @param value - The value which camera should be used.
+     */
+    setCamera(value: number): Promise<boolean>;
     showLogMessages(show: boolean): void;
     private isIos;
     private isAndroid;
@@ -589,6 +594,10 @@ export declare namespace Barkoder {
         disabled = 0,
         single = 1,
         double = 2
+    }
+    enum BarkoderCameraPosition {
+        BACK = 0,
+        FRONT = 1
     }
     enum BarkoderResolution {
         HD = 0,

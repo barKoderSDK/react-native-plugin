@@ -371,5 +371,10 @@ RCT_EXTERN_METHOD(setEnableComposite:
 RCT_EXTERN_METHOD(setVideoStabilization:
                   (nonnull NSNumber *)node
                   arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setCamera:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

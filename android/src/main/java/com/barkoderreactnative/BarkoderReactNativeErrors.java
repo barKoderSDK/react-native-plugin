@@ -14,7 +14,8 @@ enum BarkoderReactNativeErrors {
   LENGTH_RANGE_NOT_VALID("10", "Length range is not valid. Min must be > 0 and max must be >= min. "),
   CHECKSUM_TYPE_NOT_FOUNDED("11", "Checksum type can't be founded. "),
   BARKODER_CONFIG_IS_NOT_VALID("12", ""),
-  MULTICODE_CACHING_IS_NOT_SET("13", "Multicode caching is not set. ");
+  MULTICODE_CACHING_IS_NOT_SET("13", "Multicode caching is not set. "),
+  INVALID_CAMERA_POSITION("14", "Invalid camera position. ");
 
   private final String errorCode;
   private final String errorMessage;

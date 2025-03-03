@@ -1967,6 +1967,32 @@ export class Barkoder {
       this._dispatchCommand('setVideoStabilization', [value]);
   }
 
+  /**
+   * Sets the camera to be used for scanning (back/front).
+   * @param value - The value which camera should be used.
+   */
+  setCamera(value: number): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('setCamera', [promiseRequestId, value]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.setCamera(
+        findNodeHandle(this._barkoderViewRef.current),
+        value
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
   showLogMessages(show: boolean) {
     this._dispatchCommand('showLogMessages', [show]);
   }
@@ -2016,6 +2042,11 @@ export namespace Barkoder {
     disabled,
     single,
     double,
+  }
+
+  export enum BarkoderCameraPosition {
+    BACK,
+    FRONT,
   }
 
   export enum BarkoderResolution {
