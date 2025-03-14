@@ -2021,6 +2021,7 @@ export namespace Barkoder {
     automatic,
     gs1,
     aamva,
+    sadl,
   }
 
   export enum MsiChecksumType {
@@ -2087,7 +2088,14 @@ export namespace Barkoder {
     idDocument,
     databar14,         
     databarLimited,
-    databarExpanded 
+    databarExpanded,
+    postalIMB,
+    postnet,
+    planet,
+    australianPost,
+    royalMail,
+    kix,
+    japanesePost
   }
 
   export class BarkoderConfig {
@@ -2175,6 +2183,13 @@ export namespace Barkoder {
     databar14?: BarcodeConfig;         
     databarLimited?: BarcodeConfig;
     databarExpanded?: BarcodeConfig;
+    postalIMB?: BarcodeConfig;
+    postnet?: BarcodeConfig;
+    planet?: BarcodeConfig;
+    australianPost?: BarcodeConfig;
+    royalMail?: BarcodeConfig;
+    kix?: BarcodeConfig;
+    japanesePost?: BarcodeConfig;
     general?: GeneralSettings;
 
     constructor(config: Partial<DekoderConfig>) {
@@ -2215,6 +2230,13 @@ export namespace Barkoder {
         'Databar 14': this.databar14?.toMap(),
         'Databar Limited': this.databarLimited?.toMap(),
         'Databar Expanded': this.databarExpanded?.toMap(),
+        'Postal IMB': this.postalIMB?.toMap(),
+        'Postnet': this.postnet?.toMap(),
+        'Planet': this.planet?.toMap(),
+        'Australian Post': this.australianPost?.toMap(),
+        'Royal Mail': this.royalMail?.toMap(),
+        'KIX': this.kix?.toMap(),
+        'Japanese Post': this.japanesePost?.toMap(),
         'general': this.general?.toMap()
       }
 

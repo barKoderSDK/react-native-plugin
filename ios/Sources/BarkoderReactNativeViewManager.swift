@@ -1102,6 +1102,20 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 resolver(decoderConfig.databarLimited.enabled)
             case DatabarExpanded:
                 resolver(decoderConfig.databarExpanded.enabled)
+            case PostalIMB:
+                resolver(decoderConfig.postalIMB.enabled)
+            case Postnet:
+                resolver(decoderConfig.postnet.enabled)
+            case Planet:
+                resolver(decoderConfig.planet.enabled)
+            case AustralianPost:
+                resolver(decoderConfig.australianPost.enabled)
+            case RoyalMail:
+                resolver(decoderConfig.royalMail.enabled)
+            case KIX:
+                resolver(decoderConfig.kix.enabled)
+            case JapanesePost:
+                resolver(decoderConfig.japanesePost.enabled)
             default:
                 self.handleBarkoderError(BarkoderReactNativeErrors.BARKODER_CONFIG_IS_NOT_VALID, rejecter: rejecter)
             }
@@ -1189,6 +1203,20 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 decoderConfig.databarLimited.enabled = enabled
             case DatabarExpanded:
                 decoderConfig.databarExpanded.enabled = enabled
+            case PostalIMB:
+                decoderConfig.postalIMB.enabled = enabled
+            case Postnet:
+                decoderConfig.postnet.enabled = enabled
+            case Planet:
+                decoderConfig.planet.enabled = enabled
+            case AustralianPost:
+                decoderConfig.australianPost.enabled = enabled
+            case RoyalMail:
+                decoderConfig.royalMail.enabled = enabled
+            case KIX:
+                decoderConfig.kix.enabled = enabled
+            case JapanesePost:
+                decoderConfig.japanesePost.enabled = enabled
             default:
                 return
             }

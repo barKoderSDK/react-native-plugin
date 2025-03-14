@@ -575,7 +575,8 @@ export declare namespace Barkoder {
         disabled = 0,
         automatic = 1,
         gs1 = 2,
-        aamva = 3
+        aamva = 3,
+        sadl = 4
     }
     enum MsiChecksumType {
         disabled = 0,
@@ -636,7 +637,14 @@ export declare namespace Barkoder {
         idDocument = 28,
         databar14 = 29,
         databarLimited = 30,
-        databarExpanded = 31
+        databarExpanded = 31,
+        postalIMB = 32,
+        postnet = 33,
+        planet = 34,
+        australianPost = 35,
+        royalMail = 36,
+        kix = 37,
+        japanesePost = 38
     }
     class BarkoderConfig {
         locationLineColor?: string;
@@ -694,6 +702,13 @@ export declare namespace Barkoder {
         databar14?: BarcodeConfig;
         databarLimited?: BarcodeConfig;
         databarExpanded?: BarcodeConfig;
+        postalIMB?: BarcodeConfig;
+        postnet?: BarcodeConfig;
+        planet?: BarcodeConfig;
+        australianPost?: BarcodeConfig;
+        royalMail?: BarcodeConfig;
+        kix?: BarcodeConfig;
+        japanesePost?: BarcodeConfig;
         general?: GeneralSettings;
         constructor(config: Partial<DekoderConfig>);
         toMap(): {
@@ -797,6 +812,27 @@ export declare namespace Barkoder {
                 enabled: boolean | undefined;
             } | undefined;
             'Databar Expanded': {
+                enabled: boolean | undefined;
+            } | undefined;
+            'Postal IMB': {
+                enabled: boolean | undefined;
+            } | undefined;
+            Postnet: {
+                enabled: boolean | undefined;
+            } | undefined;
+            Planet: {
+                enabled: boolean | undefined;
+            } | undefined;
+            'Australian Post': {
+                enabled: boolean | undefined;
+            } | undefined;
+            'Royal Mail': {
+                enabled: boolean | undefined;
+            } | undefined;
+            KIX: {
+                enabled: boolean | undefined;
+            } | undefined;
+            'Japanese Post': {
                 enabled: boolean | undefined;
             } | undefined;
             general: {
