@@ -288,6 +288,22 @@ export class Barkoder {
   }
 
   /**
+   * Freezes the current AR scanning session by capturing a still image from the camera feed.
+   * Use only when AR mode is enabled to temporarily freeze the view while keeping overlays visible.
+   */
+    freezeScanning() {
+      this._dispatchCommand('freezeScanning', []);
+    }
+  
+  /**
+    * Unfreezes the AR scanning session by removing the still image and reactivating the camera and overlays.
+    * Use only when AR mode is enabled to restore the live AR view and continue scanning.
+   */
+    unfreezeScanning() {
+      this._dispatchCommand('unfreezeScanning', []);
+    }
+
+  /**
  * Scan barcodes from base64 string image
  * @param base64 - image string.
  * @param resultsCallback - The callback function to handle barcode scanning events.
@@ -1303,14 +1319,6 @@ export class Barkoder {
   }
 
   /**
-   * Sets the delay in milliseconds for considering duplicate barcodes during scanning.
-   * @param duplicatesDelayMs - The delay in milliseconds for duplicate detection.
-   */
-  setDuplicatesDelayMs(duplicatesDelayMs: number) {
-    this._dispatchCommand('setDuplicatesDelayMs', [duplicatesDelayMs]);
-  }
-
-  /**
    * Sets the caching duration (in milliseconds) for multi-code results.
    * @param multicodeCachingDuration - The caching duration (in milliseconds) for multi-code results.
    */
@@ -1380,31 +1388,6 @@ export class Barkoder {
       return promise;
     } else if (this.isIos()) {
       return NativeModules.BarkoderReactNativeViewManager.getMaximumResultsCount(
-        findNodeHandle(this._barkoderViewRef.current)
-      );
-    } else {
-      throw new Error(OS_NOT_SUPPORTED);
-    }
-  }
-
-  /**
-   * Gets the delay in milliseconds for considering duplicate barcodes during scanning.
-   * @returns {Promise<number>} A promise that resolves with the delay (in milliseconds) for detecting duplicate results.
-   */
-  getDuplicatesDelayMs(): Promise<number> {
-    if (this.isAndroid()) {
-      let promisesMap = this._promisesMap;
-      let promiseRequestId = ++this._promiseRequestId;
-
-      let promise = new Promise<number>((resolve, reject) => {
-        promisesMap.set(promiseRequestId, [resolve, reject]);
-      });
-
-      this._dispatchCommand('getDuplicatesDelayMs', [promiseRequestId]);
-
-      return promise;
-    } else if (this.isIos()) {
-      return NativeModules.BarkoderReactNativeViewManager.getDuplicatesDelayMs(
         findNodeHandle(this._barkoderViewRef.current)
       );
     } else {
@@ -1993,6 +1976,666 @@ export class Barkoder {
     }
   }
 
+  /**
+   * Enables or disables showing duplicate barcode locations on the preview overlay.
+   * @param value - `true` to show duplicates locations, `false` to hide them.
+   */
+  setShowDuplicatesLocations(value: boolean) {
+    this._dispatchCommand('setShowDuplicatesLocations', [value]);
+  }
+
+  /**
+   * Sets the AR mode used for barcode scanning visualization.
+   * @param value - AR mode from BarkoderARMode enum.
+   */
+  setARMode(value: Barkoder.BarkoderARMode) {
+    this._dispatchCommand('setARMode', [value]);
+  }
+
+  /**
+   * Sets the delay (in milliseconds) after which a detected AR result is removed.
+   * @param value - Delay in milliseconds.
+   */
+  setARResultDisappearanceDelayMs(value: number) {
+    this._dispatchCommand('setARResultDisappearanceDelayMs', [value]);
+  }
+
+  /**
+   * Sets the speed of AR location overlay transition.
+   * @param value - Numeric speed factor.
+   */
+  setARLocationTransitionSpeed(value: number) {
+    this._dispatchCommand('setARLocationTransitionSpeed', [value]);
+  }
+
+  /**
+   * Sets the AR overlay refresh mode.
+   * @param value - Overlay refresh mode.
+   */
+  setAROverlayRefresh(value: Barkoder.BarkoderAROverlayRefresh) {
+    this._dispatchCommand('setAROverlayRefresh', [value]);
+  }
+
+  /**
+   * Sets the color for selected AR overlay locations.
+   * @param hexColor - Color in hexadecimal format (e.g., "#FF0000").
+   * @returns A promise resolving to a boolean indicating success.
+   */
+  setARSelectedLocationColor(hexColor: string): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promisesMap = this._promisesMap;
+      const promiseRequestId = ++this._promiseRequestId;
+
+      const promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('setARSelectedLocationColor', [promiseRequestId, hexColor]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.setARSelectedLocationColor(
+        findNodeHandle(this._barkoderViewRef.current),
+        hexColor
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Sets the color for non-selected AR overlay locations.
+   * @param hexColor - Color in hexadecimal format (e.g., "#00FF00").
+   * @returns A promise resolving to a boolean indicating success.
+   */
+  setARNonSelectedLocationColor(hexColor: string): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promisesMap = this._promisesMap;
+      const promiseRequestId = ++this._promiseRequestId;
+
+      const promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('setARNonSelectedLocationColor', [promiseRequestId, hexColor]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.setARNonSelectedLocationColor(
+        findNodeHandle(this._barkoderViewRef.current),
+        hexColor
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Sets line width for selected barcode overlay.
+   * @param value - Line width.
+   */
+  setARSelectedLocationLineWidth(value: number) {
+    this._dispatchCommand('setARSelectedLocationLineWidth', [value]);
+  }
+
+  /**
+   * Sets line width for non-selected barcode overlay.
+   * @param value - Line width.
+   */
+  setARNonSelectedLocationLineWidth(value: number) {
+    this._dispatchCommand('setARNonSelectedLocationLineWidth', [value]);
+  }
+
+  /**
+   * Sets AR location overlay type.
+   * @param value - Location overlay type.
+   */
+  setARLocationType(value: Barkoder.BarkoderARLocationType) {
+    this._dispatchCommand('setARLocationType', [value]);
+  }
+
+  /**
+   * Enables or disables double-tap to freeze in AR mode.
+   * @param enabled - `true` to enable double-tap freezing.
+   */
+  setARDoubleTapToFreezeEnabled(enabled: boolean) {
+    this._dispatchCommand('setARDoubleTapToFreezeEnabled', [enabled]);
+  }
+
+  /**
+   * Sets height of the AR header label.
+   * @param value - Header height.
+   */
+  setARHeaderHeight(value: number) {
+    this._dispatchCommand('setARHeaderHeight', [value]);
+  }
+
+  /**
+   * Sets AR header display mode.
+   * @param value - Show mode for header (always, never, onSelected).
+   */
+  setARHeaderShowMode(value: Barkoder.BarkoderARHeaderShowMode) {
+    this._dispatchCommand('setARHeaderShowMode', [value]);
+  }
+
+  /**
+   * Sets max height of AR header text.
+   * @param value - Maximum text height.
+   */
+  setARHeaderMaxTextHeight(value: number) {
+    this._dispatchCommand('setARHeaderMaxTextHeight', [value]);
+  }
+
+  /**
+   * Sets min height of AR header text.
+   * @param value - Minimum text height.
+   */
+  setARHeaderMinTextHeight(value: number) {
+    this._dispatchCommand('setARHeaderMinTextHeight', [value]);
+  }
+
+  /**
+   * Sets the text color for selected barcode headers.
+   * @param hexColor - Color in hexadecimal format (e.g., "#FFFFFF").
+   * @returns A promise resolving to a boolean indicating success.
+   */
+  setARHeaderTextColorSelected(hexColor: string): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promisesMap = this._promisesMap;
+      const promiseRequestId = ++this._promiseRequestId;
+
+      const promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('setARHeaderTextColorSelected', [promiseRequestId, hexColor]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.setARHeaderTextColorSelected(
+        findNodeHandle(this._barkoderViewRef.current),
+        hexColor
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Sets the text color for non-selected barcode headers.
+   * @param hexColor - Color in hexadecimal format (e.g., "#888888").
+   * @returns A promise resolving to a boolean indicating success.
+   */
+  setARHeaderTextColorNonSelected(hexColor: string): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promisesMap = this._promisesMap;
+      const promiseRequestId = ++this._promiseRequestId;
+
+      const promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('setARHeaderTextColorNonSelected', [promiseRequestId, hexColor]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.setARHeaderTextColorNonSelected(
+        findNodeHandle(this._barkoderViewRef.current),
+        hexColor
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Sets the horizontal margin applied to the header text in AR mode, creating equal padding on both sides.
+   * @param value - Horizontal Margin.
+   */
+  setARHeaderHorizontalTextMargin(value: number) {
+    this._dispatchCommand('setARHeaderHorizontalTextMargin', [value]);
+  }
+
+  /**
+   * Sets the vertical margin applied to the header text in AR mode, creating equal padding on both sides.
+   * @param value - Vertical Margin.
+   */
+  setARHeaderVerticalTextMargin(value: number) {
+    this._dispatchCommand('setARHeaderVerticalTextMargin', [value]);
+  }
+
+  /**
+   * Sets format string for AR header text.
+   * @param value - Format string (e.g., "[barcode_text]").
+   */
+  setARHeaderTextFormat(value: string) {
+    this._dispatchCommand('setARHeaderTextFormat', [value]);
+  }
+
+  /**
+   * Retrieves whether showing duplicate barcode locations in the AR view is enabled.
+   * @returns A promise that resolves with a boolean indicating if duplicates are shown.
+   */
+  getShowDuplicatesLocations(): Promise<boolean> {
+      if (this.isAndroid()) {
+        const promiseRequestId = ++this._promiseRequestId;
+        const promise = new Promise<boolean>((resolve, reject) => {
+          this._promisesMap.set(promiseRequestId, [resolve, reject]);
+        });
+        this._dispatchCommand('getShowDuplicatesLocations', [promiseRequestId]);
+        return promise;
+      } else if (this.isIos()) {
+        return NativeModules.BarkoderReactNativeViewManager.getShowDuplicatesLocations(
+          findNodeHandle(this._barkoderViewRef.current)
+        );
+      } else {
+        throw new Error(OS_NOT_SUPPORTED);
+      }
+    }
+
+  /**
+   * Retrieves the current AR mode used for barcode scanning.
+   * @returns A promise that resolves with the current AR mode.
+   */
+  getARMode(): Promise<any> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<any>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('getARMode', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARMode(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+  
+  /**
+   * Retrieves the delay after which AR results disappear once detected.
+   * @returns A promise that resolves with the disappearance delay in milliseconds.
+   */
+  getARResultDisappearanceDelayMs(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARResultDisappearanceDelayMs', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARResultDisappearanceDelayMs(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the transition speed for AR barcode location overlays.
+   * @returns A promise that resolves with the transition speed value.
+   */
+  getARLocationTransitionSpeed(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARLocationTransitionSpeed', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARLocationTransitionSpeed(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the AR overlay refresh mode.
+   * @returns A promise that resolves with the AR overlay refresh mode.
+   */
+  getAROverlayRefresh(): Promise<Barkoder.BarkoderAROverlayRefresh> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<Barkoder.BarkoderAROverlayRefresh>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getAROverlayRefresh', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getAROverlayRefresh(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the color used for selected barcode overlays in AR mode.
+   * @returns A promise that resolves with a hex color string.
+   */
+  getARSelectedLocationColor(): Promise<string> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<string>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARSelectedLocationColor', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARSelectedLocationColor(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the color used for non-selected barcode overlays in AR mode.
+   * @returns A promise that resolves with a hex color string.
+   */
+  getARNonSelectedLocationColor(): Promise<string> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<string>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARNonSelectedLocationColor', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARNonSelectedLocationColor(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the line width for selected barcode overlays in AR mode.
+   * @returns A promise that resolves with the selected overlay line width.
+   */
+  getARSelectedLocationLineWidth(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARSelectedLocationLineWidth', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARSelectedLocationLineWidth(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the line width for non-selected barcode overlays in AR mode.
+   * @returns A promise that resolves with the non-selected overlay line width.
+   */
+  getARNonSelectedLocationLineWidth(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARNonSelectedLocationLineWidth', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARNonSelectedLocationLineWidth(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the style of AR location overlays (tight, bounding box, none).
+   * @returns A promise that resolves with the overlay style.
+   */
+  getARLocationType(): Promise<Barkoder.BarkoderARLocationType> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<Barkoder.BarkoderARLocationType>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARLocationType', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARLocationType(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Checks whether double-tap to freeze is enabled in AR mode.
+   * @returns A promise that resolves with a boolean indicating if the feature is enabled.
+   */
+  isARDoubleTapToFreezeEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<boolean>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('isARDoubleTapToFreezeEnabled', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isARDoubleTapToFreezeEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+  
+      /**
+   * Retrieves the header height above barcode in AR mode.
+   * @returns A promise that resolves with the header height.
+   */
+  getARHeaderHeight(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARHeaderHeight', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARHeaderHeight(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the header display mode (always, on selected, never).
+   * @returns A promise that resolves with the header show mode.
+   */
+  getARHeaderShowMode(): Promise<Barkoder.BarkoderARHeaderShowMode> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<Barkoder.BarkoderARHeaderShowMode>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARHeaderShowMode', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARHeaderShowMode(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the maximum text height for AR headers.
+   * @returns A promise that resolves with the maximum text height.
+   */
+  getARHeaderMaxTextHeight(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARHeaderMaxTextHeight', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARHeaderMaxTextHeight(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the minimum text height for AR headers.
+   * @returns A promise that resolves with the minimum text height.
+   */
+  getARHeaderMinTextHeight(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARHeaderMinTextHeight', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARHeaderMinTextHeight(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the header text color for selected barcodes.
+   * @returns A promise that resolves with the hex color string.
+   */
+  getARHeaderTextColorSelected(): Promise<string> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<string>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARHeaderTextColorSelected', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARHeaderTextColorSelected(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the header text color for non-selected barcodes.
+   * @returns A promise that resolves with the hex color string.
+   */
+  getARHeaderTextColorNonSelected(): Promise<string> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<string>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARHeaderTextColorNonSelected', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARHeaderTextColorNonSelected(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the horizontal margin for AR header text.
+   * @returns A promise that resolves with the horizontal margin value.
+   */
+  getARHeaderHorizontalTextMargin(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARHeaderHorizontalTextMargin', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARHeaderHorizontalTextMargin(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the vertical margin for AR header text.
+   * @returns A promise that resolves with the vertical margin value.
+   */
+  getARHeaderVerticalTextMargin(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARHeaderVerticalTextMargin', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARHeaderVerticalTextMargin(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the format string used for AR header text.
+   * @returns A promise that resolves with the header text format string.
+   */
+  getARHeaderTextFormat(): Promise<string> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<string>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARHeaderTextFormat', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARHeaderTextFormat(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
   showLogMessages(show: boolean) {
     this._dispatchCommand('showLogMessages', [show]);
   }
@@ -2054,6 +2697,30 @@ export namespace Barkoder {
     HD,
     FHD,
     UHD,
+  }
+
+  export enum BarkoderARMode {
+    off,
+    interactiveDisabled,
+    interactiveEnabled,
+    nonInteractive
+  }
+  
+  export enum BarkoderAROverlayRefresh {
+    smooth,
+    normal
+  }
+  
+  export enum BarkoderARLocationType {
+    none,
+    tight,
+    boundingBox
+  }
+  
+  export enum BarkoderARHeaderShowMode {
+    never,
+    always,
+    onSelected
   }
 
   export enum BarcodeType {
@@ -2118,6 +2785,7 @@ export namespace Barkoder {
     beepOnSuccessEnabled?: boolean;
     vibrateOnSuccessEnabled?: boolean;
     decoder?: DekoderConfig;
+    arConfig?: BarkoderARConfig;
 
     constructor(config: Partial<BarkoderConfig>) {
       Object.assign(this, config);
@@ -2143,7 +2811,8 @@ export namespace Barkoder {
         "barkoderResolution": this.barkoderResolution,
         "beepOnSuccessEnabled": this.beepOnSuccessEnabled,
         "vibrateOnSuccessEnabled": this.vibrateOnSuccessEnabled,
-        "decoder": this.decoder?.toMap()
+        "decoder": this.decoder?.toMap(),
+        "arConfig": this.arConfig?.toMap()
       };
 
       return JSON.stringify(configAsJson);
@@ -2241,6 +2910,56 @@ export namespace Barkoder {
       }
 
       return map;
+    }
+  }
+
+  export class BarkoderARConfig {
+    arMode?: BarkoderARMode;
+    resultDisappearanceDelayMs?: number;
+    locationTransitionSpeed?: number;
+    overlayRefresh?: BarkoderAROverlayRefresh;
+    selectedLocationColor?: string;
+    nonSelectedLocationColor?: string;
+    selectedLocationLineWidth?: number;
+    nonSelectedLocationLineWidth?: number;
+    locationType?: BarkoderARLocationType;
+    doubleTapToFreezeEnabled?: boolean;
+    headerHeight?: number;
+    headerShowMode?: BarkoderARHeaderShowMode;
+    headerMaxTextHeight?: number;
+    headerMinTextHeight?: number;
+    headerTextColorSelected?: string;
+    headerTextColorNonSelected?: string;
+    headerHorizontalTextMargin?: number;
+    headerVerticalTextMargin?: number;
+    headerTextFormat?: string;
+  
+    constructor(config: Partial<BarkoderARConfig>) {
+      Object.assign(this, config);
+    }
+  
+    toMap() {
+      return {
+        "arMode": this.arMode,
+        "resultDisappearanceDelayMs": this.resultDisappearanceDelayMs,
+        "locationTransitionSpeed": this.locationTransitionSpeed,
+        "overlayRefresh": this.overlayRefresh,
+        "selectedLocationColor": this.selectedLocationColor,
+        "nonSelectedLocationColor": this.nonSelectedLocationColor,
+        "selectedLocationLineWidth": this.selectedLocationLineWidth,
+        "nonSelectedLocationLineWidth": this.nonSelectedLocationLineWidth,
+        "locationType": this.locationType,
+        "doubleTapToFreezeEnabled": this.doubleTapToFreezeEnabled,
+        "headerHeight": this.headerHeight,
+        "headerShowMode": this.headerShowMode,
+        "headerMaxTextHeight": this.headerMaxTextHeight,
+        "headerMinTextHeight": this.headerMinTextHeight,
+        "headerTextColorSelected": this.headerTextColorSelected,
+        "headerTextColorNonSelected": this.headerTextColorNonSelected,
+        "headerHorizontalTextMargin": this.headerHorizontalTextMargin,
+        "headerVerticalTextMargin": this.headerVerticalTextMargin,
+        "headerTextFormat": this.headerTextFormat
+      };
     }
   }
 
@@ -2428,7 +3147,6 @@ export namespace Barkoder {
     upcEanDeblur?: number;
     enableMisshaped1D?: number;
     maximumResultsCount?: number;
-    duplicatesDelayMs?: number;
     multicodeCachingDuration?: number;
     multicodeCachingEnabled?: boolean;
 
@@ -2449,7 +3167,6 @@ export namespace Barkoder {
         "upcEanDeblur": this.upcEanDeblur,
         "enableMisshaped1D": this.enableMisshaped1D,
         "maximumResultsCount": this.maximumResultsCount,
-        "duplicatesDelayMs": this.duplicatesDelayMs,
         "multicodeCachingDuration": this.multicodeCachingDuration,
         "multicodeCachingEnabled": this.multicodeCachingEnabled
       }

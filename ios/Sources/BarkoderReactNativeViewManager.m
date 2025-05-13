@@ -12,6 +12,8 @@ RCT_EXTERN_METHOD(startScanning: (nonnull NSNumber *)node
                   rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(stopScanning: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(pauseScanning: (nonnull NSNumber *)node)
+RCT_EXTERN_METHOD(freezeScanning: (nonnull NSNumber *)node)
+RCT_EXTERN_METHOD(unfreezeScanning: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(scanImage: (nonnull NSNumber *)node
                   arg:(nonnull NSString)arg
                   resolver:(RCTPromiseResolveBlock)resolve
@@ -226,9 +228,6 @@ RCT_EXTERN_METHOD(setBarcodeTypeLengthRange:
 RCT_EXTERN_METHOD(setMaximumResultsCount:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg)
-RCT_EXTERN_METHOD(setDuplicatesDelayMs:
-                  (nonnull NSNumber *)node
-                  arg:(nonnull NSNumber)arg)
 RCT_EXTERN_METHOD(setMulticodeCachingDuration:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg)
@@ -236,10 +235,6 @@ RCT_EXTERN_METHOD(setMulticodeCachingEnabled:
                   (nonnull NSNumber *)node
                   arg:(nonnull BOOL)arg)
 RCT_EXTERN_METHOD(getMaximumResultsCount:
-                  (nonnull NSNumber *)node
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
-RCT_EXTERN_METHOD(getDuplicatesDelayMs:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
@@ -374,6 +369,154 @@ RCT_EXTERN_METHOD(setVideoStabilization:
 RCT_EXTERN_METHOD(setCamera:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setShowDuplicatesLocations:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setARMode:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARResultDisappearanceDelayMs:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARLocationTransitionSpeed:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setAROverlayRefresh:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARSelectedLocationColor:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSString)arg
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setARNonSelectedLocationColor:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSString)arg
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setARSelectedLocationLineWidth:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARNonSelectedLocationLineWidth:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARLocationType:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARDoubleTapToFreezeEnabled:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setARHeaderHeight:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARHeaderShowMode:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARHeaderMaxTextHeight:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARHeaderMinTextHeight:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARHeaderTextColorSelected:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSString)arg
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setARHeaderTextColorNonSelected:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSString)arg
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setARHeaderHorizontalTextMargin:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARHeaderVerticalTextMargin:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARHeaderTextFormat:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSString)arg)
+RCT_EXTERN_METHOD(getShowDuplicatesLocations:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARMode:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARResultDisappearanceDelayMs:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARLocationTransitionSpeed:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getAROverlayRefresh:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARSelectedLocationColor:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARNonSelectedLocationColor:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARSelectedLocationLineWidth:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARNonSelectedLocationLineWidth:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARLocationType:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(isARDoubleTapToFreezeEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARHeaderHeight:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARHeaderShowMode:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARHeaderMaxTextHeight:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARHeaderMinTextHeight:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARHeaderTextColorSelected:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARHeaderTextColorNonSelected:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARHeaderHorizontalTextMargin:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARHeaderVerticalTextMargin:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARHeaderTextFormat:
+                  (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 

@@ -86,6 +86,20 @@ class BarkoderReactNativeViewManager: RCTViewManager {
     }
   
   @objc
+  func freezeScanning(_ node: NSNumber) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.freezeScanning()
+    }
+  }
+  
+  @objc
+  func unfreezeScanning(_ node: NSNumber) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.unfreezeScanning()
+    }
+  }
+  
+  @objc
   func scanImage(
     _ node: NSNumber,
     arg: NSString,
@@ -734,16 +748,6 @@ class BarkoderReactNativeViewManager: RCTViewManager {
     }
 
     @objc
-    func setDuplicatesDelayMs(
-        _ node: NSNumber,
-        arg: NSNumber
-    ) {
-        getBarkoderView(node: node) { barkoderView in
-            barkoderView.config?.decoderConfig?.duplicatesDelayMs = Int32(truncating: arg)
-        }
-    }
-
-    @objc
     func setMulticodeCachingDuration(
         _ node: NSNumber,
         arg: NSNumber
@@ -773,28 +777,17 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             resolver(barkoderView.config?.decoderConfig?.maximumResultsCount)
         }
     }
-    
+  
     @objc
-    func getDuplicatesDelayMs(
+    func isDatamatrixDpmModeEnabled(
         _ node: NSNumber,
         resolver: @escaping RCTPromiseResolveBlock,
         rejecter: @escaping RCTPromiseRejectBlock
     ) {
         getBarkoderView(node: node) { barkoderView in
-            resolver(barkoderView.config?.decoderConfig?.duplicatesDelayMs)
+            resolver(barkoderView.config?.decoderConfig?.datamatrix.dpmMode == 1 ? true : false)
         }
     }
-  
-  @objc
-  func isDatamatrixDpmModeEnabled(
-      _ node: NSNumber,
-      resolver: @escaping RCTPromiseResolveBlock,
-      rejecter: @escaping RCTPromiseRejectBlock
-  ) {
-      getBarkoderView(node: node) { barkoderView in
-          resolver(barkoderView.config?.decoderConfig?.datamatrix.dpmMode == 1 ? true : false)
-      }
-  }
     
     @objc
     func setDatamatrixDpmModeEnabled(
@@ -1556,6 +1549,461 @@ class BarkoderReactNativeViewManager: RCTViewManager {
       barkoderView.setCamera(cameraPosition)
       
       resolver(true)
+    }
+  }
+  
+  @objc
+  func setShowDuplicatesLocations(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+          barkoderView.config?.showDuplicatesLocations = arg
+      }
+  }
+  
+  @objc
+  func setARMode(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    guard let mode = BarkoderARMode(rawValue: Int(truncating: arg)) else { return }
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.arMode = mode
+    }
+  }
+
+  @objc
+  func setARResultDisappearanceDelayMs(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.resultDisappearanceDelayMs = arg.intValue
+    }
+  }
+
+  @objc
+  func setARLocationTransitionSpeed(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.locationTransitionSpeed = arg.floatValue
+    }
+  }
+
+  @objc
+  func setAROverlayRefresh(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    guard let mode = BarkoderAROverlayRefresh(rawValue: Int(truncating: arg)) else { return }
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.overlayRefresh = mode
+    }
+  }
+
+  @objc
+  func setARSelectedLocationColor(
+    _ node: NSNumber,
+    arg: NSString,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let uiColor = Util.initColorWith(hexString: arg as String) else  {
+      self.handleBarkoderError(BarkoderReactNativeErrors.COLOR_NOT_SET, rejecter: rejecter)
+      return
+    }
+
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.selectedLocationColor = uiColor
+      resolver(true)
+    }
+  }
+
+  @objc
+  func setARNonSelectedLocationColor(
+    _ node: NSNumber,
+    arg: NSString,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let uiColor = Util.initColorWith(hexString: arg as String) else  {
+      self.handleBarkoderError(BarkoderReactNativeErrors.COLOR_NOT_SET, rejecter: rejecter)
+      return
+    }
+
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.nonSelectedLocationColor = uiColor
+      resolver(true)
+    }
+  }
+
+  @objc
+  func setARSelectedLocationLineWidth(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.selectedLocationLineWidth = arg.floatValue
+    }
+  }
+
+  @objc
+  func setARNonSelectedLocationLineWidth(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.nonSelectedLocationLineWidth = arg.floatValue
+    }
+  }
+
+  @objc
+  func setARLocationType(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    guard let type = BarkoderARLocationType(rawValue: Int(truncating: arg)) else { return }
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.locationType = type
+    }
+  }
+
+  @objc
+  func setARDoubleTapToFreezeEnabled(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.doubleTapToFreezeEnabled = arg
+    }
+  }
+
+  @objc
+  func setARHeaderHeight(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.headerHeight = arg.floatValue
+    }
+  }
+
+  @objc
+  func setARHeaderShowMode(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    guard let mode = BarkoderARHeaderShowMode(rawValue: Int(truncating: arg)) else { return }
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.headerShowMode = mode
+    }
+  }
+
+  @objc
+  func setARHeaderMaxTextHeight(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.headerMaxTextHeight = arg.floatValue
+    }
+  }
+
+  @objc
+  func setARHeaderMinTextHeight(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.headerMinTextHeight = arg.floatValue
+    }
+  }
+
+  @objc
+  func setARHeaderTextColorSelected(
+    _ node: NSNumber,
+    arg: NSString,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let uiColor = Util.initColorWith(hexString: arg as String) else  {
+      self.handleBarkoderError(BarkoderReactNativeErrors.COLOR_NOT_SET, rejecter: rejecter)
+      return
+    }
+
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.headerTextColorSelected = uiColor
+      resolver(true)
+    }
+  }
+
+  @objc
+  func setARHeaderTextColorNonSelected(
+    _ node: NSNumber,
+    arg: NSString,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    guard let uiColor = Util.initColorWith(hexString: arg as String) else  {
+      self.handleBarkoderError(BarkoderReactNativeErrors.COLOR_NOT_SET, rejecter: rejecter)
+      return
+    }
+
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.headerTextColorNonSelected = uiColor
+      resolver(true)
+    }
+  }
+
+  @objc
+  func setARHeaderHorizontalTextMargin(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.headerHorizontalTextMargin = arg.floatValue
+    }
+  }
+
+  @objc
+  func setARHeaderVerticalTextMargin(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.headerVerticalTextMargin = arg.floatValue
+    }
+  }
+
+  @objc
+  func setARHeaderTextFormat(
+    _ node: NSNumber,
+    arg: NSString
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.headerTextFormat = arg as String
+    }
+  }
+  
+  @objc
+  func getShowDuplicatesLocations(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.showDuplicatesLocations)
+    }
+  }
+  
+  @objc func getARMode(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.arMode.rawValue)
+    }
+  }
+
+  @objc
+  func getARResultDisappearanceDelayMs(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.resultDisappearanceDelayMs)
+    }
+  }
+
+  @objc
+  func getARLocationTransitionSpeed(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.locationTransitionSpeed)
+    }
+  }
+
+  @objc
+  func getAROverlayRefresh(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.overlayRefresh.rawValue)
+    }
+  }
+
+  @objc
+  func getARSelectedLocationColor(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.selectedLocationColor.toHex())
+    }
+  }
+
+  @objc
+  func getARNonSelectedLocationColor(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.nonSelectedLocationColor.toHex())
+    }
+  }
+
+  @objc
+  func getARSelectedLocationLineWidth(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.selectedLocationLineWidth)
+    }
+  }
+
+  @objc
+  func getARNonSelectedLocationLineWidth(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.nonSelectedLocationLineWidth)
+    }
+  }
+
+  @objc
+  func getARLocationType(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.locationType.rawValue)
+    }
+  }
+
+  @objc
+  func isARDoubleTapToFreezeEnabled(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.doubleTapToFreezeEnabled)
+    }
+  }
+
+  @objc
+  func getARHeaderHeight(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.headerHeight)
+    }
+  }
+
+  @objc
+  func getARHeaderShowMode(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.headerShowMode.rawValue)
+    }
+  }
+
+  @objc
+  func getARHeaderMaxTextHeight(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.headerMaxTextHeight)
+    }
+  }
+
+  @objc
+  func getARHeaderMinTextHeight(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.headerMinTextHeight)
+    }
+  }
+
+  @objc
+  func getARHeaderTextColorSelected(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.headerTextColorSelected.toHex())
+    }
+  }
+
+  @objc
+  func getARHeaderTextColorNonSelected(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.headerTextColorNonSelected.toHex())
+    }
+  }
+
+  @objc
+  func getARHeaderHorizontalTextMargin(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.headerHorizontalTextMargin)
+    }
+  }
+
+  @objc
+  func getARHeaderVerticalTextMargin(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.headerVerticalTextMargin)
+    }
+  }
+
+  @objc
+  func getARHeaderTextFormat(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.headerTextFormat)
     }
   }
         

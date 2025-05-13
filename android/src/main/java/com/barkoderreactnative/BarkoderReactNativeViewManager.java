@@ -8,8 +8,12 @@ import com.barkoder.Barkoder;
 import com.barkoder.BarkoderConfig;
 import com.barkoder.BarkoderHelper;
 import com.barkoder.BarkoderLog;
+import com.barkoder.enums.BarkoderARHeaderShowMode;
+import com.barkoder.enums.BarkoderARLocationType;
+import com.barkoder.enums.BarkoderARMode;
 import com.barkoder.enums.BarkoderResolution;
 import com.barkoder.enums.BarkoderCameraPosition;
+import com.barkoder.overlaymanager.BarkoderAROverlayRefresh;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableArray;
@@ -144,11 +148,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setFormattingType", BarkoderReactNativeCommands.SET_FORMATTING_TYPE);
     commandsMap.put("configureBarkoder", BarkoderReactNativeCommands.CONFIGURE_BARKODER);
     commandsMap.put("setMaximumResultsCount", BarkoderReactNativeCommands.SET_MAXIMUM_RESULTS_COUNT);
-    commandsMap.put("setDuplicatesDelayMs", BarkoderReactNativeCommands.SET_DUPLICATES_DELAY_MS);
     commandsMap.put("setMulticodeCachingDuration", BarkoderReactNativeCommands.SET_MULTICODE_CACHING_DURATION);
     commandsMap.put("setMulticodeCachingEnabled", BarkoderReactNativeCommands.SET_MULTICODE_CACHING_ENABLED);
     commandsMap.put("getMaximumResultsCount", BarkoderReactNativeCommands.GET_MAXIMUM_RESULTS_COUNT);
-    commandsMap.put("getDuplicatesDelayMs", BarkoderReactNativeCommands.GET_DUPLICATES_DELAY_MS);
     commandsMap.put("setUpcEanDeblurEnabled", BarkoderReactNativeCommands.SET_UPC_EAN_DEBLUR_ENABLED);
     commandsMap.put("setEnableMisshaped1DEnabled", BarkoderReactNativeCommands.SET_ENABLE_MISSHAPED_1D_ENABLED);
     commandsMap.put("setBarcodeThumbnailOnResultEnabled",
@@ -188,6 +190,48 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setEnableComposite", BarkoderReactNativeCommands.SET_ENABLE_COMPOSITE);
     commandsMap.put("setVideoStabilization", BarkoderReactNativeCommands.SET_VIDEO_STABILIZATION);
     commandsMap.put("setCamera", BarkoderReactNativeCommands.SET_CAMERA);
+    commandsMap.put("setShowDuplicatesLocations", BarkoderReactNativeCommands.SET_SHOW_DUPLICATES_LOCATIONS);
+    commandsMap.put("getShowDuplicatesLocations", BarkoderReactNativeCommands.GET_SHOW_DUPLICATES_LOCATIONS);
+    commandsMap.put("setARMode", BarkoderReactNativeCommands.SET_AR_MODE);
+    commandsMap.put("getARMode", BarkoderReactNativeCommands.GET_AR_MODE);
+    commandsMap.put("setARResultDisappearanceDelayMs", BarkoderReactNativeCommands.SET_AR_RESULT_DISAPPEARANCE_DELAY_MS);
+    commandsMap.put("getARResultDisappearanceDelayMs", BarkoderReactNativeCommands.GET_AR_RESULT_DISAPPEARANCE_DELAY_MS);
+    commandsMap.put("setARLocationTransitionSpeed", BarkoderReactNativeCommands.SET_AR_LOCATION_TRANSITION_SPEED);
+    commandsMap.put("getARLocationTransitionSpeed", BarkoderReactNativeCommands.GET_AR_LOCATION_TRANSITION_SPEED);
+    commandsMap.put("setAROverlayRefresh", BarkoderReactNativeCommands.SET_AR_OVERLAY_REFRESH);
+    commandsMap.put("getAROverlayRefresh", BarkoderReactNativeCommands.GET_AR_OVERLAY_REFRESH);
+    commandsMap.put("setARSelectedLocationColor", BarkoderReactNativeCommands.SET_AR_SELECTED_LOCATION_COLOR);
+    commandsMap.put("getARSelectedLocationColor", BarkoderReactNativeCommands.GET_AR_SELECTED_LOCATION_COLOR);
+    commandsMap.put("setARNonSelectedLocationColor", BarkoderReactNativeCommands.SET_AR_NON_SELECTED_LOCATION_COLOR);
+    commandsMap.put("getARNonSelectedLocationColor", BarkoderReactNativeCommands.GET_AR_NON_SELECTED_LOCATION_COLOR);
+    commandsMap.put("setARSelectedLocationLineWidth", BarkoderReactNativeCommands.SET_AR_SELECTED_LOCATION_LINE_WIDTH);
+    commandsMap.put("getARSelectedLocationLineWidth", BarkoderReactNativeCommands.GET_AR_SELECTED_LOCATION_LINE_WIDTH);
+    commandsMap.put("setARNonSelectedLocationLineWidth", BarkoderReactNativeCommands.SET_AR_NON_SELECTED_LOCATION_LINE_WIDTH);
+    commandsMap.put("getARNonSelectedLocationLineWidth", BarkoderReactNativeCommands.GET_AR_NON_SELECTED_LOCATION_LINE_WIDTH);
+    commandsMap.put("setARLocationType", BarkoderReactNativeCommands.SET_AR_LOCATION_TYPE);
+    commandsMap.put("getARLocationType", BarkoderReactNativeCommands.GET_AR_LOCATION_TYPE);
+    commandsMap.put("setARDoubleTapToFreezeEnabled", BarkoderReactNativeCommands.SET_AR_DOUBLE_TAP_TO_FREEZE_ENABLED);
+    commandsMap.put("isARDoubleTapToFreezeEnabled", BarkoderReactNativeCommands.IS_AR_DOUBLE_TAP_TO_FREEZE_ENABLED);
+    commandsMap.put("setARHeaderHeight", BarkoderReactNativeCommands.SET_AR_HEADER_HEIGHT);
+    commandsMap.put("getARHeaderHeight", BarkoderReactNativeCommands.GET_AR_HEADER_HEIGHT);
+    commandsMap.put("setARHeaderShowMode", BarkoderReactNativeCommands.SET_AR_HEADER_SHOW_MODE);
+    commandsMap.put("getARHeaderShowMode", BarkoderReactNativeCommands.GET_AR_HEADER_SHOW_MODE);
+    commandsMap.put("setARHeaderMaxTextHeight", BarkoderReactNativeCommands.SET_AR_HEADER_MAX_TEXT_HEIGHT);
+    commandsMap.put("getARHeaderMaxTextHeight", BarkoderReactNativeCommands.GET_AR_HEADER_MAX_TEXT_HEIGHT);
+    commandsMap.put("setARHeaderMinTextHeight", BarkoderReactNativeCommands.SET_AR_HEADER_MIN_TEXT_HEIGHT);
+    commandsMap.put("getARHeaderMinTextHeight", BarkoderReactNativeCommands.GET_AR_HEADER_MIN_TEXT_HEIGHT);
+    commandsMap.put("setARHeaderTextColorSelected", BarkoderReactNativeCommands.SET_AR_HEADER_TEXT_COLOR_SELECTED);
+    commandsMap.put("getARHeaderTextColorSelected", BarkoderReactNativeCommands.GET_AR_HEADER_TEXT_COLOR_SELECTED);
+    commandsMap.put("setARHeaderTextColorNonSelected", BarkoderReactNativeCommands.SET_AR_HEADER_TEXT_COLOR_NON_SELECTED);
+    commandsMap.put("getARHeaderTextColorNonSelected", BarkoderReactNativeCommands.GET_AR_HEADER_TEXT_COLOR_NON_SELECTED);
+    commandsMap.put("setARHeaderHorizontalTextMargin", BarkoderReactNativeCommands.SET_AR_HEADER_HORIZONTAL_TEXT_MARGIN);
+    commandsMap.put("getARHeaderHorizontalTextMargin", BarkoderReactNativeCommands.GET_AR_HEADER_HORIZONTAL_TEXT_MARGIN);
+    commandsMap.put("setARHeaderVerticalTextMargin", BarkoderReactNativeCommands.SET_AR_HEADER_VERTICAL_TEXT_MARGIN);
+    commandsMap.put("getARHeaderVerticalTextMargin", BarkoderReactNativeCommands.GET_AR_HEADER_VERTICAL_TEXT_MARGIN);
+    commandsMap.put("setARHeaderTextFormat", BarkoderReactNativeCommands.SET_AR_HEADER_TEXT_FORMAT);
+    commandsMap.put("getARHeaderTextFormat", BarkoderReactNativeCommands.GET_AR_HEADER_TEXT_FORMAT);
+    commandsMap.put("freezeScanning", BarkoderReactNativeCommands.FREEZE_SCANNING);
+    commandsMap.put("unfreezeScanning", BarkoderReactNativeCommands.UNFREEZE_SCANNING);
     return commandsMap;
   }
 
@@ -225,6 +269,12 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "pauseScanning":
         pauseScanning(root);
+        break;
+      case "freezeScanning":
+        freezeScanning(root);
+        break;
+      case "unfreezeScanning":
+        unfreezeScanning(root);
         break;
       case "getLocationLineColorHex":
         getLocationLineColorHex(root, args.getInt(0));
@@ -395,9 +445,6 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "setMaximumResultsCount":
         setMaximumResultsCount(root, args.getInt(0));
         break;
-      case "setDuplicatesDelayMs":
-        setDuplicatesDelayMs(root, args.getInt(0));
-        break;
       case "getMulticodeCachingDuration":
         getMulticodeCachingDuration(root, args.getInt(0));
         break;
@@ -412,9 +459,6 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "getMaximumResultsCount":
         getMaximumResultsCount(root, args.getInt(0));
-        break;
-      case "getDuplicatesDelayMs":
-        getDuplicatesDelayMs(root, args.getInt(0));
         break;
       case "isUpcEanDeblurEnabled":
         isUpcEanDeblurEnabled(root, args.getInt(0));
@@ -506,6 +550,126 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "setCamera":
         setCamera(root, args.getInt(0), args.getInt(1));
         break;
+      case "setShowDuplicatesLocations":
+        setShowDuplicatesLocations(root, args.getBoolean(0));
+        break;
+      case "getShowDuplicatesLocations":
+        getShowDuplicatesLocations(root, args.getInt(0));
+        break;
+      case "setARMode":
+        setARMode(root, args.getInt(0));
+        break;
+      case "getARMode":
+        getARMode(root, args.getInt(0));
+        break;
+      case "setARResultDisappearanceDelayMs":
+        setARResultDisappearanceDelayMs(root, args.getInt(0));
+        break;
+      case "getARResultDisappearanceDelayMs":
+        getARResultDisappearanceDelayMs(root, args.getInt(0));
+        break;
+      case "setARLocationTransitionSpeed":
+        setARLocationTransitionSpeed(root, (float) args.getDouble(0));
+        break;
+      case "getARLocationTransitionSpeed":
+        getARLocationTransitionSpeed(root, args.getInt(0));
+        break;
+      case "setAROverlayRefresh":
+        setAROverlayRefresh(root, args.getInt(0));
+        break;
+      case "getAROverlayRefresh":
+        getAROverlayRefresh(root, args.getInt(0));
+        break;
+      case "setARSelectedLocationColor":
+        setARSelectedLocationColor(root, args.getInt(0), args.getString(1));
+        break;
+      case "getARSelectedLocationColor":
+        getARSelectedLocationColor(root, args.getInt(0));
+        break;
+      case "setARNonSelectedLocationColor":
+        setARNonSelectedLocationColor(root, args.getInt(0), args.getString(1));
+        break;
+      case "getARNonSelectedLocationColor":
+        getARNonSelectedLocationColor(root, args.getInt(0));
+        break;
+      case "setARSelectedLocationLineWidth":
+        setARSelectedLocationLineWidth(root, (float) args.getDouble(0));
+        break;
+      case "getARSelectedLocationLineWidth":
+        getARSelectedLocationLineWidth(root, args.getInt(0));
+        break;
+      case "setARNonSelectedLocationLineWidth":
+        setARNonSelectedLocationLineWidth(root, (float) args.getDouble(0));
+        break;
+      case "getARNonSelectedLocationLineWidth":
+        getARNonSelectedLocationLineWidth(root, args.getInt(0));
+        break;
+      case "setARLocationType":
+        setARLocationType(root, args.getInt(0));
+        break;
+      case "getARLocationType":
+        getARLocationType(root, args.getInt(0));
+        break;
+      case "setARDoubleTapToFreezeEnabled":
+        setARDoubleTapToFreezeEnabled(root, args.getBoolean(0));
+        break;
+      case "isARDoubleTapToFreezeEnabled":
+        isARDoubleTapToFreezeEnabled(root, args.getInt(0));
+        break;
+      case "setARHeaderHeight":
+        setARHeaderHeight(root, (float) args.getDouble(0));
+        break;
+      case "getARHeaderHeight":
+        getARHeaderHeight(root, args.getInt(0));
+        break;
+      case "setARHeaderShowMode":
+        setARHeaderShowMode(root, args.getInt(0));
+        break;
+      case "getARHeaderShowMode":
+        getARHeaderShowMode(root, args.getInt(0));
+        break;
+      case "setARHeaderMaxTextHeight":
+        setARHeaderMaxTextHeight(root, (float) args.getDouble(0));
+        break;
+      case "getARHeaderMaxTextHeight":
+        getARHeaderMaxTextHeight(root, args.getInt(0));
+        break;
+      case "setARHeaderMinTextHeight":
+        setARHeaderMinTextHeight(root, (float) args.getDouble(0));
+        break;
+      case "getARHeaderMinTextHeight":
+        getARHeaderMinTextHeight(root, args.getInt(0));
+        break;
+      case "setARHeaderTextColorSelected":
+        setARHeaderTextColorSelected(root, args.getInt(0), args.getString(1));
+        break;
+      case "getARHeaderTextColorSelected":
+        getARHeaderTextColorSelected(root, args.getInt(0));
+        break;
+      case "setARHeaderTextColorNonSelected":
+        setARHeaderTextColorNonSelected(root, args.getInt(0), args.getString(1));
+        break;
+      case "getARHeaderTextColorNonSelected":
+        getARHeaderTextColorNonSelected(root, args.getInt(0));
+        break;
+      case "setARHeaderHorizontalTextMargin":
+        setARHeaderHorizontalTextMargin(root, (float) args.getDouble(0));
+        break;
+      case "getARHeaderHorizontalTextMargin":
+        getARHeaderHorizontalTextMargin(root, args.getInt(0));
+        break;
+      case "setARHeaderVerticalTextMargin":
+        setARHeaderVerticalTextMargin(root, (float) args.getDouble(0));
+        break;
+      case "getARHeaderVerticalTextMargin":
+        getARHeaderVerticalTextMargin(root, args.getInt(0));
+        break;
+      case "setARHeaderTextFormat":
+        setARHeaderTextFormat(root, args.getString(0));
+        break;
+      case "getARHeaderTextFormat":
+        getARHeaderTextFormat(root, args.getInt(0));
+        break;
     }
   }
 
@@ -590,6 +754,14 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void pauseScanning(BarkoderReactBarkoderView bkdView) {
     bkdView.pauseScanning();
+  }
+
+  private void freezeScanning(BarkoderReactBarkoderView bkdView) {
+    bkdView.freezeScanning();
+  }
+
+  private void unfreezeScanning(BarkoderReactBarkoderView bkdView) {
+    bkdView.unfreezeScanning();
   }
 
   private void getLocationLineColorHex(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
@@ -932,10 +1104,6 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.config.getDecoderConfig().maximumResultsCount = maximumResultsCount;
   }
 
-  private void setDuplicatesDelayMs(BarkoderReactBarkoderView bkdView, int duplicatesDelayMs) {
-    bkdView.config.getDecoderConfig().duplicatesDelayMs = duplicatesDelayMs;
-  }
-
   private void setMulticodeCachingDuration(BarkoderReactBarkoderView bkdView, int promiseRequestId,
       int multicodeCachingDuration) {
     try {
@@ -978,12 +1146,6 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     int maximumResultsCount = bkdView.config.getDecoderConfig().maximumResultsCount;
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
         maximumResultsCount);
-  }
-
-  private void getDuplicatesDelayMs(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
-    int duplicatesDelayMs = bkdView.config.getDecoderConfig().duplicatesDelayMs;
-    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
-        duplicatesDelayMs);
   }
 
   private void setUpcEanDeblurEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
@@ -1170,6 +1332,210 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, true);
   }
 
+  private void setShowDuplicatesLocations(BarkoderReactBarkoderView bkdView, boolean value) {
+    bkdView.config.setShowDuplicatesLocations(value);
+  }
+
+  private void setARMode(BarkoderReactBarkoderView bkdView, int index) {
+    bkdView.config.getArConfig().setARModeEnabled(BarkoderARMode.values()[index]);
+  }
+
+  private void setARResultDisappearanceDelayMs(BarkoderReactBarkoderView bkdView, int value) {
+    bkdView.config.getArConfig().setResultDisappearanceDelayMs(value);
+  }
+
+  private void setARLocationTransitionSpeed(BarkoderReactBarkoderView bkdView, float value) {
+    bkdView.config.getArConfig().setLocationTransitionSpeed(value);
+  }
+
+  private void setAROverlayRefresh(BarkoderReactBarkoderView bkdView, int index) {
+    bkdView.config.getArConfig().setOverlayRefresh(BarkoderAROverlayRefresh.values()[index]);
+  }
+
+  private void setARSelectedLocationColor(BarkoderReactBarkoderView bkdView, int promiseRequestId, String hexColor) {
+      try {
+          bkdView.config.getArConfig().setSelectedLocationColor(Util.hexColorToIntColor(hexColor));
+          dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, true);
+      } catch (IllegalArgumentException ex) {
+          dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, null,
+              BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
+      }
+  }
+
+  private void setARNonSelectedLocationColor(BarkoderReactBarkoderView bkdView, int promiseRequestId, String hexColor) {
+      try {
+          bkdView.config.getArConfig().setNonSelectedLocationColor(Util.hexColorToIntColor(hexColor));
+          dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, true);
+      } catch (IllegalArgumentException ex) {
+          dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, null,
+              BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
+      }
+  }
+
+  private void setARSelectedLocationLineWidth(BarkoderReactBarkoderView bkdView, float value) {
+    bkdView.config.getArConfig().setSelectedLocationLineWidth(value);
+  }
+
+  private void setARNonSelectedLocationLineWidth(BarkoderReactBarkoderView bkdView, float value) {
+    bkdView.config.getArConfig().setNonSelectedLocationLineWidth(value);
+  }
+
+  private void setARLocationType(BarkoderReactBarkoderView bkdView, int index) {
+    bkdView.config.getArConfig().setLocationType(BarkoderARLocationType.values()[index]);
+  }
+
+  private void setARDoubleTapToFreezeEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getArConfig().setDoubleTapToFreezeEnabled(enabled);
+  }
+
+  private void setARHeaderHeight(BarkoderReactBarkoderView bkdView, float value) {
+    bkdView.config.getArConfig().setHeaderHeight(value);
+  }
+
+  private void setARHeaderShowMode(BarkoderReactBarkoderView bkdView, int index) {
+    bkdView.config.getArConfig().setHeaderShowMode(BarkoderARHeaderShowMode.values()[index]);
+  }
+
+  private void setARHeaderMaxTextHeight(BarkoderReactBarkoderView bkdView, float value) {
+    bkdView.config.getArConfig().setHeaderMaxTextHeight(value);
+  }
+
+  private void setARHeaderMinTextHeight(BarkoderReactBarkoderView bkdView, float value) {
+    bkdView.config.getArConfig().setHeaderMinTextHeight(value);
+  }
+
+  private void setARHeaderTextColorSelected(BarkoderReactBarkoderView bkdView, int promiseRequestId, String hexColor) {
+      try {
+          bkdView.config.getArConfig().setHeaderTextColorSelected(Util.hexColorToIntColor(hexColor));
+          dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, true);
+      } catch (IllegalArgumentException ex) {
+          dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, null,
+              BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
+      }
+  }
+
+  private void setARHeaderTextColorNonSelected(BarkoderReactBarkoderView bkdView, int promiseRequestId, String hexColor) {
+      try {
+          bkdView.config.getArConfig().setHeaderTextColorNonSelected(Util.hexColorToIntColor(hexColor));
+          dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, true);
+      } catch (IllegalArgumentException ex) {
+          dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, null,
+              BarkoderReactNativeErrors.COLOR_NOT_SET, ex.getMessage());
+      }
+  }
+
+  private void setARHeaderHorizontalTextMargin(BarkoderReactBarkoderView bkdView, float value) {
+    bkdView.config.getArConfig().setHeaderHorizontalTextMargin(value);
+  }
+
+  private void setARHeaderVerticalTextMargin(BarkoderReactBarkoderView bkdView, float value) {
+    bkdView.config.getArConfig().setHeaderVerticalTextMargin(value);
+  }
+
+  private void setARHeaderTextFormat(BarkoderReactBarkoderView bkdView, String value) {
+    bkdView.config.getArConfig().setHeaderTextFormat(value);
+  }
+
+  private void getShowDuplicatesLocations(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getShowDuplicatesLocations());
+  }
+
+  private void getARMode(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getARMode().ordinal());
+  }
+
+  private void getARResultDisappearanceDelayMs(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getResultDisappearanceDelayMs());
+  }
+
+  private void getARLocationTransitionSpeed(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getLocationTransitionSpeed());
+  }
+
+  private void getAROverlayRefresh(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getOverlayRefresh().ordinal());
+  }
+
+  private void getARSelectedLocationColor(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    String hexColor = String.format("#%08X", bkdView.config.getArConfig().getSelectedLocationColor());
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, hexColor);
+  }
+
+  private void getARNonSelectedLocationColor(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    String hexColor = String.format("#%08X", bkdView.config.getArConfig().getNonSelectedLocationColor());
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, hexColor);
+  }
+
+  private void getARSelectedLocationLineWidth(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getSelectedLocationLineWidth());
+  }
+
+  private void getARNonSelectedLocationLineWidth(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getNonSelectedLocationLineWidth());
+  }
+
+  private void getARLocationType(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getLocationType().ordinal());
+  }
+
+  private void isARDoubleTapToFreezeEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().isDoubleTapToFreezeEnabled());
+  }
+
+  private void getARHeaderHeight(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getHeaderHeight());
+  }
+
+  private void getARHeaderShowMode(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getHeaderShowMode().ordinal());
+  }
+
+  private void getARHeaderMaxTextHeight(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getHeaderMaxTextHeight());
+  }
+
+  private void getARHeaderMinTextHeight(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getHeaderMinTextHeight());
+  }
+
+  private void getARHeaderTextColorSelected(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    String hexColor = String.format("#%08X", bkdView.config.getArConfig().getHeaderTextColorSelected());
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, hexColor);
+  }
+
+  private void getARHeaderTextColorNonSelected(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    String hexColor = String.format("#%08X", bkdView.config.getArConfig().getHeaderTextColorNonSelected());
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId, hexColor);
+  }
+
+  private void getARHeaderHorizontalTextMargin(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getHeaderHorizontalTextMargin());
+  }
+
+  private void getARHeaderVerticalTextMargin(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getHeaderVerticalTextMargin());
+  }
+
+  private void getARHeaderTextFormat(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getHeaderTextFormat());
+  }
+
   private void configureBarkoder(BarkoderReactBarkoderView bkdView, int promiseRequestId,
       String barkoderConfigAsJsonString) {
     try {
@@ -1195,6 +1561,26 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       if (configAsJson.has("scanningIndicatorColor")) {
         String colorAsHex = configAsJson.getString("scanningIndicatorColor");
         configAsJson.put("scanningIndicatorColor", Util.hexColorToIntColor(colorAsHex));
+      }
+
+      if (configAsJson.has("selectedLocationColor")) {
+        String colorAsHex = configAsJson.getString("selectedLocationColor");
+        configAsJson.put("selectedLocationColor", Util.hexColorToIntColor(colorAsHex));
+      }
+
+      if (configAsJson.has("nonSelectedLocationColor")) {
+        String colorAsHex = configAsJson.getString("nonSelectedLocationColor");
+        configAsJson.put("nonSelectedLocationColor", Util.hexColorToIntColor(colorAsHex));
+      }
+
+      if (configAsJson.has("headerTextColorSelected")) {
+        String colorAsHex = configAsJson.getString("headerTextColorSelected");
+        configAsJson.put("headerTextColorSelected", Util.hexColorToIntColor(colorAsHex));
+      }
+
+      if (configAsJson.has("headerTextColorNonSelected")) {
+        String colorAsHex = configAsJson.getString("headerTextColorNonSelected");
+        configAsJson.put("headerTextColorNonSelected", Util.hexColorToIntColor(colorAsHex));
       }
 
       BarkoderHelper.applyJsonToConfig(bkdView.config, configAsJson);

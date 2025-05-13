@@ -81,6 +81,16 @@ export declare class Barkoder {
      */
     pauseScanning(): void;
     /**
+     * Freezes the current AR scanning session by capturing a still image from the camera feed.
+     * Use only when AR mode is enabled to temporarily freeze the view while keeping overlays visible.
+     */
+    freezeScanning(): void;
+    /**
+      * Unfreezes the AR scanning session by removing the still image and reactivating the camera and overlays.
+      * Use only when AR mode is enabled to restore the live AR view and continue scanning.
+     */
+    unfreezeScanning(): void;
+    /**
    * Scan barcodes from base64 string image
    * @param base64 - image string.
    * @param resultsCallback - The callback function to handle barcode scanning events.
@@ -354,11 +364,6 @@ export declare class Barkoder {
      */
     setMaximumResultsCount(maximumResultsCount: number): void;
     /**
-     * Sets the delay in milliseconds for considering duplicate barcodes during scanning.
-     * @param duplicatesDelayMs - The delay in milliseconds for duplicate detection.
-     */
-    setDuplicatesDelayMs(duplicatesDelayMs: number): void;
-    /**
      * Sets the caching duration (in milliseconds) for multi-code results.
      * @param multicodeCachingDuration - The caching duration (in milliseconds) for multi-code results.
      */
@@ -373,11 +378,6 @@ export declare class Barkoder {
      * @returns {Promise<number>} A promise that resolves with the maximum number of results to return.
      */
     getMaximumResultsCount(): Promise<number>;
-    /**
-     * Gets the delay in milliseconds for considering duplicate barcodes during scanning.
-     * @returns {Promise<number>} A promise that resolves with the delay (in milliseconds) for detecting duplicate results.
-     */
-    getDuplicatesDelayMs(): Promise<number>;
     /**
   * Retrieves whether Direct Part Marking (DPM) mode for Datamatrix barcodes is enabled
   * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether DPM mode for Datamatrix barcodes is enabled.
@@ -560,6 +560,210 @@ export declare class Barkoder {
      * @param value - The value which camera should be used.
      */
     setCamera(value: number): Promise<boolean>;
+    /**
+     * Enables or disables showing duplicate barcode locations on the preview overlay.
+     * @param value - `true` to show duplicates locations, `false` to hide them.
+     */
+    setShowDuplicatesLocations(value: boolean): void;
+    /**
+     * Sets the AR mode used for barcode scanning visualization.
+     * @param value - AR mode from BarkoderARMode enum.
+     */
+    setARMode(value: Barkoder.BarkoderARMode): void;
+    /**
+     * Sets the delay (in milliseconds) after which a detected AR result is removed.
+     * @param value - Delay in milliseconds.
+     */
+    setARResultDisappearanceDelayMs(value: number): void;
+    /**
+     * Sets the speed of AR location overlay transition.
+     * @param value - Numeric speed factor.
+     */
+    setARLocationTransitionSpeed(value: number): void;
+    /**
+     * Sets the AR overlay refresh mode.
+     * @param value - Overlay refresh mode.
+     */
+    setAROverlayRefresh(value: Barkoder.BarkoderAROverlayRefresh): void;
+    /**
+     * Sets the color for selected AR overlay locations.
+     * @param hexColor - Color in hexadecimal format (e.g., "#FF0000").
+     * @returns A promise resolving to a boolean indicating success.
+     */
+    setARSelectedLocationColor(hexColor: string): Promise<boolean>;
+    /**
+     * Sets the color for non-selected AR overlay locations.
+     * @param hexColor - Color in hexadecimal format (e.g., "#00FF00").
+     * @returns A promise resolving to a boolean indicating success.
+     */
+    setARNonSelectedLocationColor(hexColor: string): Promise<boolean>;
+    /**
+     * Sets line width for selected barcode overlay.
+     * @param value - Line width.
+     */
+    setARSelectedLocationLineWidth(value: number): void;
+    /**
+     * Sets line width for non-selected barcode overlay.
+     * @param value - Line width.
+     */
+    setARNonSelectedLocationLineWidth(value: number): void;
+    /**
+     * Sets AR location overlay type.
+     * @param value - Location overlay type.
+     */
+    setARLocationType(value: Barkoder.BarkoderARLocationType): void;
+    /**
+     * Enables or disables double-tap to freeze in AR mode.
+     * @param enabled - `true` to enable double-tap freezing.
+     */
+    setARDoubleTapToFreezeEnabled(enabled: boolean): void;
+    /**
+     * Sets height of the AR header label.
+     * @param value - Header height.
+     */
+    setARHeaderHeight(value: number): void;
+    /**
+     * Sets AR header display mode.
+     * @param value - Show mode for header (always, never, onSelected).
+     */
+    setARHeaderShowMode(value: Barkoder.BarkoderARHeaderShowMode): void;
+    /**
+     * Sets max height of AR header text.
+     * @param value - Maximum text height.
+     */
+    setARHeaderMaxTextHeight(value: number): void;
+    /**
+     * Sets min height of AR header text.
+     * @param value - Minimum text height.
+     */
+    setARHeaderMinTextHeight(value: number): void;
+    /**
+     * Sets the text color for selected barcode headers.
+     * @param hexColor - Color in hexadecimal format (e.g., "#FFFFFF").
+     * @returns A promise resolving to a boolean indicating success.
+     */
+    setARHeaderTextColorSelected(hexColor: string): Promise<boolean>;
+    /**
+     * Sets the text color for non-selected barcode headers.
+     * @param hexColor - Color in hexadecimal format (e.g., "#888888").
+     * @returns A promise resolving to a boolean indicating success.
+     */
+    setARHeaderTextColorNonSelected(hexColor: string): Promise<boolean>;
+    /**
+     * Sets the horizontal margin applied to the header text in AR mode, creating equal padding on both sides.
+     * @param value - Horizontal Margin.
+     */
+    setARHeaderHorizontalTextMargin(value: number): void;
+    /**
+     * Sets the vertical margin applied to the header text in AR mode, creating equal padding on both sides.
+     * @param value - Vertical Margin.
+     */
+    setARHeaderVerticalTextMargin(value: number): void;
+    /**
+     * Sets format string for AR header text.
+     * @param value - Format string (e.g., "[barcode_text]").
+     */
+    setARHeaderTextFormat(value: string): void;
+    /**
+     * Retrieves whether showing duplicate barcode locations in the AR view is enabled.
+     * @returns A promise that resolves with a boolean indicating if duplicates are shown.
+     */
+    getShowDuplicatesLocations(): Promise<boolean>;
+    /**
+     * Retrieves the current AR mode used for barcode scanning.
+     * @returns A promise that resolves with the current AR mode.
+     */
+    getARMode(): Promise<any>;
+    /**
+     * Retrieves the delay after which AR results disappear once detected.
+     * @returns A promise that resolves with the disappearance delay in milliseconds.
+     */
+    getARResultDisappearanceDelayMs(): Promise<number>;
+    /**
+     * Retrieves the transition speed for AR barcode location overlays.
+     * @returns A promise that resolves with the transition speed value.
+     */
+    getARLocationTransitionSpeed(): Promise<number>;
+    /**
+     * Retrieves the AR overlay refresh mode.
+     * @returns A promise that resolves with the AR overlay refresh mode.
+     */
+    getAROverlayRefresh(): Promise<Barkoder.BarkoderAROverlayRefresh>;
+    /**
+     * Retrieves the color used for selected barcode overlays in AR mode.
+     * @returns A promise that resolves with a hex color string.
+     */
+    getARSelectedLocationColor(): Promise<string>;
+    /**
+     * Retrieves the color used for non-selected barcode overlays in AR mode.
+     * @returns A promise that resolves with a hex color string.
+     */
+    getARNonSelectedLocationColor(): Promise<string>;
+    /**
+     * Retrieves the line width for selected barcode overlays in AR mode.
+     * @returns A promise that resolves with the selected overlay line width.
+     */
+    getARSelectedLocationLineWidth(): Promise<number>;
+    /**
+     * Retrieves the line width for non-selected barcode overlays in AR mode.
+     * @returns A promise that resolves with the non-selected overlay line width.
+     */
+    getARNonSelectedLocationLineWidth(): Promise<number>;
+    /**
+     * Retrieves the style of AR location overlays (tight, bounding box, none).
+     * @returns A promise that resolves with the overlay style.
+     */
+    getARLocationType(): Promise<Barkoder.BarkoderARLocationType>;
+    /**
+     * Checks whether double-tap to freeze is enabled in AR mode.
+     * @returns A promise that resolves with a boolean indicating if the feature is enabled.
+     */
+    isARDoubleTapToFreezeEnabled(): Promise<boolean>;
+    /**
+ * Retrieves the header height above barcode in AR mode.
+ * @returns A promise that resolves with the header height.
+ */
+    getARHeaderHeight(): Promise<number>;
+    /**
+     * Retrieves the header display mode (always, on selected, never).
+     * @returns A promise that resolves with the header show mode.
+     */
+    getARHeaderShowMode(): Promise<Barkoder.BarkoderARHeaderShowMode>;
+    /**
+     * Retrieves the maximum text height for AR headers.
+     * @returns A promise that resolves with the maximum text height.
+     */
+    getARHeaderMaxTextHeight(): Promise<number>;
+    /**
+     * Retrieves the minimum text height for AR headers.
+     * @returns A promise that resolves with the minimum text height.
+     */
+    getARHeaderMinTextHeight(): Promise<number>;
+    /**
+     * Retrieves the header text color for selected barcodes.
+     * @returns A promise that resolves with the hex color string.
+     */
+    getARHeaderTextColorSelected(): Promise<string>;
+    /**
+     * Retrieves the header text color for non-selected barcodes.
+     * @returns A promise that resolves with the hex color string.
+     */
+    getARHeaderTextColorNonSelected(): Promise<string>;
+    /**
+     * Retrieves the horizontal margin for AR header text.
+     * @returns A promise that resolves with the horizontal margin value.
+     */
+    getARHeaderHorizontalTextMargin(): Promise<number>;
+    /**
+     * Retrieves the vertical margin for AR header text.
+     * @returns A promise that resolves with the vertical margin value.
+     */
+    getARHeaderVerticalTextMargin(): Promise<number>;
+    /**
+     * Retrieves the format string used for AR header text.
+     * @returns A promise that resolves with the header text format string.
+     */
+    getARHeaderTextFormat(): Promise<string>;
     showLogMessages(show: boolean): void;
     private isIos;
     private isAndroid;
@@ -604,6 +808,26 @@ export declare namespace Barkoder {
         HD = 0,
         FHD = 1,
         UHD = 2
+    }
+    enum BarkoderARMode {
+        off = 0,
+        interactiveDisabled = 1,
+        interactiveEnabled = 2,
+        nonInteractive = 3
+    }
+    enum BarkoderAROverlayRefresh {
+        smooth = 0,
+        normal = 1
+    }
+    enum BarkoderARLocationType {
+        none = 0,
+        tight = 1,
+        boundingBox = 2
+    }
+    enum BarkoderARHeaderShowMode {
+        never = 0,
+        always = 1,
+        onSelected = 2
     }
     enum BarcodeType {
         aztec = 0,
@@ -666,6 +890,7 @@ export declare namespace Barkoder {
         beepOnSuccessEnabled?: boolean;
         vibrateOnSuccessEnabled?: boolean;
         decoder?: DekoderConfig;
+        arConfig?: BarkoderARConfig;
         constructor(config: Partial<BarkoderConfig>);
         toJsonString(): string;
     }
@@ -840,6 +1065,49 @@ export declare namespace Barkoder {
             } | undefined;
         };
     }
+    class BarkoderARConfig {
+        arMode?: BarkoderARMode;
+        resultDisappearanceDelayMs?: number;
+        locationTransitionSpeed?: number;
+        overlayRefresh?: BarkoderAROverlayRefresh;
+        selectedLocationColor?: string;
+        nonSelectedLocationColor?: string;
+        selectedLocationLineWidth?: number;
+        nonSelectedLocationLineWidth?: number;
+        locationType?: BarkoderARLocationType;
+        doubleTapToFreezeEnabled?: boolean;
+        headerHeight?: number;
+        headerShowMode?: BarkoderARHeaderShowMode;
+        headerMaxTextHeight?: number;
+        headerMinTextHeight?: number;
+        headerTextColorSelected?: string;
+        headerTextColorNonSelected?: string;
+        headerHorizontalTextMargin?: number;
+        headerVerticalTextMargin?: number;
+        headerTextFormat?: string;
+        constructor(config: Partial<BarkoderARConfig>);
+        toMap(): {
+            arMode: BarkoderARMode | undefined;
+            resultDisappearanceDelayMs: number | undefined;
+            locationTransitionSpeed: number | undefined;
+            overlayRefresh: BarkoderAROverlayRefresh | undefined;
+            selectedLocationColor: string | undefined;
+            nonSelectedLocationColor: string | undefined;
+            selectedLocationLineWidth: number | undefined;
+            nonSelectedLocationLineWidth: number | undefined;
+            locationType: BarkoderARLocationType | undefined;
+            doubleTapToFreezeEnabled: boolean | undefined;
+            headerHeight: number | undefined;
+            headerShowMode: BarkoderARHeaderShowMode | undefined;
+            headerMaxTextHeight: number | undefined;
+            headerMinTextHeight: number | undefined;
+            headerTextColorSelected: string | undefined;
+            headerTextColorNonSelected: string | undefined;
+            headerHorizontalTextMargin: number | undefined;
+            headerVerticalTextMargin: number | undefined;
+            headerTextFormat: string | undefined;
+        };
+    }
     class BarcodeConfig {
         enabled?: boolean;
         constructor(config: Partial<BarcodeConfig>);
@@ -927,7 +1195,6 @@ export declare namespace Barkoder {
         upcEanDeblur?: number;
         enableMisshaped1D?: number;
         maximumResultsCount?: number;
-        duplicatesDelayMs?: number;
         multicodeCachingDuration?: number;
         multicodeCachingEnabled?: boolean;
         constructor(config: Partial<GeneralSettings>);
