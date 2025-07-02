@@ -196,6 +196,31 @@ export class Barkoder {
   }
 
   /**
+   * Retrieves the current zoom factor for the device's camera.
+   * @returns A promise that resolves with the current zoom factor.
+   */
+    getCurrentZoomFactor(): Promise<number> {
+      if (this.isAndroid()) {
+        let promisesMap = this._promisesMap;
+        let promiseRequestId = ++this._promiseRequestId;
+  
+        let promise = new Promise<number>((resolve, reject) => {
+          promisesMap.set(promiseRequestId, [resolve, reject]);
+        });
+  
+        this._dispatchCommand('getCurrentZoomFactor', [promiseRequestId]);
+  
+        return promise;
+      } else if (this.isIos()) {
+        return NativeModules.BarkoderReactNativeViewManager.getCurrentZoomFactor(
+          findNodeHandle(this._barkoderViewRef.current)
+        );
+      } else {
+        throw new Error(OS_NOT_SUPPORTED);
+      }
+    }
+
+  /**
    * Sets the zoom factor for the device's camera, adjusting the level of zoom during barcode scanning.
    * @param zoomFactor - The zoom factor to set.
    */
@@ -1014,8 +1039,8 @@ export class Barkoder {
   }
 
   /**
-   * Retrieves the version of the Barkoder library.
-   * @returns {Promise<string>} A promise that resolves with the version of the Barkoder library.
+   * Retrieves the version of the Barkoder SDK.
+   * @returns {Promise<string>} A promise that resolves with the version of the Barkoder SDK.
    */
   getVersion(): Promise<string> {
     if (this.isAndroid()) {
@@ -1037,6 +1062,31 @@ export class Barkoder {
       throw new Error(OS_NOT_SUPPORTED);
     }
   }
+
+  /**
+   * Retrieves the version of the Barkoder library.
+   * @returns {Promise<string>} A promise that resolves with the version of the Barkoder library.
+   */
+    getLibVersion(): Promise<string> {
+      if (this.isAndroid()) {
+        let promisesMap = this._promisesMap;
+        let promiseRequestId = ++this._promiseRequestId;
+  
+        let promise = new Promise<string>((resolve, reject) => {
+          promisesMap.set(promiseRequestId, [resolve, reject]);
+        });
+  
+        this._dispatchCommand('getLibVersion', [promiseRequestId]);
+  
+        return promise;
+      } else if (this.isIos()) {
+        return NativeModules.BarkoderReactNativeViewManager.getLibVersion(
+          findNodeHandle(this._barkoderViewRef.current)
+        );
+      } else {
+        throw new Error(OS_NOT_SUPPORTED);
+      }
+    }
 
   /**
    * Retrieves the current decoding speed setting for barcode scanning.
@@ -2103,6 +2153,22 @@ export class Barkoder {
   }
 
   /**
+   * Enables or disables the capturing and processing of image data when a barcode is selected for AR mode.
+   * @param enabled - A boolean indicating whether to enable image result.
+   */
+  setARImageResultEnabled(enabled: boolean) {
+    this._dispatchCommand('setARImageResultEnabled', [enabled]);
+  }
+
+  /**
+   * Enables or disables the barcode thumbnail on result for AR mode.
+   * @param enabled - A boolean indicating whether to enable barcode thumbnail on result.
+   */
+  setARBarcodeThumbnailOnResultEnabled(enabled: boolean) {
+    this._dispatchCommand('setARBarcodeThumbnailOnResultEnabled', [enabled]);
+  }
+
+  /**
    * Sets height of the AR header label.
    * @param value - Header height.
    */
@@ -2446,6 +2512,48 @@ export class Barkoder {
       throw new Error(OS_NOT_SUPPORTED);
     }
   }
+
+  /**
+   * Retrieves whether image result is enabled for AR mode.
+   * @returns A promise that resolves with a boolean indicating if the feature is enabled.
+   */
+  isARImageResultEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<boolean>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('isARImageResultEnabled', [promiseRequestId]);
+      return promise;
+      } else if (this.isIos()) {
+        return NativeModules.BarkoderReactNativeViewManager.isARImageResultEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+       throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves whether barcode thumbnail on result is enabled for AR mode.
+   * @returns A promise that resolves with a boolean indicating if the feature is enabled.
+   */
+  isARBarcodeThumbnailOnResultEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<boolean>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('isARBarcodeThumbnailOnResultEnabled', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isARBarcodeThumbnailOnResultEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
   
       /**
    * Retrieves the header height above barcode in AR mode.
@@ -2762,7 +2870,8 @@ export namespace Barkoder {
     australianPost,
     royalMail,
     kix,
-    japanesePost
+    japanesePost,
+    maxiCode
   }
 
   export class BarkoderConfig {
@@ -2859,6 +2968,7 @@ export namespace Barkoder {
     royalMail?: BarcodeConfig;
     kix?: BarcodeConfig;
     japanesePost?: BarcodeConfig;
+    maxiCode?: BarcodeConfig;
     general?: GeneralSettings;
 
     constructor(config: Partial<DekoderConfig>) {
@@ -2906,6 +3016,7 @@ export namespace Barkoder {
         'Royal Mail': this.royalMail?.toMap(),
         'KIX': this.kix?.toMap(),
         'Japanese Post': this.japanesePost?.toMap(),
+        'MaxiCode': this.maxiCode?.toMap(),
         'general': this.general?.toMap()
       }
 
@@ -2924,6 +3035,8 @@ export namespace Barkoder {
     nonSelectedLocationLineWidth?: number;
     locationType?: BarkoderARLocationType;
     doubleTapToFreezeEnabled?: boolean;
+    imageResultEnabled?: boolean;
+    barcodeThumbnailOnResult?: boolean;
     headerHeight?: number;
     headerShowMode?: BarkoderARHeaderShowMode;
     headerMaxTextHeight?: number;
@@ -2950,6 +3063,8 @@ export namespace Barkoder {
         "nonSelectedLocationLineWidth": this.nonSelectedLocationLineWidth,
         "locationType": this.locationType,
         "doubleTapToFreezeEnabled": this.doubleTapToFreezeEnabled,
+        "imageResultEnabled": this.imageResultEnabled,
+        "barcodeThumbnailOnResult": this.barcodeThumbnailOnResult,
         "headerHeight": this.headerHeight,
         "headerShowMode": this.headerShowMode,
         "headerMaxTextHeight": this.headerMaxTextHeight,

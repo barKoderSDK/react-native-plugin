@@ -30,6 +30,10 @@ RCT_EXTERN_METHOD(getMaxZoomFactor:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getCurrentZoomFactor:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(setZoomFactor:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg)
@@ -164,6 +168,10 @@ RCT_EXTERN_METHOD(isVibrateOnSuccessEnabled:
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(getVersion:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getLibVersion:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
@@ -408,6 +416,12 @@ RCT_EXTERN_METHOD(setARLocationType:
 RCT_EXTERN_METHOD(setARDoubleTapToFreezeEnabled:
                   (nonnull NSNumber *)node
                   arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setARImageResultEnabled:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setARBarcodeThumbnailOnResultEnabled:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
 RCT_EXTERN_METHOD(setARHeaderHeight:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg)
@@ -480,6 +494,14 @@ RCT_EXTERN_METHOD(getARLocationType:
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(isARDoubleTapToFreezeEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(isARImageResultEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(isARBarcodeThumbnailOnResultEnabled:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)

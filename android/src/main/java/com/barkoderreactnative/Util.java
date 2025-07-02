@@ -199,6 +199,8 @@ class Util {
         return decoderConfig.KIX;
       case JapanesePost:
         return decoderConfig.JapanesePost;
+      case MaxiCode:
+        return decoderConfig.MaxiCode;
     }
     return null;
   }

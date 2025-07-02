@@ -169,6 +169,17 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             }
         }
     }
+  
+    @objc
+    func getCurrentZoomFactor(
+        _ node: NSNumber,
+        resolver: @escaping RCTPromiseResolveBlock,
+        rejecter: @escaping RCTPromiseRejectBlock
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            resolver(barkoderView.getCurrentZoomFactor())
+        }
+    }
     
     @objc
     func setZoomFactor(
@@ -606,6 +617,17 @@ class BarkoderReactNativeViewManager: RCTViewManager {
     ) {
         getBarkoderView(node: node) { barkoderView in
             resolver(iBarkoder.GetVersion())
+        }
+    }
+  
+    @objc
+    func getLibVersion(
+        _ node: NSNumber,
+        resolver: @escaping RCTPromiseResolveBlock,
+        rejecter: @escaping RCTPromiseRejectBlock
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            resolver(iBarkoder.getLibVersion())
         }
     }
     
@@ -1109,6 +1131,8 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 resolver(decoderConfig.kix.enabled)
             case JapanesePost:
                 resolver(decoderConfig.japanesePost.enabled)
+            case MaxiCode:
+                resolver(decoderConfig.maxiCode.enabled)
             default:
                 self.handleBarkoderError(BarkoderReactNativeErrors.BARKODER_CONFIG_IS_NOT_VALID, rejecter: rejecter)
             }
@@ -1210,6 +1234,8 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 decoderConfig.kix.enabled = enabled
             case JapanesePost:
                 decoderConfig.japanesePost.enabled = enabled
+            case MaxiCode:
+                decoderConfig.maxiCode.enabled = enabled
             default:
                 return
             }
@@ -1680,6 +1706,26 @@ class BarkoderReactNativeViewManager: RCTViewManager {
       barkoderView.config?.arConfig.doubleTapToFreezeEnabled = arg
     }
   }
+  
+  @objc
+  func setARImageResultEnabled(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.imageResultEnabled = arg
+    }
+  }
+  
+  @objc
+  func setARBarcodeThumbnailOnResultEnabled(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.barcodeThumbnailOnResult = arg
+    }
+  }
 
   @objc
   func setARHeaderHeight(
@@ -1905,6 +1951,28 @@ class BarkoderReactNativeViewManager: RCTViewManager {
   ) {
     getBarkoderView(node: node) { barkoderView in
       resolver(barkoderView.config?.arConfig.doubleTapToFreezeEnabled)
+    }
+  }
+  
+  @objc
+  func isARImageResultEnabled(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.imageResultEnabled)
+    }
+  }
+  
+  @objc
+  func isARBarcodeThumbnailOnResultEnabled(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.barcodeThumbnailOnResult)
     }
   }
 

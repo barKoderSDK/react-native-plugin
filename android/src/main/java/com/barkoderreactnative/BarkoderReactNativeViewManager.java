@@ -232,6 +232,12 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("getARHeaderTextFormat", BarkoderReactNativeCommands.GET_AR_HEADER_TEXT_FORMAT);
     commandsMap.put("freezeScanning", BarkoderReactNativeCommands.FREEZE_SCANNING);
     commandsMap.put("unfreezeScanning", BarkoderReactNativeCommands.UNFREEZE_SCANNING);
+    commandsMap.put("getLibVersion", BarkoderReactNativeCommands.GET_LIB_VERSION);
+    commandsMap.put("getCurrentZoomFactor", BarkoderReactNativeCommands.GET_CURRENT_ZOOM_FACTOR);
+    commandsMap.put("setARImageResultEnabled", BarkoderReactNativeCommands.SET_AR_IMAGE_RESULT_ENABLED);
+    commandsMap.put("isARImageResultEnabled", BarkoderReactNativeCommands.IS_AR_IMAGE_RESULT_ENABLED);
+    commandsMap.put("setARBarcodeThumbnailOnResultEnabled", BarkoderReactNativeCommands.SET_AR_BARCODE_THUMBNAIL_ON_RESULT_ENABLED);
+    commandsMap.put("isARBarcodeThumbnailOnResultEnabled", BarkoderReactNativeCommands.IS_AR_BARCODE_THUMBNAIL_ON_RESULT_ENABLED);
     return commandsMap;
   }
 
@@ -244,6 +250,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     switch (commandId) {
       case "getMaxZoomFactor":
         getMaxZoomFactor(root, args.getInt(0));
+        break;
+      case "getCurrentZoomFactor":
+        getCurrentZoomFactor(root, args.getInt(0));
         break;
       case "setZoomFactor":
         setZoomFactor(root, args.getDouble(0));
@@ -375,6 +384,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "getVersion":
         getVersion(root, args.getInt(0));
+        break;
+      case "getLibVersion":
+        getLibVersion(root, args.getInt(0));
         break;
       case "showLogMessages":
         showLogMessages(args.getBoolean(0));
@@ -616,6 +628,18 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "isARDoubleTapToFreezeEnabled":
         isARDoubleTapToFreezeEnabled(root, args.getInt(0));
         break;
+      case "setARImageResultEnabled":
+        setARImageResultEnabled(root, args.getBoolean(0));
+        break;
+      case "isARImageResultEnabled":
+        isARImageResultEnabled(root, args.getInt(0));
+        break;
+      case "setARBarcodeThumbnailOnResultEnabled":
+        setARBarcodeThumbnailOnResultEnabled(root, args.getBoolean(0));
+        break;
+      case "isARBarcodeThumbnailOnResultEnabled":
+        isARBarcodeThumbnailOnResultEnabled(root, args.getInt(0));
+        break;
       case "setARHeaderHeight":
         setARHeaderHeight(root, (float) args.getDouble(0));
         break;
@@ -694,6 +718,13 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
     bkdView.getMaxZoomFactor(
         maxZoomFactor -> dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId, maxZoomFactor));
+  }
+
+  private void getCurrentZoomFactor(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    SoftReference<EventDispatcher> dispatcherRef = new SoftReference<>(eventDispatcher);
+    int bkdViewId = bkdView.getId();
+
+    dispatchDataReturnedEvent(dispatcherRef, bkdViewId, promiseRequestId, bkdView.getCurrentZoomFactor());
   }
 
   private void setZoomFactor(BarkoderReactBarkoderView bkdView, double zoomFactor) {
@@ -962,6 +993,11 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
   private void getVersion(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
         Barkoder.GetVersion());
+  }
+
+  private void getLibVersion(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      Barkoder.GetLibVersion());
   }
 
   private void showLogMessages(boolean show) {
@@ -1388,6 +1424,14 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.config.getArConfig().setDoubleTapToFreezeEnabled(enabled);
   }
 
+  private void setARImageResultEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getArConfig().setImageResultEnabled(enabled);
+  }
+
+  private void setARBarcodeThumbnailOnResultEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getArConfig().setBarcodeThumbnailOnResultEnabled(enabled);
+  }
+
   private void setARHeaderHeight(BarkoderReactBarkoderView bkdView, float value) {
     bkdView.config.getArConfig().setHeaderHeight(value);
   }
@@ -1489,6 +1533,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
   private void isARDoubleTapToFreezeEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
       bkdView.config.getArConfig().isDoubleTapToFreezeEnabled());
+  }
+
+  private void isARImageResultEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().isImageResultEnabled());
+  }
+
+  private void isARBarcodeThumbnailOnResultEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().isBarcodeThumbnailOnResultEnabled());
   }
 
   private void getARHeaderHeight(BarkoderReactBarkoderView bkdView, int promiseRequestId) {

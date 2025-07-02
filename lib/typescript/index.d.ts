@@ -49,6 +49,11 @@ export declare class Barkoder {
      */
     getMaxZoomFactor(): Promise<number>;
     /**
+     * Retrieves the current zoom factor for the device's camera.
+     * @returns A promise that resolves with the current zoom factor.
+     */
+    getCurrentZoomFactor(): Promise<number>;
+    /**
      * Sets the zoom factor for the device's camera, adjusting the level of zoom during barcode scanning.
      * @param zoomFactor - The zoom factor to set.
      */
@@ -282,10 +287,15 @@ export declare class Barkoder {
      */
     getEncodingCharacterSet(): Promise<string>;
     /**
+     * Retrieves the version of the Barkoder SDK.
+     * @returns {Promise<string>} A promise that resolves with the version of the Barkoder SDK.
+     */
+    getVersion(): Promise<string>;
+    /**
      * Retrieves the version of the Barkoder library.
      * @returns {Promise<string>} A promise that resolves with the version of the Barkoder library.
      */
-    getVersion(): Promise<string>;
+    getLibVersion(): Promise<string>;
     /**
      * Retrieves the current decoding speed setting for barcode scanning.
      * @returns {Promise<Barkoder.DecodingSpeed>} A promise that resolves with the decoding speed configuration.
@@ -618,6 +628,16 @@ export declare class Barkoder {
      */
     setARDoubleTapToFreezeEnabled(enabled: boolean): void;
     /**
+     * Enables or disables the capturing and processing of image data when a barcode is selected for AR mode.
+     * @param enabled - A boolean indicating whether to enable image result.
+     */
+    setARImageResultEnabled(enabled: boolean): void;
+    /**
+     * Enables or disables the barcode thumbnail on result for AR mode.
+     * @param enabled - A boolean indicating whether to enable barcode thumbnail on result.
+     */
+    setARBarcodeThumbnailOnResultEnabled(enabled: boolean): void;
+    /**
      * Sets height of the AR header label.
      * @param value - Header height.
      */
@@ -719,6 +739,16 @@ export declare class Barkoder {
      * @returns A promise that resolves with a boolean indicating if the feature is enabled.
      */
     isARDoubleTapToFreezeEnabled(): Promise<boolean>;
+    /**
+     * Retrieves whether image result is enabled for AR mode.
+     * @returns A promise that resolves with a boolean indicating if the feature is enabled.
+     */
+    isARImageResultEnabled(): Promise<boolean>;
+    /**
+     * Retrieves whether barcode thumbnail on result is enabled for AR mode.
+     * @returns A promise that resolves with a boolean indicating if the feature is enabled.
+     */
+    isARBarcodeThumbnailOnResultEnabled(): Promise<boolean>;
     /**
  * Retrieves the header height above barcode in AR mode.
  * @returns A promise that resolves with the header height.
@@ -868,7 +898,8 @@ export declare namespace Barkoder {
         australianPost = 35,
         royalMail = 36,
         kix = 37,
-        japanesePost = 38
+        japanesePost = 38,
+        maxiCode = 39
     }
     class BarkoderConfig {
         locationLineColor?: string;
@@ -934,6 +965,7 @@ export declare namespace Barkoder {
         royalMail?: BarcodeConfig;
         kix?: BarcodeConfig;
         japanesePost?: BarcodeConfig;
+        maxiCode?: BarcodeConfig;
         general?: GeneralSettings;
         constructor(config: Partial<DekoderConfig>);
         toMap(): {
@@ -1060,6 +1092,9 @@ export declare namespace Barkoder {
             'Japanese Post': {
                 enabled: boolean | undefined;
             } | undefined;
+            MaxiCode: {
+                enabled: boolean | undefined;
+            } | undefined;
             general: {
                 [key: string]: any;
             } | undefined;
@@ -1076,6 +1111,8 @@ export declare namespace Barkoder {
         nonSelectedLocationLineWidth?: number;
         locationType?: BarkoderARLocationType;
         doubleTapToFreezeEnabled?: boolean;
+        imageResultEnabled?: boolean;
+        barcodeThumbnailOnResult?: boolean;
         headerHeight?: number;
         headerShowMode?: BarkoderARHeaderShowMode;
         headerMaxTextHeight?: number;
@@ -1097,6 +1134,8 @@ export declare namespace Barkoder {
             nonSelectedLocationLineWidth: number | undefined;
             locationType: BarkoderARLocationType | undefined;
             doubleTapToFreezeEnabled: boolean | undefined;
+            imageResultEnabled: boolean | undefined;
+            barcodeThumbnailOnResult: boolean | undefined;
             headerHeight: number | undefined;
             headerShowMode: BarkoderARHeaderShowMode | undefined;
             headerMaxTextHeight: number | undefined;

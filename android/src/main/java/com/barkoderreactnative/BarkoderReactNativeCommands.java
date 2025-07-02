@@ -135,4 +135,10 @@ class BarkoderReactNativeCommands {
   public static final int GET_AR_HEADER_TEXT_FORMAT = 131;
   public static final int FREEZE_SCANNING = 132;
   public static final int UNFREEZE_SCANNING = 133;
+  public static final int GET_LIB_VERSION = 134;
+  public static final int GET_CURRENT_ZOOM_FACTOR = 135;
+  public static final int SET_AR_IMAGE_RESULT_ENABLED = 136;
+  public static final int IS_AR_IMAGE_RESULT_ENABLED = 137;
+  public static final int SET_AR_BARCODE_THUMBNAIL_ON_RESULT_ENABLED = 138;
+  public static final int IS_AR_BARCODE_THUMBNAIL_ON_RESULT_ENABLED = 139;
 }
