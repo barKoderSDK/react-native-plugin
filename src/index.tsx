@@ -329,6 +329,13 @@ export class Barkoder {
     }
 
   /**
+    * Captures the latest camera frame
+   */
+    captureImage() {
+      this._dispatchCommand('captureImage', []);
+    }
+
+  /**
  * Scan barcodes from base64 string image
  * @param base64 - image string.
  * @param resultsCallback - The callback function to handle barcode scanning events.
@@ -2169,6 +2176,30 @@ export class Barkoder {
   }
 
   /**
+   * Sets the maximum number of results allowed in a single AR scanning session.
+   * @param value - Maximum number of results.
+   */
+  setARResultLimit(value: number) {
+    this._dispatchCommand('setARResultLimit', [value]);
+  }
+
+  /**
+   * Sets whether scanning continues when the result limit is reached (only in `.interactiveDisabled` mode).
+   * @param value - Boolean indicating whether to continue scanning.
+   */
+  setARContinueScanningOnLimit(value: boolean) {
+    this._dispatchCommand('setARContinueScanningOnLimit', [value]);
+  }
+
+  /**
+   * Sets whether results are emitted only at AR session end (or when the limit is reached).
+   * @param value - Boolean indicating whether to emit results only at session end.
+   */
+  setAREmitResultsAtSessionEndOnly(value: boolean) {
+    this._dispatchCommand('setAREmitResultsAtSessionEndOnly', [value]);
+  }
+
+  /**
    * Sets height of the AR header label.
    * @param value - Header height.
    */
@@ -2554,8 +2585,71 @@ export class Barkoder {
       throw new Error(OS_NOT_SUPPORTED);
     }
   }
+
+  /**
+   * Retrieves the maximum number of results allowed in a single AR scanning session.
+   * @returns A promise resolving to the maximum result limit.
+   */
+  getARResultLimit(): Promise<number> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<number>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARResultLimit', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARResultLimit(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
   
-      /**
+  /**
+   * Retrieves whether scanning continues when the result limit is reached (only in `.interactiveDisabled` mode).
+   * @returns A promise resolving to a boolean indicating if continue scanning is enabled.
+   */
+  getARContinueScanningOnLimit(): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<boolean>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARContinueScanningOnLimit', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARContinueScanningOnLimit(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+  
+  /**
+   * Retrieves whether results are emitted only at AR session end (or when the limit is reached).
+   * @returns A promise resolving to a boolean indicating if results emit only at session end.
+   */
+  getAREmitResultsAtSessionEndOnly(): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<boolean>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getAREmitResultsAtSessionEndOnly', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getAREmitResultsAtSessionEndOnly(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+  
+  /**
    * Retrieves the header height above barcode in AR mode.
    * @returns A promise that resolves with the header height.
    */
@@ -3037,6 +3131,9 @@ export namespace Barkoder {
     doubleTapToFreezeEnabled?: boolean;
     imageResultEnabled?: boolean;
     barcodeThumbnailOnResult?: boolean;
+    resultLimit?: number;
+    continueScanningOnLimit?: boolean;
+    emitResultsAtSessionEndOnly?: boolean;
     headerHeight?: number;
     headerShowMode?: BarkoderARHeaderShowMode;
     headerMaxTextHeight?: number;
@@ -3065,6 +3162,9 @@ export namespace Barkoder {
         "doubleTapToFreezeEnabled": this.doubleTapToFreezeEnabled,
         "imageResultEnabled": this.imageResultEnabled,
         "barcodeThumbnailOnResult": this.barcodeThumbnailOnResult,
+        "resultLimit": this.resultLimit,
+        "continueScanningOnLimit": this.continueScanningOnLimit,
+        "emitResultsAtSessionEndOnly": this.emitResultsAtSessionEndOnly,
         "headerHeight": this.headerHeight,
         "headerShowMode": this.headerShowMode,
         "headerMaxTextHeight": this.headerMaxTextHeight,

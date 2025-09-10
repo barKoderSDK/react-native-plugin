@@ -100,6 +100,13 @@ class BarkoderReactNativeViewManager: RCTViewManager {
   }
   
   @objc
+  func captureImage(_ node: NSNumber) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.captureImage()
+    }
+  }
+  
+  @objc
   func scanImage(
     _ node: NSNumber,
     arg: NSString,
@@ -1726,6 +1733,36 @@ class BarkoderReactNativeViewManager: RCTViewManager {
       barkoderView.config?.arConfig.barcodeThumbnailOnResult = arg
     }
   }
+  
+  @objc
+  func setARResultLimit(
+    _ node: NSNumber,
+    arg: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.resultLimit = arg.intValue
+    }
+  }
+
+  @objc
+  func setARContinueScanningOnLimit(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.continueScanningOnLimit = arg
+    }
+  }
+
+  @objc
+  func setAREmitResultsAtSessionEndOnly(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.emitResultsAtSessionEndOnly = arg
+    }
+  }
 
   @objc
   func setARHeaderHeight(
@@ -1973,6 +2010,39 @@ class BarkoderReactNativeViewManager: RCTViewManager {
   ) {
     getBarkoderView(node: node) { barkoderView in
       resolver(barkoderView.config?.arConfig.barcodeThumbnailOnResult)
+    }
+  }
+  
+  @objc
+  func getARResultLimit(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.resultLimit)
+    }
+  }
+
+  @objc
+  func getARContinueScanningOnLimit(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.continueScanningOnLimit)
+    }
+  }
+
+  @objc
+  func getAREmitResultsAtSessionEndOnly(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.emitResultsAtSessionEndOnly)
     }
   }
 

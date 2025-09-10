@@ -141,4 +141,11 @@ class BarkoderReactNativeCommands {
   public static final int IS_AR_IMAGE_RESULT_ENABLED = 137;
   public static final int SET_AR_BARCODE_THUMBNAIL_ON_RESULT_ENABLED = 138;
   public static final int IS_AR_BARCODE_THUMBNAIL_ON_RESULT_ENABLED = 139;
+  public static final int SET_AR_RESULT_LIMIT = 140;
+  public static final int GET_AR_RESULT_LIMIT = 141;
+  public static final int SET_AR_CONTINUE_SCANNING_ON_LIMIT = 142;
+  public static final int GET_AR_CONTINUE_SCANNING_ON_LIMIT = 143;
+  public static final int SET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY = 144;
+  public static final int GET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY = 145;
+  public static final int CAPTURE_IMAGE = 146;
 }

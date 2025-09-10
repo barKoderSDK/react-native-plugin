@@ -14,6 +14,7 @@ RCT_EXTERN_METHOD(stopScanning: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(pauseScanning: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(freezeScanning: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(unfreezeScanning: (nonnull NSNumber *)node)
+RCT_EXTERN_METHOD(captureImage: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(scanImage: (nonnull NSNumber *)node
                   arg:(nonnull NSString)arg
                   resolver:(RCTPromiseResolveBlock)resolve
@@ -422,6 +423,15 @@ RCT_EXTERN_METHOD(setARImageResultEnabled:
 RCT_EXTERN_METHOD(setARBarcodeThumbnailOnResultEnabled:
                   (nonnull NSNumber *)node
                   arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setARResultLimit:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(setARContinueScanningOnLimit:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setAREmitResultsAtSessionEndOnly:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
 RCT_EXTERN_METHOD(setARHeaderHeight:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg)
@@ -502,6 +512,18 @@ RCT_EXTERN_METHOD(isARImageResultEnabled:
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(isARBarcodeThumbnailOnResultEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARResultLimit:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARContinueScanningOnLimit:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getAREmitResultsAtSessionEndOnly:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)

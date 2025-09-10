@@ -238,6 +238,13 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("isARImageResultEnabled", BarkoderReactNativeCommands.IS_AR_IMAGE_RESULT_ENABLED);
     commandsMap.put("setARBarcodeThumbnailOnResultEnabled", BarkoderReactNativeCommands.SET_AR_BARCODE_THUMBNAIL_ON_RESULT_ENABLED);
     commandsMap.put("isARBarcodeThumbnailOnResultEnabled", BarkoderReactNativeCommands.IS_AR_BARCODE_THUMBNAIL_ON_RESULT_ENABLED);
+    commandsMap.put("setARResultLimit", BarkoderReactNativeCommands.SET_AR_RESULT_LIMIT);
+    commandsMap.put("getARResultLimit", BarkoderReactNativeCommands.GET_AR_RESULT_LIMIT);
+    commandsMap.put("setARContinueScanningOnLimit", BarkoderReactNativeCommands.SET_AR_CONTINUE_SCANNING_ON_LIMIT);
+    commandsMap.put("getARContinueScanningOnLimit", BarkoderReactNativeCommands.GET_AR_CONTINUE_SCANNING_ON_LIMIT);
+    commandsMap.put("setAREmitResultsAtSessionEndOnly", BarkoderReactNativeCommands.SET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY);
+    commandsMap.put("getAREmitResultsAtSessionEndOnly", BarkoderReactNativeCommands.GET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY);
+    commandsMap.put("captureImage", BarkoderReactNativeCommands.CAPTURE_IMAGE);
     return commandsMap;
   }
 
@@ -284,6 +291,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "unfreezeScanning":
         unfreezeScanning(root);
+        break;
+      case "captureImage":
+        captureImage(root);
         break;
       case "getLocationLineColorHex":
         getLocationLineColorHex(root, args.getInt(0));
@@ -640,6 +650,24 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "isARBarcodeThumbnailOnResultEnabled":
         isARBarcodeThumbnailOnResultEnabled(root, args.getInt(0));
         break;
+      case "setARResultLimit":
+        setARResultLimit(root, args.getInt(0));
+        break;
+      case "getARResultLimit":
+        getARResultLimit(root, args.getInt(0));
+        break;
+      case "setARContinueScanningOnLimit":
+        setARContinueScanningOnLimit(root, args.getBoolean(0));
+        break;
+      case "getARContinueScanningOnLimit":
+        getARContinueScanningOnLimit(root, args.getInt(0));
+        break;
+      case "setAREmitResultsAtSessionEndOnly":
+        setAREmitResultsAtSessionEndOnly(root, args.getBoolean(0));
+        break;
+      case "getAREmitResultsAtSessionEndOnly":
+        getAREmitResultsAtSessionEndOnly(root, args.getInt(0));
+        break;
       case "setARHeaderHeight":
         setARHeaderHeight(root, (float) args.getDouble(0));
         break;
@@ -793,6 +821,10 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void unfreezeScanning(BarkoderReactBarkoderView bkdView) {
     bkdView.unfreezeScanning();
+  }
+
+  private void captureImage(BarkoderReactBarkoderView bkdView) {
+    bkdView.captureImage();
   }
 
   private void getLocationLineColorHex(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
@@ -1432,6 +1464,18 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.config.getArConfig().setBarcodeThumbnailOnResultEnabled(enabled);
   }
 
+  private void setARResultLimit(BarkoderReactBarkoderView bkdView, int value) {
+    bkdView.config.getArConfig().setResultLimit(value);
+  }
+
+  private void setARContinueScanningOnLimit(BarkoderReactBarkoderView bkdView, boolean value) {
+    bkdView.config.getArConfig().setContinueScanningOnLimit(value);
+  }
+
+  private void setAREmitResultsAtSessionEndOnly(BarkoderReactBarkoderView bkdView, boolean value) {
+    bkdView.config.getArConfig().setEmitResultsAtSessionEndOnly(value);
+  }
+
   private void setARHeaderHeight(BarkoderReactBarkoderView bkdView, float value) {
     bkdView.config.getArConfig().setHeaderHeight(value);
   }
@@ -1543,6 +1587,21 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
   private void isARBarcodeThumbnailOnResultEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
       bkdView.config.getArConfig().isBarcodeThumbnailOnResultEnabled());
+  }
+
+  private void getARResultLimit(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getResultLimit());
+  }
+
+  private void getARContinueScanningOnLimit(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getContinueScanningOnLimit());
+  }
+
+  private void getAREmitResultsAtSessionEndOnly(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getEmitResultsAtSessionEndOnly());
   }
 
   private void getARHeaderHeight(BarkoderReactBarkoderView bkdView, int promiseRequestId) {

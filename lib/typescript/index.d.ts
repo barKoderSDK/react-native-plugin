@@ -96,6 +96,10 @@ export declare class Barkoder {
      */
     unfreezeScanning(): void;
     /**
+      * Captures the latest camera frame
+     */
+    captureImage(): void;
+    /**
    * Scan barcodes from base64 string image
    * @param base64 - image string.
    * @param resultsCallback - The callback function to handle barcode scanning events.
@@ -638,6 +642,21 @@ export declare class Barkoder {
      */
     setARBarcodeThumbnailOnResultEnabled(enabled: boolean): void;
     /**
+     * Sets the maximum number of results allowed in a single AR scanning session.
+     * @param value - Maximum number of results.
+     */
+    setARResultLimit(value: number): void;
+    /**
+     * Sets whether scanning continues when the result limit is reached (only in `.interactiveDisabled` mode).
+     * @param value - Boolean indicating whether to continue scanning.
+     */
+    setARContinueScanningOnLimit(value: boolean): void;
+    /**
+     * Sets whether results are emitted only at AR session end (or when the limit is reached).
+     * @param value - Boolean indicating whether to emit results only at session end.
+     */
+    setAREmitResultsAtSessionEndOnly(value: boolean): void;
+    /**
      * Sets height of the AR header label.
      * @param value - Header height.
      */
@@ -750,9 +769,24 @@ export declare class Barkoder {
      */
     isARBarcodeThumbnailOnResultEnabled(): Promise<boolean>;
     /**
- * Retrieves the header height above barcode in AR mode.
- * @returns A promise that resolves with the header height.
- */
+     * Retrieves the maximum number of results allowed in a single AR scanning session.
+     * @returns A promise resolving to the maximum result limit.
+     */
+    getARResultLimit(): Promise<number>;
+    /**
+     * Retrieves whether scanning continues when the result limit is reached (only in `.interactiveDisabled` mode).
+     * @returns A promise resolving to a boolean indicating if continue scanning is enabled.
+     */
+    getARContinueScanningOnLimit(): Promise<boolean>;
+    /**
+     * Retrieves whether results are emitted only at AR session end (or when the limit is reached).
+     * @returns A promise resolving to a boolean indicating if results emit only at session end.
+     */
+    getAREmitResultsAtSessionEndOnly(): Promise<boolean>;
+    /**
+     * Retrieves the header height above barcode in AR mode.
+     * @returns A promise that resolves with the header height.
+     */
     getARHeaderHeight(): Promise<number>;
     /**
      * Retrieves the header display mode (always, on selected, never).
@@ -1113,6 +1147,9 @@ export declare namespace Barkoder {
         doubleTapToFreezeEnabled?: boolean;
         imageResultEnabled?: boolean;
         barcodeThumbnailOnResult?: boolean;
+        resultLimit?: number;
+        continueScanningOnLimit?: boolean;
+        emitResultsAtSessionEndOnly?: boolean;
         headerHeight?: number;
         headerShowMode?: BarkoderARHeaderShowMode;
         headerMaxTextHeight?: number;
@@ -1136,6 +1173,9 @@ export declare namespace Barkoder {
             doubleTapToFreezeEnabled: boolean | undefined;
             imageResultEnabled: boolean | undefined;
             barcodeThumbnailOnResult: boolean | undefined;
+            resultLimit: number | undefined;
+            continueScanningOnLimit: boolean | undefined;
+            emitResultsAtSessionEndOnly: boolean | undefined;
             headerHeight: number | undefined;
             headerShowMode: BarkoderARHeaderShowMode | undefined;
             headerMaxTextHeight: number | undefined;
