@@ -148,4 +148,11 @@ class BarkoderReactNativeCommands {
   public static final int SET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY = 144;
   public static final int GET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY = 145;
   public static final int CAPTURE_IMAGE = 146;
+  public static final int CONFIGURE_CLOSE_BUTTON = 147;
+  public static final int CONFIGURE_FLASH_BUTTON = 148;
+  public static final int CONFIGURE_ZOOM_BUTTON = 149;
+  public static final int SELECT_VISIBLE_BARCODES = 150;
+  public static final int SET_QR_MULTI_PART_MERGE_ENABLED = 151;
+  public static final int IS_QR_MULTI_PART_MERGE_ENABLED = 152;
+
 }

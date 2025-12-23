@@ -245,6 +245,13 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setAREmitResultsAtSessionEndOnly", BarkoderReactNativeCommands.SET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY);
     commandsMap.put("getAREmitResultsAtSessionEndOnly", BarkoderReactNativeCommands.GET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY);
     commandsMap.put("captureImage", BarkoderReactNativeCommands.CAPTURE_IMAGE);
+    commandsMap.put("configureCloseButton", BarkoderReactNativeCommands.CONFIGURE_CLOSE_BUTTON);
+    commandsMap.put("configureFlashButton", BarkoderReactNativeCommands.CONFIGURE_FLASH_BUTTON);
+    commandsMap.put("configureZoomButton", BarkoderReactNativeCommands.CONFIGURE_ZOOM_BUTTON);
+    commandsMap.put("selectVisibleBarcodes", BarkoderReactNativeCommands.SELECT_VISIBLE_BARCODES);
+    commandsMap.put("setQrMultiPartMergeEnabled", BarkoderReactNativeCommands.SET_QR_MULTI_PART_MERGE_ENABLED);
+    commandsMap.put("isQrMultiPartMergeEnabled", BarkoderReactNativeCommands.IS_QR_MULTI_PART_MERGE_ENABLED);
+
     return commandsMap;
   }
 
@@ -722,6 +729,61 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "getARHeaderTextFormat":
         getARHeaderTextFormat(root, args.getInt(0));
         break;
+      case "configureCloseButton": {
+        configureCloseButton(
+          root,
+          args.getBoolean(0),
+          (float) args.getDouble(1),
+          (float) args.getDouble(2),
+          (float) args.getDouble(3),
+          args.getString(4),
+          args.getString(5),
+          (float) args.getDouble(6),
+          (float) args.getDouble(7),
+          args.getBoolean(8),
+          args.getString(9)
+        );
+        break;
+      }
+      case "configureFlashButton":
+        configureFlashButton(root,
+          args.getBoolean(0),
+          (float) args.getDouble(1),
+          (float) args.getDouble(2),
+          (float) args.getDouble(3),
+          args.getString(4),
+          args.getString(5),
+          (float) args.getDouble(6),
+          (float) args.getDouble(7),
+          args.getBoolean(8),
+          args.getString(9),
+          args.getString(10));
+        break;
+      case "configureZoomButton":
+        configureZoomButton(root,
+          args.getBoolean(0),
+          (float) args.getDouble(1),
+          (float) args.getDouble(2),
+          (float) args.getDouble(3),
+          args.getString(4),
+          args.getString(5),
+          (float) args.getDouble(6),
+          (float) args.getDouble(7),
+          args.getBoolean(8),
+          args.getString(9),
+          args.getString(10),
+          (float) args.getDouble(11),
+          (float) args.getDouble(12));
+        break;
+      case "selectVisibleBarcodes":
+        selectVisibleBarcodes(root);
+        break;
+      case "setQrMultiPartMergeEnabled":
+        setQrMultiPartMergeEnabled(root, args.getBoolean(0));
+        break;
+      case "isQrMultiPartMergeEnabled":
+        isQrMultiPartMergeEnabled(root, args.getInt(0));
+        break;
     }
   }
 
@@ -734,6 +796,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
     exportedCustomDirectEventTypeConstants.put(BarkoderViewConfigCreatedEvent.EVENT_NAME,
         MapBuilder.of("registrationName", "onBarkoderConfigCreated"));
+
+    exportedCustomDirectEventTypeConstants.put(BarkoderViewCloseButtonTappedEvent.EVENT_NAME,
+      MapBuilder.of("registrationName", "onCloseButtonTapped"));
 
     return exportedCustomDirectEventTypeConstants;
   }
@@ -1524,6 +1589,139 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.config.getArConfig().setHeaderTextFormat(value);
   }
 
+  private void configureCloseButton(
+    BarkoderReactBarkoderView bkdView,
+    boolean visible,
+    float positionX,
+    float positionY,
+    Float iconSize,
+    String tintColor,
+    String backgroundColor,
+    Float cornerRadius,
+    Float padding,
+    boolean useCustomIcon,
+    String base64CustomIcon
+  ) {
+    SoftReference<EventDispatcher> dispatcherRef = new SoftReference<>(eventDispatcher);
+
+    Integer tint = Util.hexColorToIntColorOrNull(tintColor);
+    Integer bg = Util.hexColorToIntColorOrNull(backgroundColor);
+
+    final Bitmap customIcon = Util.decodeBase64BitmapOrNull(base64CustomIcon);
+
+    float[] position = new float[]{positionX, positionY};
+
+    bkdView.post(() -> {
+      bkdView.configureCloseButton(
+        visible,
+        position,
+        iconSize,
+        tint,
+        bg,
+        cornerRadius,
+        padding,
+        useCustomIcon,
+        customIcon,
+        () -> {
+          dispatchCloseButtonTappedEvent(dispatcherRef, bkdView.getId());
+        });
+    });
+  }
+
+  private void configureFlashButton(
+    BarkoderReactBarkoderView bkdView,
+    boolean visible,
+    float positionX,
+    float positionY,
+    Float iconSize,
+    String tintColor,
+    String backgroundColor,
+    Float cornerRadius,
+    Float padding,
+    boolean useCustomIcon,
+    String base64FlashOn,
+    String base64FlashOff
+  ) {
+    Integer tint = Util.hexColorToIntColorOrNull(tintColor);
+    Integer bg = Util.hexColorToIntColorOrNull(backgroundColor);
+
+    final Bitmap customIconFlashOn = Util.decodeBase64BitmapOrNull(base64FlashOn);
+    final Bitmap customIconFlashOff = Util.decodeBase64BitmapOrNull(base64FlashOff);
+
+    float[] position = new float[]{positionX, positionY};
+
+    bkdView.post(() -> {
+      bkdView.configureFlashButton(
+        visible,
+        position,
+        iconSize,
+        tint,
+        bg,
+        cornerRadius,
+        padding,
+        useCustomIcon,
+        customIconFlashOn,
+        customIconFlashOff
+      );
+    });
+  }
+
+  private void configureZoomButton(
+    BarkoderReactBarkoderView bkdView,
+    boolean visible,
+    float positionX,
+    float positionY,
+    Float iconSize,
+    String tintColor,
+    String backgroundColor,
+    Float cornerRadius,
+    Float padding,
+    boolean useCustomIcon,
+    String base64ZoomedIn,
+    String base64ZoomedOut,
+    Float zoomedInFactor,
+    Float zoomedOutFactor
+  ) {
+    Integer tint = Util.hexColorToIntColorOrNull(tintColor);
+    Integer bg = Util.hexColorToIntColorOrNull(backgroundColor);
+
+    final Bitmap customIconFlashZoomedIn = Util.decodeBase64BitmapOrNull(base64ZoomedIn);
+    final Bitmap customIconFlashZoomedOut = Util.decodeBase64BitmapOrNull(base64ZoomedOut);
+
+    float[] position = new float[]{positionX, positionY};
+
+    bkdView.post(() -> {
+      bkdView.configureZoomButton(
+        visible,
+        position,
+        iconSize,
+        tint,
+        bg,
+        cornerRadius,
+        padding,
+        useCustomIcon,
+        customIconFlashZoomedIn,
+        customIconFlashZoomedOut,
+        zoomedInFactor,
+        zoomedOutFactor
+      );
+    });
+  }
+
+  private void selectVisibleBarcodes(BarkoderReactBarkoderView bkdView) {
+    bkdView.selectVisibleBarcodes();
+  }
+
+  private void setQrMultiPartMergeEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.config.getDecoderConfig().QR.multiPartMerge = enabled;
+  }
+
+  private void isQrMultiPartMergeEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    boolean isQrMultiPartMergeEnabled = bkdView.config.getDecoderConfig().QR.multiPartMerge;
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        isQrMultiPartMergeEnabled);
+  }
+
   private void getShowDuplicatesLocations(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
       bkdView.config.getShowDuplicatesLocations());
@@ -1712,7 +1910,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void configureBarkoderView(BarkoderReactBarkoderView bkdView, String licenseKey) {
     bkdView.config = new BarkoderConfig(bkdView.getContext(), licenseKey,
-        licenseCheckResult -> BarkoderLog.i(TAG, "LICENSE RESULT: " + licenseCheckResult.message));
+      licenseCheckResult -> {
+        BarkoderLog.i(TAG, "License Info: " + Barkoder.GetLicenseInfo());
+      });
   }
 
   private void dispatchDataReturnedEvent(SoftReference<EventDispatcher> dispatcherRef,
@@ -1746,5 +1946,13 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     });
   }
 
+  private void dispatchCloseButtonTappedEvent(SoftReference<EventDispatcher> dispatcherRef, int bkdViewId) {
+    mainThreadHandler.post(() -> {
+      EventDispatcher dispatcher = dispatcherRef.get();
+      if (dispatcher != null) {
+        dispatcher.dispatchEvent(new BarkoderViewCloseButtonTappedEvent(bkdViewId));
+      }
+    });
+  }
   // endregion Helper f-ons
 }

@@ -11,7 +11,7 @@ class BarkoderEmitter: RCTEventEmitter {
     private var hasListeners: Bool = false
     
     override func supportedEvents() -> [String]! {
-        return ["BarkoderResultEvent", "BarkoderConfigEvent"]
+        return ["BarkoderResultEvent", "BarkoderConfigEvent", "BarkoderCloseButtonTappedEvent"]
     }
     
     override class func requiresMainQueueSetup() -> Bool {
@@ -37,6 +37,13 @@ class BarkoderEmitter: RCTEventEmitter {
     func configDidFinish() {
         if hasListeners {
             sendEvent(withName: "BarkoderConfigEvent", body: nil)
+        }
+    }
+  
+    @objc
+    func sendCloseButtonTappedEvent() {
+        if hasListeners {
+            sendEvent(withName: "BarkoderCloseButtonTappedEvent", body: nil)
         }
     }
     
@@ -850,6 +857,27 @@ class BarkoderReactNativeViewManager: RCTViewManager {
   }
   
   @objc
+  func isQrMultiPartMergeEnabled(
+      _ node: NSNumber,
+      resolver: @escaping RCTPromiseResolveBlock,
+      rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+          resolver(barkoderView.config?.decoderConfig?.qr.multiPartMerge)
+      }
+  }
+  
+  @objc
+  func setQrMultiPartMergeEnabled(
+      _ node: NSNumber,
+      arg: Bool
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+        barkoderView.config?.decoderConfig?.qr.multiPartMerge = arg
+      }
+  }
+  
+  @objc
   func isQrMicroDpmModeEnabled(
       _ node: NSNumber,
       resolver: @escaping RCTPromiseResolveBlock,
@@ -1140,6 +1168,8 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 resolver(decoderConfig.japanesePost.enabled)
             case MaxiCode:
                 resolver(decoderConfig.maxiCode.enabled)
+            case OCRText:
+                resolver(decoderConfig.ocrText.enabled)
             default:
                 self.handleBarkoderError(BarkoderReactNativeErrors.BARKODER_CONFIG_IS_NOT_VALID, rejecter: rejecter)
             }
@@ -1243,6 +1273,8 @@ class BarkoderReactNativeViewManager: RCTViewManager {
                 decoderConfig.japanesePost.enabled = enabled
             case MaxiCode:
                 decoderConfig.maxiCode.enabled = enabled
+            case OCRText:
+                decoderConfig.ocrText.enabled = enabled
             default:
                 return
             }
@@ -1872,6 +1904,168 @@ class BarkoderReactNativeViewManager: RCTViewManager {
   }
   
   @objc
+  func configureCloseButton(
+    _ node: NSNumber,
+    visible: NSNumber,
+    positionX: NSNumber,
+    positionY: NSNumber,
+    iconSize: NSNumber,
+    tintColorHex: NSString,
+    backgroundColorHex: NSString,
+    cornerRadius: NSNumber,
+    padding: NSNumber,
+    useCustomIcon: NSNumber,
+    customIcon: NSString
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      
+      let position = NSValue(cgPoint: CGPoint(
+        x: CGFloat(truncating: positionX),
+        y: CGFloat(truncating: positionY)
+      ))
+      
+      let iconSizeNum = NSNumber(value: iconSize.doubleValue)
+      let cornerRadiusNum = NSNumber(value: cornerRadius.doubleValue)
+      let paddingNum = NSNumber(value: padding.doubleValue)
+      let useCustomIconNum = NSNumber(value: useCustomIcon.boolValue)
+      
+      let tintColor        = Util.fromHexOrNil(tintColorHex as String)
+      let backgroundColor  = Util.fromHexOrNil(backgroundColorHex as String)
+      
+      let customImage = Util.image(fromBase64: customIcon as String)
+      
+      let onClose: (() -> Void) = {
+          if let eventEmitter = self.bridge.module(for: BarkoderEmitter.self) as? BarkoderEmitter {
+              eventEmitter.sendCloseButtonTappedEvent()
+          }
+      }
+      
+      barkoderView.configureCloseButton(
+        visible: visible.boolValue,
+        position: position,
+        iconSize: iconSizeNum,
+        tintColor: tintColor,
+        backgroundColor: backgroundColor,
+        cornerRadius: cornerRadiusNum,
+        padding: paddingNum,
+        useCustomIcon: useCustomIconNum,
+        customIcon: customImage,
+        onClose: onClose
+      )
+    }
+  }
+
+
+  @objc
+  func configureFlashButton(
+    _ node: NSNumber,
+    visible: NSNumber,
+    positionX: NSNumber,
+    positionY: NSNumber,
+    iconSize: NSNumber,
+    tintColorHex: NSString,
+    backgroundColorHex: NSString,
+    cornerRadius: NSNumber,
+    padding: NSNumber,
+    useCustomIcon: NSNumber,
+    customIconFlashOn: NSString,
+    customIconFlashOff: NSString
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      
+      let position = NSValue(cgPoint: CGPoint(
+        x: CGFloat(truncating: positionX),
+        y: CGFloat(truncating: positionY)
+      ))
+      
+      let iconSizeNum = NSNumber(value: iconSize.doubleValue)
+      let cornerRadiusNum = NSNumber(value: cornerRadius.doubleValue)
+      let paddingNum = NSNumber(value: padding.doubleValue)
+      let useCustomIconNum = NSNumber(value: useCustomIcon.boolValue)
+      
+      let tintColor        = Util.fromHexOrNil(tintColorHex as String)
+      let backgroundColor  = Util.fromHexOrNil(backgroundColorHex as String)
+      
+      let customImageFlashOn = Util.image(fromBase64: customIconFlashOn as String)
+      let customImageFlashOff = Util.image(fromBase64: customIconFlashOff as String)
+      
+      barkoderView.configureFlashButton(
+        visible: visible.boolValue,
+        position: position,
+        iconSize: iconSizeNum,
+        tintColor: tintColor,
+        backgroundColor: backgroundColor,
+        cornerRadius: cornerRadiusNum,
+        padding: paddingNum,
+        useCustomIcon: useCustomIconNum,
+        customIconFlashOn: customImageFlashOn,
+        customIconFlashOff: customImageFlashOff
+      )
+    }
+  }
+
+  @objc
+  func configureZoomButton(
+    _ node: NSNumber,
+    visible: NSNumber,
+    positionX: NSNumber,
+    positionY: NSNumber,
+    iconSize: NSNumber,
+    tintColorHex: NSString,
+    backgroundColorHex: NSString,
+    cornerRadius: NSNumber,
+    padding: NSNumber,
+    useCustomIcon: NSNumber,
+    customIconZoomedIn: NSString,
+    customIconZoomedOut: NSString,
+    zoomedInFactor: NSNumber,
+    zoomedOutFactor: NSNumber
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      
+      let position = NSValue(cgPoint: CGPoint(
+        x: CGFloat(truncating: positionX),
+        y: CGFloat(truncating: positionY)
+      ))
+      
+      let iconSizeNum = NSNumber(value: iconSize.doubleValue)
+      let cornerRadiusNum = NSNumber(value: cornerRadius.doubleValue)
+      let paddingNum = NSNumber(value: padding.doubleValue)
+      let zoomInNum = NSNumber(value: zoomedInFactor.doubleValue)
+      let zoomOutNum = NSNumber(value: zoomedOutFactor.doubleValue)
+      let useCustomIconNum = NSNumber(value: useCustomIcon.boolValue)
+      
+      let tintColor        = Util.fromHexOrNil(tintColorHex as String)
+      let backgroundColor  = Util.fromHexOrNil(backgroundColorHex as String)
+      
+      let customImageZoomedIn = Util.image(fromBase64: customIconZoomedIn as String)
+      let customImageZoomedout = Util.image(fromBase64: customIconZoomedOut as String)
+      
+      barkoderView.configureZoomButton(
+        visible: visible.boolValue,
+        position: position,
+        iconSize: iconSizeNum,
+        tintColor: tintColor,
+        backgroundColor: backgroundColor,
+        cornerRadius: cornerRadiusNum,
+        padding: paddingNum,
+        useCustomIcon: useCustomIconNum,
+        customIconZoomedIn: customImageZoomedIn,
+        customIconZoomedOut: customImageZoomedout,
+        zoomedInFactor: zoomInNum,
+        zoomedOutFactor: zoomOutNum
+      )
+    }
+  }
+  
+  @objc
+  func selectVisibleBarcodes(_ node: NSNumber) {
+      getBarkoderView(node: node) { barkoderView in
+          barkoderView.selectVisibleBarcodes()
+      }
+  }
+
+  @objc
   func getShowDuplicatesLocations(
     _ node: NSNumber,
     resolver: @escaping RCTPromiseResolveBlock,
@@ -2174,6 +2368,7 @@ class BarkoderReactNativeView: UIView {
         didSet {
             DispatchQueue.main.async {
                 self.barkoderView.config = BarkoderConfig(licenseKey: self.licenseKey) { _ in
+                    print("License Info: \(Config.getLicenseInfo())")
                     guard let eventEmitter = self.bridge.module(for: BarkoderEmitter.self) as? BarkoderEmitter else {
                         return
                     }
@@ -2276,6 +2471,76 @@ class Util {
       let hex = hexColor.replacingOccurrences(of: "#", with: "")
       return Int("FF" + hex, radix: 16)
     }
+  
+  /// Parses "#RGB", "#ARGB", "#RRGGBB", or "#AARRGGBB" (alpha first when present).
+  /// Returns nil for empty or invalid input.
+  static func fromHexOrNil(_ raw: String?) -> UIColor? {
+      guard var s = raw?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !s.isEmpty else { return nil }
+
+      if s.hasPrefix("#") { s.removeFirst() }
+      if s.lowercased().hasPrefix("0x") { s.removeFirst(2) }
+
+      let len = s.count
+      guard len == 3 || len == 4 || len == 6 || len == 8 else { return nil }
+
+      var value: UInt64 = 0
+      let scanner = Scanner(string: s)
+      guard scanner.scanHexInt64(&value),
+            scanner.isAtEnd || scanner.currentIndex == s.endIndex else { return nil }
+
+      let a, r, g, b: UInt64
+      switch len {
+      case 3: // #RGB
+          (a, r, g, b) = (255, (value >> 8) * 17,
+                                (value >> 4 & 0xF) * 17,
+                                (value & 0xF) * 17)
+      case 4: // #ARGB
+          (a, r, g, b) = ((value >> 12) * 17,
+                          (value >> 8  & 0xF) * 17,
+                          (value >> 4  & 0xF) * 17,
+                          (value        & 0xF) * 17)
+      case 6: // #RRGGBB
+          (a, r, g, b) = (255,
+                          value >> 16,
+                          value >> 8 & 0xFF,
+                          value & 0xFF)
+      case 8: // #AARRGGBB
+          (a, r, g, b) = (value >> 24,
+                          value >> 16 & 0xFF,
+                          value >> 8  & 0xFF,
+                          value & 0xFF)
+      default:
+          return nil
+      }
+
+      return UIColor(red: CGFloat(r) / 255,
+                     green: CGFloat(g) / 255,
+                     blue: CGFloat(b) / 255,
+                     alpha: CGFloat(a) / 255)
+  }
+  
+  // Decode base64 image
+  static func image(fromBase64 input: String?) -> UIImage? {
+      guard var s = input?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !s.isEmpty
+      else { return nil }
+      
+      // Strip data URL prefix if present
+      if s.hasPrefix("data:") {
+          guard let i = s.firstIndex(of: ",") else { return nil }
+          s = String(s[s.index(after: i)...])
+      }
+      
+      // Normalize URL-safe Base64 and fix padding
+      s = s.replacingOccurrences(of: "-", with: "+")
+          .replacingOccurrences(of: "_", with: "/")
+      let pad = 4 - (s.count % 4)
+      if pad < 4 { s.append(String(repeating: "=", count: pad)) }
+      
+      guard let data = Data(base64Encoded: s, options: .ignoreUnknownCharacters) else { return nil }
+      return UIImage(data: data)
+  }
     
   static func barkoderResultsToJsonString(_ decoderResults: [DecoderResult], thumbnails: [UIImage]?, image: UIImage?) -> String? {
     var resultsJsonArray = [[String: Any]]()
@@ -2295,6 +2560,20 @@ class Util {
          let jsonData = try? JSONSerialization.data(withJSONObject: extraAsDictionary, options: []),
          let jsonString = String(data: jsonData, encoding: .utf8) {
         resultJson["extra"] = jsonString
+      }
+      
+      if let pointsPtr = decoderResult.getLocationPoints() {
+          let points = Array(UnsafeBufferPointer(start: pointsPtr, count: 4))
+          let pointsJson: [[String: CGFloat]] = points.map { point in
+              ["x": point.x, "y": point.y]
+          }
+          resultJson["locationPoints"] = pointsJson
+      }
+      
+      if let extra = decoderResult.extra,
+         let sadlImage = BarkoderHelper.sadlImage(fromExtra: extra),
+         let sadlImageData = sadlImage.pngData() {
+          resultJson["sadlImageAsBase64"] = sadlImageData.base64EncodedString()
       }
       
       // Add mrzImages

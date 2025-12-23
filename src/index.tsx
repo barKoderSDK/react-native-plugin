@@ -27,6 +27,7 @@ type BarkoderReactNativeProps = {
   ref?: React.RefObject<BarkoderView>; //users shouldn't set this
   onDataReturned?: DataReturned; //users shouldn't set this
   onBarkoderConfigCreated?: BarkoderConfigCreated; //users shouldn't set this
+  onCloseButtonTapped?: () => void;
 };
 
 const LINKING_ERROR =
@@ -39,6 +40,7 @@ const OS_NOT_SUPPORTED = 'OS is not supported!';
 
 const BARKODER_RESULT_EVENT_NAME = 'BarkoderResultEvent';
 const BARKODER_CONFIG_EVENT_NAME = 'BarkoderConfigEvent';
+const BARKODER_CLOSE_BUTTON_TAPPED_EVENT_NAME = 'BarkoderCloseButtonTappedEvent';
 
 const ComponentName = 'BarkoderReactNativeView';
 
@@ -68,6 +70,10 @@ export class BarkoderView extends React.Component<BarkoderReactNativeProps> {
     }
   }
 
+  componentWillUnmount(): void {
+    this._eventEmitter.removeAllListeners(BARKODER_CLOSE_BUTTON_TAPPED_EVENT_NAME);
+  }
+  
   private startConfigurationEmitter() {
     this._eventEmitter.addListener(BARKODER_CONFIG_EVENT_NAME, () => {
       this._eventEmitter.removeAllListeners(BARKODER_CONFIG_EVENT_NAME);
@@ -84,6 +90,10 @@ export class BarkoderView extends React.Component<BarkoderReactNativeProps> {
     this.props.onBarkoderViewCreated(this._barkoder);
   }
 
+  private _onCloseButtonTapped = () => {
+    this._barkoder._emitCloseFromNative();
+  };
+
   render() {
     return (
       <BarkoderReactNativeView
@@ -93,6 +103,7 @@ export class BarkoderView extends React.Component<BarkoderReactNativeProps> {
         onBarkoderViewCreated={this.props.onBarkoderViewCreated}
         onDataReturned={this._onDataReturned}
         onBarkoderConfigCreated={this._onBarkoderConfigCreated}
+        onCloseButtonTapped={this._onCloseButtonTapped}
       />
     );
   }
@@ -115,6 +126,8 @@ export class Barkoder {
   private _promiseRequestId: number;
   private _resultCallback: ResultCallback | undefined | null;
   private _eventEmitter: NativeEventEmitter;
+
+  private _closeCallback?: () => void;
 
   constructor(barkoderViewRef: React.RefObject<BarkoderView>) {
     this._barkoderViewRef = barkoderViewRef;
@@ -169,6 +182,24 @@ export class Barkoder {
       }
     });
   }
+
+  /**
+   * Registers a callback to handle the Close Button tap event during scanning.
+   * The callback will be triggered whenever the user presses the Close Button.
+   * 
+   * @param callback - Function to execute when the event fires.
+   */
+  onCloseButtonTapped(callback: () => void) {
+    if (this.isIos()) {
+      this._eventEmitter.removeAllListeners(BARKODER_CLOSE_BUTTON_TAPPED_EVENT_NAME);
+      this._eventEmitter.addListener(BARKODER_CLOSE_BUTTON_TAPPED_EVENT_NAME, callback);
+    } else {
+      this._closeCallback = callback;
+    }
+  }
+    _emitCloseFromNative = () => {
+      this._closeCallback?.();
+    };
 
   /**
    * Retrieves the maximum available zoom factor for the device's camera.
@@ -1511,6 +1542,39 @@ export class Barkoder {
   }
 
   /**
+ * Sets whether the QR multi-part merge mode is enabled.
+ * @param enabled - True to enable multi-part merge mode, false to disable it.
+ */
+  setQrMultiPartMergeEnabled(enabled: boolean) {
+    this._dispatchCommand('setQrMultiPartMergeEnabled', [enabled]);
+  }
+
+    /**
+* Retrieves whether the QR multi-part merge mode is enabled
+* @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether the QR multi-part merge mode is enabled.
+*/
+  isQrMultiPartMergeEnabled(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isQrMultiPartMergeEnabled', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isQrMultiPartMergeEnabled(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
  * Sets whether the Direct Part Marking (DPM) mode for QR barcodes is enabled.
  * @param enabled - True to enable DPM mode, false to disable it.
  */
@@ -2310,6 +2374,142 @@ export class Barkoder {
   }
 
   /**
+   * Configures the close button shown during scanning.
+   * @param visible - Show the button while scanning.
+   * @param positionX - X position in points.
+   * @param positionY - Y position in points.
+   * @param iconSize - Glyph point size.
+   * @param tintColor - Icon tint as a hex string (e.g., "#3472c9"); leave "" to use the default.
+   * @param backgroundColor - Button background as a hex string; leave "" for default (clear).
+   * @param cornerRadius - Corner radius.
+   * @param padding - Inner padding around the glyph.
+   * @param useCustomIcon - Set true to use a provided custom icon.
+   * @param customIcon - Custom icon as a Base64-encoded image string.
+   */
+  configureCloseButton(
+    visible: boolean,
+    positionX: number,
+    positionY: number,
+    iconSize: number,
+    tintColor: string,
+    backgroundColor: string,
+    cornerRadius: number,
+    padding: number,
+    useCustomIcon: boolean,
+    customIcon: string
+  ) {
+    this._dispatchCommand('configureCloseButton', [
+      visible,
+      positionX,
+      positionY,
+      iconSize,
+      tintColor,
+      backgroundColor,
+      cornerRadius,
+      padding,
+      useCustomIcon,
+      customIcon,
+    ]);
+  }
+
+  /**
+   * Configures the flash (torch) button shown during scanning; auto-hides if the device torch is unavailable.
+   * @param visible - Show the button while scanning.
+   * @param positionX - X position in points.
+   * @param positionY - Y position in points.
+   * @param iconSize - Glyph point size.
+   * @param tintColor - Icon tint as a hex string (e.g., "#3472c9"); leave "" to use the default.
+   * @param backgroundColor - Button background as a hex string; leave "" for default (clear).
+   * @param cornerRadius - Corner radius.
+   * @param padding - Inner padding around the glyph.
+   * @param useCustomIcon - Set true to use provided custom icons.
+   * @param customIconFlashOn - ON-state icon as a Base64-encoded image string.
+   * @param customIconFlashOff - OFF-state icon as a Base64-encoded image string.
+   */
+  configureFlashButton(
+    visible: boolean,
+    positionX: number,
+    positionY: number,
+    iconSize: number,
+    tintColor: string,
+    backgroundColor: string,
+    cornerRadius: number,
+    padding: number,
+    useCustomIcon: boolean,
+    customIconFlashOn: string,
+    customIconFlashOff: string
+  ) {
+    this._dispatchCommand('configureFlashButton', [
+      visible,
+      positionX,
+      positionY,
+      iconSize,
+      tintColor,
+      backgroundColor,
+      cornerRadius,
+      padding,
+      useCustomIcon,
+      customIconFlashOn,
+      customIconFlashOff,
+    ]);
+  }
+
+  /**
+   * Configures the zoom button shown during scanning.
+   * @param visible - Show the button while scanning.
+   * @param positionX - X position in points.
+   * @param positionY - Y position in points.
+   * @param iconSize - Glyph point size.
+   * @param tintColor - Icon tint as a hex string (e.g., "#3472c9"); leave "" to use the default.
+   * @param backgroundColor - Button background as a hex string; leave "" for default (clear).
+   * @param cornerRadius - Corner radius.
+   * @param padding - Inner padding around the glyph.
+   * @param useCustomIcon - Set true to use provided custom icons.
+   * @param customIconZoomedIn - Zoomed-in state icon as a Base64-encoded image string.
+   * @param customIconZoomedOut - Zoomed-out state icon as a Base64-encoded image string.
+   * @param zoomedInFactor - Zoom factor when toggled in (e.g., 2.0).
+   * @param zoomedOutFactor - Zoom factor when toggled out (e.g., 1.0).
+   */
+  configureZoomButton(
+    visible: boolean,
+    positionX: number,
+    positionY: number,
+    iconSize: number,
+    tintColor: string,
+    backgroundColor: string,
+    cornerRadius: number,
+    padding: number,
+    useCustomIcon: boolean,
+    customIconZoomedIn: string,
+    customIconZoomedOut: string,
+    zoomedInFactor: number,
+    zoomedOutFactor: number
+  ) {
+    this._dispatchCommand('configureZoomButton', [
+      visible,
+      positionX,
+      positionY,
+      iconSize,
+      tintColor,
+      backgroundColor,
+      cornerRadius,
+      padding,
+      useCustomIcon,
+      customIconZoomedIn,
+      customIconZoomedOut,
+      zoomedInFactor,
+      zoomedOutFactor,
+    ]);
+  }
+
+  /**
+   * Selects all barcodes that are currently visible in AR mode.
+   */
+  selectVisibleBarcodes() {
+      this._dispatchCommand('selectVisibleBarcodes', []);
+    }
+
+  /**
    * Retrieves whether showing duplicate barcode locations in the AR view is enabled.
    * @returns A promise that resolves with a boolean indicating if duplicates are shown.
    */
@@ -2965,7 +3165,8 @@ export namespace Barkoder {
     royalMail,
     kix,
     japanesePost,
-    maxiCode
+    maxiCode,
+    ocrText
   }
 
   export class BarkoderConfig {
@@ -3025,7 +3226,7 @@ export namespace Barkoder {
   export class DekoderConfig {
     aztec?: BarcodeConfig;
     aztecCompact?: BarcodeConfig;
-    qr?: BarcodeConfigWithDpmMode;
+    qr?: QRBarcodeConfig;
     qrMicro?: BarcodeConfigWithDpmMode;
     code128?: BarcodeConfigWithLength;
     code93?: BarcodeConfigWithLength;
@@ -3063,6 +3264,7 @@ export namespace Barkoder {
     kix?: BarcodeConfig;
     japanesePost?: BarcodeConfig;
     maxiCode?: BarcodeConfig;
+    ocrText?: BarcodeConfig;
     general?: GeneralSettings;
 
     constructor(config: Partial<DekoderConfig>) {
@@ -3111,6 +3313,7 @@ export namespace Barkoder {
         'KIX': this.kix?.toMap(),
         'Japanese Post': this.japanesePost?.toMap(),
         'MaxiCode': this.maxiCode?.toMap(),
+        'OCR Text': this.ocrText?.toMap(),
         'general': this.general?.toMap()
       }
 
@@ -3327,6 +3530,35 @@ export namespace Barkoder {
     }
   }
 
+    export class QRBarcodeConfig {
+    enabled?: boolean;
+    dpmMode?: number;
+    multiPartMerge?: boolean;
+    private minLength?: number;
+    private maxLength?: number;
+
+    constructor(config: Partial<QRBarcodeConfig>) {
+      Object.assign(this, config);
+    }
+
+    toMap() {
+      let map: { [key: string]: any } = {
+        "enabled": this.enabled,
+        "dpmMode": this.dpmMode,
+        "multiPartMerge": this.multiPartMerge,
+        "minimumLength": this.minLength,
+        "maximumLength": this.maxLength,
+      }
+
+      return map;
+    }
+
+    setLengthRange(minLength: number, maxLength: number) {
+      this.minLength = minLength;
+      this.maxLength = maxLength;
+    }
+  }
+
   export enum IdDocumentMasterChecksumType {
     disabled,
     enabled,
@@ -3431,6 +3663,8 @@ export namespace Barkoder {
     characterSet?: string | null;
     extra?: Record<string, any> | null;
     mrzImagesAsBase64?: { name: string; base64: string }[];
+    locationPoints?: { x: number; y: number }[];
+    sadlImageAsBase64?: string | null;
 
     constructor(resultMap: Record<string, any>) {
       this.barcodeType = resultMap['barcodeType'];
@@ -3445,7 +3679,18 @@ export namespace Barkoder {
           base64: `data:image/jpeg;base64,${image.base64}`,
         }))
         : [];
+      this.locationPoints = Array.isArray(resultMap['locationPoints'])
+      ? resultMap['locationPoints']
+      : undefined;
+
+      this.sadlImageAsBase64 = this.convertToBase64(
+        resultMap['sadlImageAsBase64'],
+      );
     }
+
+      private convertToBase64(data: string | null | undefined): string | null {
+        return data ? `data:image/jpeg;base64,${data}` : null;
+      }
   }
 
   export class BarkoderError {

@@ -34,3 +34,16 @@ class BarkoderViewConfigCreatedEvent extends Event<BarkoderViewConfigCreatedEven
     return false;
   }
 }
+
+class BarkoderViewCloseButtonTappedEvent extends Event<BarkoderViewCloseButtonTappedEvent> {
+
+  static final String EVENT_NAME = "BarkoderViewCloseButtonTapped";
+
+  BarkoderViewCloseButtonTappedEvent(int viewId) { super(viewId); }
+
+  @Override public String getEventName() { return EVENT_NAME; }
+
+  @Override public boolean canCoalesce() { return false; }
+
+  @Override protected WritableMap getEventData() { return Arguments.createMap(); }
+}

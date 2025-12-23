@@ -265,6 +265,13 @@ RCT_EXTERN_METHOD(isQrMicroDpmModeEnabled:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setQrMultiPartMergeEnabled:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(isQrMultiPartMergeEnabled:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(setQrMicroDpmModeEnabled:
                   (nonnull NSNumber *)node
                   arg:(nonnull BOOL)arg)
@@ -463,6 +470,47 @@ RCT_EXTERN_METHOD(setARHeaderVerticalTextMargin:
 RCT_EXTERN_METHOD(setARHeaderTextFormat:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSString)arg)
+RCT_EXTERN_METHOD(configureCloseButton:
+                  (nonnull NSNumber *)node
+                  visible:(nonnull NSNumber *)visible
+                  positionX:(nonnull NSNumber *)positionX
+                  positionY:(nonnull NSNumber *)positionY
+                  iconSize:(nonnull NSNumber *)iconSize
+                  tintColorHex:(nonnull NSString *)tintColorHex
+                  backgroundColorHex:(nonnull NSString *)backgroundColorHex
+                  cornerRadius:(nonnull NSNumber *)cornerRadius
+                  padding:(nonnull NSNumber *)padding
+                  useCustomIcon:(nonnull NSNumber *)useCustomIcon
+                  customIcon:(nonnull NSString *)customIcon)
+RCT_EXTERN_METHOD(configureFlashButton:
+                  (nonnull NSNumber *)node
+                  visible:(nonnull NSNumber *)visible
+                  positionX:(nonnull NSNumber *)positionX
+                  positionY:(nonnull NSNumber *)positionY
+                  iconSize:(nonnull NSNumber *)iconSize
+                  tintColorHex:(nonnull NSString *)tintColorHex
+                  backgroundColorHex:(nonnull NSString *)backgroundColorHex
+                  cornerRadius:(nonnull NSNumber *)cornerRadius
+                  padding:(nonnull NSNumber *)padding
+                  useCustomIcon:(nonnull NSNumber *)useCustomIcon
+                  customIconFlashOn:(nonnull NSString *)customIconFlashOn
+                  customIconFlashOff:(nonnull NSString *)customIconFlashOff)
+RCT_EXTERN_METHOD(configureZoomButton:
+                  (nonnull NSNumber *)node
+                  visible:(nonnull NSNumber *)visible
+                  positionX:(nonnull NSNumber *)positionX
+                  positionY:(nonnull NSNumber *)positionY
+                  iconSize:(nonnull NSNumber *)iconSize
+                  tintColorHex:(nonnull NSString *)tintColorHex
+                  backgroundColorHex:(nonnull NSString *)backgroundColorHex
+                  cornerRadius:(nonnull NSNumber *)cornerRadius
+                  padding:(nonnull NSNumber *)padding
+                  useCustomIcon:(nonnull NSNumber *)useCustomIcon
+                  customIconZoomedIn:(nonnull NSString *)customIconZoomedIn
+                  customIconZoomedOut:(nonnull NSString *)customIconZoomedOut
+                  zoomedInFactor:(nonnull NSNumber *)zoomedInFactor
+                  zoomedOutFactor:(nonnull NSNumber *)zoomedOutFactor)
+RCT_EXTERN_METHOD(selectVisibleBarcodes: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(getShowDuplicatesLocations:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
