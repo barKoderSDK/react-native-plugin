@@ -900,6 +900,16 @@ export declare class Barkoder {
      * @returns A promise that resolves with the header text format string.
      */
     getARHeaderTextFormat(): Promise<string>;
+    /**
+    * Retrieves the power saving mode level.
+    * @returns A promise that resolves with the power saving mode level.
+    */
+    getPowerSavingMode(): Promise<number>;
+    /**
+    * Power saving mode level. Higher values reduce CPU/battery usage by limiting frame processing. 0 = disabled (no constraints).
+    * @param powerSavingMode - The power saving mode level to set.
+    */
+    setPowerSavingMode(powerSavingMode: number): void;
     showLogMessages(show: boolean): void;
     private isIos;
     private isAndroid;
@@ -1025,6 +1035,7 @@ export declare namespace Barkoder {
         pinchToZoomEnabled?: boolean;
         regionOfInterestVisible?: boolean;
         barkoderResolution?: BarkoderResolution;
+        powerSavingMode?: number;
         beepOnSuccessEnabled?: boolean;
         vibrateOnSuccessEnabled?: boolean;
         decoder?: DekoderConfig;

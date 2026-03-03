@@ -81,3 +81,11 @@ if (isNewArchitectureEnabled()) {
     codegenJavaPackageName = "com.barkoderreactnative"
   }
 }
+
+afterEvaluate {
+  tasks.matching { t ->
+    t.name == "bundleReleaseAar" || t.name == "bundleDebugAar"
+  }.configureEach {
+    enabled = false
+  }
+}

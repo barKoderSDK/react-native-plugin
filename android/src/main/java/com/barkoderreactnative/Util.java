@@ -123,7 +123,7 @@ class Util {
 
   private static String bitmapImageToBase64(Bitmap bitmapImage) {
     try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-      bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+      bitmapImage.compress(Bitmap.CompressFormat.JPEG, 60, byteArrayOutputStream);
       byte[] bitmapImageBytes = byteArrayOutputStream.toByteArray();
 
       return Base64.encodeToString(bitmapImageBytes, Base64.NO_WRAP);

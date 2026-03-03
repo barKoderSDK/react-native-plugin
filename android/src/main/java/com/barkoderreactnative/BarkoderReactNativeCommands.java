@@ -154,5 +154,7 @@ class BarkoderReactNativeCommands {
   public static final int SELECT_VISIBLE_BARCODES = 150;
   public static final int SET_QR_MULTI_PART_MERGE_ENABLED = 151;
   public static final int IS_QR_MULTI_PART_MERGE_ENABLED = 152;
+  public static final int SET_POWER_SAVING_MODE = 153;
+  public static final int GET_POWER_SAVING_MODE = 154;
 
 }

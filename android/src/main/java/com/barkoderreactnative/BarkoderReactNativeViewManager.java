@@ -251,6 +251,8 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("selectVisibleBarcodes", BarkoderReactNativeCommands.SELECT_VISIBLE_BARCODES);
     commandsMap.put("setQrMultiPartMergeEnabled", BarkoderReactNativeCommands.SET_QR_MULTI_PART_MERGE_ENABLED);
     commandsMap.put("isQrMultiPartMergeEnabled", BarkoderReactNativeCommands.IS_QR_MULTI_PART_MERGE_ENABLED);
+    commandsMap.put("setPowerSavingMode", BarkoderReactNativeCommands.SET_POWER_SAVING_MODE);
+    commandsMap.put("getPowerSavingMode", BarkoderReactNativeCommands.GET_POWER_SAVING_MODE);
 
     return commandsMap;
   }
@@ -783,6 +785,12 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "isQrMultiPartMergeEnabled":
         isQrMultiPartMergeEnabled(root, args.getInt(0));
+        break;
+      case "setPowerSavingMode":
+        setPowerSavingMode(root, args.getInt(0));
+        break;
+      case "getPowerSavingMode":
+        getPowerSavingMode(root, args.getInt(0));
         break;
     }
   }
@@ -1720,6 +1728,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     boolean isQrMultiPartMergeEnabled = bkdView.config.getDecoderConfig().QR.multiPartMerge;
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
         isQrMultiPartMergeEnabled);
+  }
+
+  private void setPowerSavingMode(BarkoderReactBarkoderView bkdView, int powerSavingMode) {
+    bkdView.config.setPowerSavingMode(powerSavingMode);
+  }
+
+  private void getPowerSavingMode(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    int powerSavingMode = bkdView.config.getPowerSavingMode();
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      powerSavingMode);
   }
 
   private void getShowDuplicatesLocations(BarkoderReactBarkoderView bkdView, int promiseRequestId) {

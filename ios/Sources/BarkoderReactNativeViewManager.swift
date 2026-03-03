@@ -2338,6 +2338,27 @@ class BarkoderReactNativeViewManager: RCTViewManager {
       resolver(barkoderView.config?.arConfig.headerTextFormat)
     }
   }
+  
+  @objc
+  func getPowerSavingMode(
+      _ node: NSNumber,
+      resolver: @escaping RCTPromiseResolveBlock,
+      rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+        resolver(barkoderView.config?.powerSavingMode)
+      }
+  }
+  
+  @objc
+  func setPowerSavingMode(
+      _ node: NSNumber,
+      arg: NSNumber
+  ) {
+      getBarkoderView(node: node) { barkoderView in
+        barkoderView.config?.powerSavingMode = Int(truncating: arg)
+      }
+  }
         
 }
 
@@ -2572,7 +2593,7 @@ class Util {
       
       if let extra = decoderResult.extra,
          let sadlImage = BarkoderHelper.sadlImage(fromExtra: extra),
-         let sadlImageData = sadlImage.pngData() {
+         let sadlImageData = sadlImage.jpegData(compressionQuality: 0.6) {
           resultJson["sadlImageAsBase64"] = sadlImageData.base64EncodedString()
       }
       
@@ -2582,7 +2603,7 @@ class Util {
           var mrzImagesArray = [[String: Any]]()
           
           for image in images {
-            if let imageName = image.name, let imageData = image.image.pngData() {
+            if let imageName = image.name, let imageData = image.image.jpegData(compressionQuality: 0.6) {
               switch imageName {
               case "main", "document", "signature", "picture":
                 let imageInfo: [String: Any] = [
@@ -2607,13 +2628,13 @@ class Util {
     
     if let thumbnails = thumbnails {
       let thumbnailsBase64Array = thumbnails.compactMap { thumbnail in
-        thumbnail.pngData()?.base64EncodedString()
+        thumbnail.jpegData(compressionQuality: 0.6)?.base64EncodedString()
       }
       barkoderResultJson["resultThumbnailsAsBase64"] = thumbnailsBase64Array
     }
     
     if let image = image,
-       let imageData = image.pngData() {
+       let imageData = image.jpegData(compressionQuality: 0.6) {
       barkoderResultJson["resultImageAsBase64"] = imageData.base64EncodedString()
     }
     

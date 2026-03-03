@@ -611,5 +611,12 @@ RCT_EXTERN_METHOD(getARHeaderTextFormat:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getPowerSavingMode:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setPowerSavingMode:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
 
 @end

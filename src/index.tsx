@@ -3038,6 +3038,39 @@ export class Barkoder {
     }
   }
 
+  /**
+  * Retrieves the power saving mode level.
+  * @returns A promise that resolves with the power saving mode level.
+  */
+  getPowerSavingMode(): Promise<number> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<number>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('getPowerSavingMode', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getPowerSavingMode(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+  * Power saving mode level. Higher values reduce CPU/battery usage by limiting frame processing. 0 = disabled (no constraints).
+  * @param powerSavingMode - The power saving mode level to set.
+  */
+  setPowerSavingMode(powerSavingMode: number) {
+    this._dispatchCommand('setPowerSavingMode', [powerSavingMode]);
+  }
+
   showLogMessages(show: boolean) {
     this._dispatchCommand('showLogMessages', [show]);
   }
@@ -3186,6 +3219,7 @@ export namespace Barkoder {
     pinchToZoomEnabled?: boolean;
     regionOfInterestVisible?: boolean;
     barkoderResolution?: BarkoderResolution;
+    powerSavingMode?: number;
     beepOnSuccessEnabled?: boolean;
     vibrateOnSuccessEnabled?: boolean;
     decoder?: DekoderConfig;
@@ -3213,6 +3247,7 @@ export namespace Barkoder {
         "pinchToZoomEnabled": this.pinchToZoomEnabled,
         "regionOfInterestVisible": this.regionOfInterestVisible,
         "barkoderResolution": this.barkoderResolution,
+        "powerSavingMode": this.powerSavingMode,
         "beepOnSuccessEnabled": this.beepOnSuccessEnabled,
         "vibrateOnSuccessEnabled": this.vibrateOnSuccessEnabled,
         "decoder": this.decoder?.toMap(),
