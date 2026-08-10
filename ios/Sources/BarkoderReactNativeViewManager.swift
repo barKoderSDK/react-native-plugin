@@ -420,6 +420,28 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             resolver(barkoderView.config?.decoderConfig?.encodingCharacterSet)
         }
     }
+
+    @objc
+    func getMatchFilter(
+        _ node: NSNumber,
+        resolver: @escaping RCTPromiseResolveBlock,
+        rejecter: @escaping RCTPromiseRejectBlock
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            resolver(barkoderView.config?.decoderConfig?.matchFilter)
+        }
+    }
+
+    @objc
+    func getReturnOnlyMatchedResults(
+        _ node: NSNumber,
+        resolver: @escaping RCTPromiseResolveBlock,
+        rejecter: @escaping RCTPromiseRejectBlock
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            resolver(barkoderView.config?.decoderConfig?.returnOnlyMatchedResults)
+        }
+    }
     
     @objc
     func getDecodingSpeed(
@@ -727,6 +749,21 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             }
         }
     }
+
+        @objc
+        func setRoiCenterMark(
+          _ node: NSNumber,
+          arg: NSNumber
+        ) {
+          guard let index = arg as? Int else { return }
+          guard let roiCenterMark = BarkoderView.BarkoderRoiCenterMark(rawValue: index) else {
+            return
+          }
+
+          getBarkoderView(node: node) { barkoderView in
+            barkoderView.config?.roiCenterMark = roiCenterMark
+          }
+        }
     
     @objc
     func getBarkoderResolution(
@@ -737,6 +774,17 @@ class BarkoderReactNativeViewManager: RCTViewManager {
         getBarkoderView(node: node) { barkoderView in
             resolver(barkoderView.config?.barkoderResolution.rawValue)
         }
+    }
+
+    @objc
+    func getRoiCenterMark(
+      _ node: NSNumber,
+      resolver: @escaping RCTPromiseResolveBlock,
+      rejecter: @escaping RCTPromiseRejectBlock
+    ) {
+      getBarkoderView(node: node) { barkoderView in
+        resolver(barkoderView.config?.roiCenterMark.rawValue)
+      }
     }
     
     @objc
@@ -760,7 +808,27 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             barkoderView.config?.decoderConfig?.encodingCharacterSet = arg as String
         }
     }
-    
+
+    @objc
+    func setMatchFilter(
+        _ node: NSNumber,
+        arg: NSString
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            barkoderView.config?.decoderConfig?.matchFilter = arg as String
+        }
+    }
+
+    @objc
+    func setReturnOnlyMatchedResults(
+        _ node: NSNumber,
+        arg: Bool
+    ) {
+        getBarkoderView(node: node) { barkoderView in
+            barkoderView.config?.decoderConfig?.returnOnlyMatchedResults = arg
+        }
+    }
+
     @objc
     func setFormattingType(
         _ node: NSNumber,
@@ -1797,6 +1865,26 @@ class BarkoderReactNativeViewManager: RCTViewManager {
   }
 
   @objc
+  func setARReturnOnlyMatchedResults(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.returnOnlyMatchedResults = arg
+    }
+  }
+
+  @objc
+  func setARDisplayOnlyMatchedResults(
+    _ node: NSNumber,
+    arg: Bool
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      barkoderView.config?.arConfig.displayOnlyMatchedResults = arg
+    }
+  }
+
+  @objc
   func setARHeaderHeight(
     _ node: NSNumber,
     arg: NSNumber
@@ -2064,6 +2152,13 @@ class BarkoderReactNativeViewManager: RCTViewManager {
           barkoderView.selectVisibleBarcodes()
       }
   }
+  
+  @objc
+  func resetARCache(_ node: NSNumber) {
+      getBarkoderView(node: node) { barkoderView in
+          barkoderView.resetARCache()
+      }
+  }
 
   @objc
   func getShowDuplicatesLocations(
@@ -2241,6 +2336,28 @@ class BarkoderReactNativeViewManager: RCTViewManager {
   }
 
   @objc
+  func getARReturnOnlyMatchedResults(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.returnOnlyMatchedResults)
+    }
+  }
+
+  @objc
+  func getARDisplayOnlyMatchedResults(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.arConfig.displayOnlyMatchedResults)
+    }
+  }
+
+  @objc
   func getARHeaderHeight(
     _ node: NSNumber,
     resolver: @escaping RCTPromiseResolveBlock,
@@ -2358,6 +2475,17 @@ class BarkoderReactNativeViewManager: RCTViewManager {
       getBarkoderView(node: node) { barkoderView in
         barkoderView.config?.powerSavingMode = Int(truncating: arg)
       }
+  }
+  
+  @objc
+  func getDeviceId(
+    _ node: NSNumber,
+    resolver: @escaping RCTPromiseResolveBlock,
+    rejecter: @escaping RCTPromiseRejectBlock
+  ) {
+    getBarkoderView(node: node) { barkoderView in
+      resolver(barkoderView.config?.decoderConfig?.getDeviceId())
+    }
   }
         
 }
@@ -2575,6 +2703,7 @@ class Util {
       resultJson["binaryDataAsBase64"] = Data(decoderResult.binaryData).base64EncodedString()
       resultJson["textualData"] = decoderResult.textualData
       resultJson["characterSet"] = decoderResult.characterSet
+      resultJson["isMatched"] = decoderResult.isMatched
       
       if let extraAsDictionary = decoderResult.extra as? [String: Any],
          !extraAsDictionary.isEmpty,

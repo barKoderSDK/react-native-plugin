@@ -12,6 +12,7 @@ import com.barkoder.enums.BarkoderARHeaderShowMode;
 import com.barkoder.enums.BarkoderARLocationType;
 import com.barkoder.enums.BarkoderARMode;
 import com.barkoder.enums.BarkoderResolution;
+import com.barkoder.enums.BarkoderRoiCenterMark;
 import com.barkoder.enums.BarkoderCameraPosition;
 import com.barkoder.overlaymanager.BarkoderAROverlayRefresh;
 import com.facebook.react.bridge.Arguments;
@@ -124,6 +125,8 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setRegionOfInterestVisible", BarkoderReactNativeCommands.SET_REGION_OF_INTEREST_ENABLED);
     commandsMap.put("getBarkoderResolution", BarkoderReactNativeCommands.GET_BARKODER_RESOLUTION);
     commandsMap.put("setBarkoderResolution", BarkoderReactNativeCommands.SET_BARKODER_RESOLUTION);
+    commandsMap.put("setRoiCenterMark", BarkoderReactNativeCommands.SET_ROI_CENTER_MARK);
+    commandsMap.put("getRoiCenterMark", BarkoderReactNativeCommands.GET_ROI_CENTER_MARK);
     commandsMap.put("isBeepOnSuccessEnabled", BarkoderReactNativeCommands.IS_BEEP_ON_SUCCESS_ENABLED);
     commandsMap.put("setBeepOnSuccessEnabled", BarkoderReactNativeCommands.SET_BEEP_ON_SUCCESS_ENABLED);
     commandsMap.put("isVibrateOnSuccessEnabled", BarkoderReactNativeCommands.IS_VIBRATE_ON_SUCCESS_ENABLED);
@@ -142,6 +145,10 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setCode11ChecksumType", BarkoderReactNativeCommands.SET_CODE_11_CHECKSUM_TYPE);
     commandsMap.put("getEncodingCharacterSet", BarkoderReactNativeCommands.GET_ENCODING_CHARACTER_SET);
     commandsMap.put("setEncodingCharacterSet", BarkoderReactNativeCommands.SET_ENCODING_CHARACTER_SET);
+    commandsMap.put("getMatchFilter", BarkoderReactNativeCommands.GET_MATCH_FILTER);
+    commandsMap.put("setMatchFilter", BarkoderReactNativeCommands.SET_MATCH_FILTER);
+    commandsMap.put("getReturnOnlyMatchedResults", BarkoderReactNativeCommands.GET_RETURN_ONLY_MATCHED_RESULTS);
+    commandsMap.put("setReturnOnlyMatchedResults", BarkoderReactNativeCommands.SET_RETURN_ONLY_MATCHED_RESULTS);
     commandsMap.put("getDecodingSpeed", BarkoderReactNativeCommands.GET_DECODING_SPEED);
     commandsMap.put("setDecodingSpeed", BarkoderReactNativeCommands.SET_DECODING_SPEED);
     commandsMap.put("getFormattingType", BarkoderReactNativeCommands.GET_FORMATTING_TYPE);
@@ -244,6 +251,10 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("getARContinueScanningOnLimit", BarkoderReactNativeCommands.GET_AR_CONTINUE_SCANNING_ON_LIMIT);
     commandsMap.put("setAREmitResultsAtSessionEndOnly", BarkoderReactNativeCommands.SET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY);
     commandsMap.put("getAREmitResultsAtSessionEndOnly", BarkoderReactNativeCommands.GET_AR_EMIT_RESULTS_AT_SESSION_END_ONLY);
+    commandsMap.put("setARReturnOnlyMatchedResults", BarkoderReactNativeCommands.SET_AR_RETURN_ONLY_MATCHED_RESULTS);
+    commandsMap.put("getARReturnOnlyMatchedResults", BarkoderReactNativeCommands.GET_AR_RETURN_ONLY_MATCHED_RESULTS);
+    commandsMap.put("setARDisplayOnlyMatchedResults", BarkoderReactNativeCommands.SET_AR_DISPLAY_ONLY_MATCHED_RESULTS);
+    commandsMap.put("getARDisplayOnlyMatchedResults", BarkoderReactNativeCommands.GET_AR_DISPLAY_ONLY_MATCHED_RESULTS);
     commandsMap.put("captureImage", BarkoderReactNativeCommands.CAPTURE_IMAGE);
     commandsMap.put("configureCloseButton", BarkoderReactNativeCommands.CONFIGURE_CLOSE_BUTTON);
     commandsMap.put("configureFlashButton", BarkoderReactNativeCommands.CONFIGURE_FLASH_BUTTON);
@@ -253,6 +264,8 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("isQrMultiPartMergeEnabled", BarkoderReactNativeCommands.IS_QR_MULTI_PART_MERGE_ENABLED);
     commandsMap.put("setPowerSavingMode", BarkoderReactNativeCommands.SET_POWER_SAVING_MODE);
     commandsMap.put("getPowerSavingMode", BarkoderReactNativeCommands.GET_POWER_SAVING_MODE);
+    commandsMap.put("getDeviceId", BarkoderReactNativeCommands.GET_DEVICE_ID);
+    commandsMap.put("resetARCache", BarkoderReactNativeCommands.RESET_AR_CACHE);
 
     return commandsMap;
   }
@@ -389,6 +402,12 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "setBarkoderResolution":
         setBarkoderResolution(root, args.getInt(0));
         break;
+      case "setRoiCenterMark":
+        setRoiCenterMark(root, args.getInt(0));
+        break;
+      case "getRoiCenterMark":
+        getRoiCenterMark(root, args.getInt(0));
+        break;
       case "isBeepOnSuccessEnabled":
         isBeepOnSuccessEnabled(root, args.getInt(0));
         break;
@@ -457,6 +476,18 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "setEncodingCharacterSet":
         setEncodingCharacterSet(root, args.getString(0));
+        break;
+      case "getMatchFilter":
+        getMatchFilter(root, args.getInt(0));
+        break;
+      case "setMatchFilter":
+        setMatchFilter(root, args.getString(0));
+        break;
+      case "getReturnOnlyMatchedResults":
+        getReturnOnlyMatchedResults(root, args.getInt(0));
+        break;
+      case "setReturnOnlyMatchedResults":
+        setReturnOnlyMatchedResults(root, args.getBoolean(0));
         break;
       case "getDecodingSpeed":
         getDecodingSpeed(root, args.getInt(0));
@@ -677,6 +708,18 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "getAREmitResultsAtSessionEndOnly":
         getAREmitResultsAtSessionEndOnly(root, args.getInt(0));
         break;
+      case "setARReturnOnlyMatchedResults":
+        setARReturnOnlyMatchedResults(root, args.getBoolean(0));
+        break;
+      case "getARReturnOnlyMatchedResults":
+        getARReturnOnlyMatchedResults(root, args.getInt(0));
+        break;
+      case "setARDisplayOnlyMatchedResults":
+        setARDisplayOnlyMatchedResults(root, args.getBoolean(0));
+        break;
+      case "getARDisplayOnlyMatchedResults":
+        getARDisplayOnlyMatchedResults(root, args.getInt(0));
+        break;
       case "setARHeaderHeight":
         setARHeaderHeight(root, (float) args.getDouble(0));
         break;
@@ -780,6 +823,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       case "selectVisibleBarcodes":
         selectVisibleBarcodes(root);
         break;
+      case "resetARCache":
+        resetARCache(root);
+        break;
       case "setQrMultiPartMergeEnabled":
         setQrMultiPartMergeEnabled(root, args.getBoolean(0));
         break;
@@ -791,6 +837,9 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "getPowerSavingMode":
         getPowerSavingMode(root, args.getInt(0));
+        break;
+      case "getDeviceId":
+        getDeviceId(root, args.getInt(0));
         break;
     }
   }
@@ -1077,6 +1126,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.config.setBarkoderResolution(bkdResolution);
   }
 
+  private void setRoiCenterMark(BarkoderReactBarkoderView bkdView, int roiCenterMarkOrdinal) {
+    BarkoderRoiCenterMark roiCenterMark = BarkoderRoiCenterMark.values()[roiCenterMarkOrdinal];
+    bkdView.config.setRoiCenterMark(roiCenterMark);
+  }
+
+  private void getRoiCenterMark(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getRoiCenterMark().ordinal());
+  }
+
   private void isBeepOnSuccessEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
         bkdView.config.isBeepOnSuccessEnabled());
@@ -1219,6 +1278,24 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void setEncodingCharacterSet(BarkoderReactBarkoderView bkdView, String characterSet) {
     bkdView.config.getDecoderConfig().encodingCharacterSet = characterSet;
+  }
+
+  private void getMatchFilter(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        bkdView.config.getDecoderConfig().matchFilter);
+  }
+
+  private void setMatchFilter(BarkoderReactBarkoderView bkdView, String matchFilter) {
+    bkdView.config.getDecoderConfig().matchFilter = matchFilter;
+  }
+
+  private void getReturnOnlyMatchedResults(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        bkdView.config.getDecoderConfig().returnOnlyMatchedResults);
+  }
+
+  private void setReturnOnlyMatchedResults(BarkoderReactBarkoderView bkdView, boolean value) {
+    bkdView.config.getDecoderConfig().returnOnlyMatchedResults = value;
   }
 
   private void getDecodingSpeed(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
@@ -1549,6 +1626,14 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.config.getArConfig().setEmitResultsAtSessionEndOnly(value);
   }
 
+  private void setARReturnOnlyMatchedResults(BarkoderReactBarkoderView bkdView, boolean value) {
+    bkdView.config.getArConfig().setReturnOnlyMatchedResults(value);
+  }
+
+  private void setARDisplayOnlyMatchedResults(BarkoderReactBarkoderView bkdView, boolean value) {
+    bkdView.config.getArConfig().setDisplayOnlyMatchedResults(value);
+  }
+
   private void setARHeaderHeight(BarkoderReactBarkoderView bkdView, float value) {
     bkdView.config.getArConfig().setHeaderHeight(value);
   }
@@ -1720,6 +1805,10 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     bkdView.selectVisibleBarcodes();
   }
 
+  private void resetARCache(BarkoderReactBarkoderView bkdView) {
+    bkdView.resetArCache();
+  }
+
   private void setQrMultiPartMergeEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
     bkdView.config.getDecoderConfig().QR.multiPartMerge = enabled;
   }
@@ -1820,6 +1909,16 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
       bkdView.config.getArConfig().getEmitResultsAtSessionEndOnly());
   }
 
+  private void getARReturnOnlyMatchedResults(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getReturnOnlyMatchedResults());
+  }
+
+  private void getARDisplayOnlyMatchedResults(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      bkdView.config.getArConfig().getDisplayOnlyMatchedResults());
+  }
+
   private void getARHeaderHeight(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
       bkdView.config.getArConfig().getHeaderHeight());
@@ -1863,6 +1962,11 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
   private void getARHeaderTextFormat(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
     dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
       bkdView.config.getArConfig().getHeaderTextFormat());
+  }
+
+  private void getDeviceId(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+      Barkoder.GetDeviceId());
   }
 
   private void configureBarkoder(BarkoderReactBarkoderView bkdView, int promiseRequestId,

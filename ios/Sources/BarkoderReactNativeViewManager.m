@@ -96,6 +96,14 @@ RCT_EXTERN_METHOD(getEncodingCharacterSet:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getMatchFilter:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getReturnOnlyMatchedResults:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(getDecodingSpeed:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
@@ -195,9 +203,22 @@ RCT_EXTERN_METHOD(getBarkoderResolution:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setRoiCenterMark:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(getRoiCenterMark:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(setEncodingCharacterSet:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSString)arg)
+RCT_EXTERN_METHOD(setMatchFilter:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull NSString)arg)
+RCT_EXTERN_METHOD(setReturnOnlyMatchedResults:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
 RCT_EXTERN_METHOD(setDecodingSpeed:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg)
@@ -439,6 +460,12 @@ RCT_EXTERN_METHOD(setARContinueScanningOnLimit:
 RCT_EXTERN_METHOD(setAREmitResultsAtSessionEndOnly:
                   (nonnull NSNumber *)node
                   arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setARReturnOnlyMatchedResults:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setARDisplayOnlyMatchedResults:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
 RCT_EXTERN_METHOD(setARHeaderHeight:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg)
@@ -511,6 +538,7 @@ RCT_EXTERN_METHOD(configureZoomButton:
                   zoomedInFactor:(nonnull NSNumber *)zoomedInFactor
                   zoomedOutFactor:(nonnull NSNumber *)zoomedOutFactor)
 RCT_EXTERN_METHOD(selectVisibleBarcodes: (nonnull NSNumber *)node)
+RCT_EXTERN_METHOD(resetARCache: (nonnull NSNumber *)node)
 RCT_EXTERN_METHOD(getShowDuplicatesLocations:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
@@ -575,6 +603,14 @@ RCT_EXTERN_METHOD(getAREmitResultsAtSessionEndOnly:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARReturnOnlyMatchedResults:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getARDisplayOnlyMatchedResults:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(getARHeaderHeight:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
@@ -618,5 +654,9 @@ RCT_EXTERN_METHOD(getPowerSavingMode:
 RCT_EXTERN_METHOD(setPowerSavingMode:
                   (nonnull NSNumber *)node
                   arg:(nonnull NSNumber)arg)
+RCT_EXTERN_METHOD(getDeviceId:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

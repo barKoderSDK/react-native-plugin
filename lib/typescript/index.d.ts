@@ -127,6 +127,16 @@ export declare class Barkoder {
      */
     setBarkoderResolution(barkoderResolution: Barkoder.BarkoderResolution): void;
     /**
+     * Sets the style of the visual marker drawn at the center of the Region of Interest (ROI).
+     * @param roiCenterMark - The ROI center mark style to set.
+     */
+    setRoiCenterMark(roiCenterMark: Barkoder.BarkoderRoiCenterMark): void;
+    /**
+     * Retrieves the style of the visual marker drawn at the center of the Region of Interest (ROI).
+     * @returns A promise that resolves with the ROI center mark style.
+     */
+    getRoiCenterMark(): Promise<Barkoder.BarkoderRoiCenterMark>;
+    /**
      * Sets the decoding speed for barcode scanning.
      */
     setDecodingSpeed(decodingSpeed: Barkoder.DecodingSpeed): void;
@@ -139,6 +149,19 @@ export declare class Barkoder {
      * @param encodingCharacterSet - The encoding character set to be set.
      */
     setEncodingCharacterSet(encodingCharacterSet: String): void;
+    /**
+     * Defines the string match filter applied to decoded results.
+     * Results expose their match status through `isMatched`.
+     * @param matchFilter - The match filter string to set.
+     */
+    setMatchFilter(matchFilter: string): void;
+    /**
+     * Controls whether only results matching `matchFilter` are returned.
+     * If `false`, all decoded results are returned, including unmatched results.
+     * This option only applies when a match filter is active.
+     * @param enabled - A boolean indicating whether to return only matched results.
+     */
+    setReturnOnlyMatchedResults(enabled: boolean): void;
     /**
      * Retrieves the hexadecimal color code representing the line color used to indicate the location of detected barcodes.
      * @returns A promise that resolves with the location line color in hexadecimal format.
@@ -302,6 +325,16 @@ export declare class Barkoder {
      * @returns {Promise<string>} A promise that resolves with the encoding character set.
      */
     getEncodingCharacterSet(): Promise<string>;
+    /**
+     * Retrieves the string match filter applied to decoded results.
+     * @returns {Promise<string>} A promise that resolves with the match filter string.
+     */
+    getMatchFilter(): Promise<string>;
+    /**
+     * Retrieves whether only results matching `matchFilter` are returned.
+     * @returns {Promise<boolean>} A promise that resolves with a boolean indicating if only matched results are returned.
+     */
+    getReturnOnlyMatchedResults(): Promise<boolean>;
     /**
      * Retrieves the version of the Barkoder SDK.
      * @returns {Promise<string>} A promise that resolves with the version of the Barkoder SDK.
@@ -679,6 +712,20 @@ export declare class Barkoder {
      */
     setAREmitResultsAtSessionEndOnly(value: boolean): void;
     /**
+     * When AR mode is `matchFilter`, controls whether only matched results are returned.
+     * If `false`, all detected results are returned, while unmatched results remain marked through `isMatched`.
+     * This option only applies when `arMode == matchFilter` and a match filter is active.
+     * @param value - Boolean indicating whether to return only matched results.
+     */
+    setARReturnOnlyMatchedResults(value: boolean): void;
+    /**
+     * When AR mode is `matchFilter`, controls whether only matched results are displayed.
+     * If `false`, all decoded results are displayed, including unmatched results.
+     * This option only applies when `arMode == matchFilter` and a match filter is active.
+     * @param value - Boolean indicating whether to display only matched results.
+     */
+    setARDisplayOnlyMatchedResults(value: boolean): void;
+    /**
      * Sets height of the AR header label.
      * @param value - Header height.
      */
@@ -776,6 +823,10 @@ export declare class Barkoder {
      */
     selectVisibleBarcodes(): void;
     /**
+     * Clears the current AR result cache and removes all rendered AR barcode overlays without stopping the camera, ending the scanning session, or emitting results.
+     */
+    resetARCache(): void;
+    /**
      * Retrieves whether showing duplicate barcode locations in the AR view is enabled.
      * @returns A promise that resolves with a boolean indicating if duplicates are shown.
      */
@@ -856,6 +907,16 @@ export declare class Barkoder {
      */
     getAREmitResultsAtSessionEndOnly(): Promise<boolean>;
     /**
+     * Retrieves whether only matched results are returned in AR match filter mode.
+     * @returns A promise resolving to a boolean indicating if only matched results are returned.
+     */
+    getARReturnOnlyMatchedResults(): Promise<boolean>;
+    /**
+     * Retrieves whether only matched results are displayed in AR match filter mode.
+     * @returns A promise resolving to a boolean indicating if only matched results are displayed.
+     */
+    getARDisplayOnlyMatchedResults(): Promise<boolean>;
+    /**
      * Retrieves the header height above barcode in AR mode.
      * @returns A promise that resolves with the header height.
      */
@@ -910,6 +971,11 @@ export declare class Barkoder {
     * @param powerSavingMode - The power saving mode level to set.
     */
     setPowerSavingMode(powerSavingMode: number): void;
+    /**
+    * Retrieves the Device ID.
+    * @returns A promise that resolves with the Device ID.
+    */
+    getDeviceId(): Promise<string>;
     showLogMessages(show: boolean): void;
     private isIos;
     private isAndroid;
@@ -926,7 +992,8 @@ export declare namespace Barkoder {
         automatic = 1,
         gs1 = 2,
         aamva = 3,
-        sadl = 4
+        sadl = 4,
+        bcbp = 5
     }
     enum MsiChecksumType {
         disabled = 0,
@@ -955,11 +1022,17 @@ export declare namespace Barkoder {
         FHD = 1,
         UHD = 2
     }
+    enum BarkoderRoiCenterMark {
+        none = 0,
+        crosshair = 1,
+        point = 2
+    }
     enum BarkoderARMode {
         off = 0,
         interactiveDisabled = 1,
         interactiveEnabled = 2,
-        nonInteractive = 3
+        nonInteractive = 3,
+        matchFilter = 4
     }
     enum BarkoderAROverlayRefresh {
         smooth = 0,
@@ -1030,11 +1103,13 @@ export declare namespace Barkoder {
         scanningIndicatorAlwaysVisible?: boolean;
         closeSessionOnResultEnabled?: boolean;
         imageResultEnabled?: boolean;
+        barcodeThumbnailOnResult?: boolean;
         locationInImageResultEnabled?: boolean;
         locationInPreviewEnabled?: boolean;
         pinchToZoomEnabled?: boolean;
         regionOfInterestVisible?: boolean;
         barkoderResolution?: BarkoderResolution;
+        roiCenterMark?: BarkoderRoiCenterMark;
         powerSavingMode?: number;
         beepOnSuccessEnabled?: boolean;
         vibrateOnSuccessEnabled?: boolean;
@@ -1238,6 +1313,8 @@ export declare namespace Barkoder {
         resultLimit?: number;
         continueScanningOnLimit?: boolean;
         emitResultsAtSessionEndOnly?: boolean;
+        returnOnlyMatchedResults?: boolean;
+        displayOnlyMatchedResults?: boolean;
         headerHeight?: number;
         headerShowMode?: BarkoderARHeaderShowMode;
         headerMaxTextHeight?: number;
@@ -1264,6 +1341,8 @@ export declare namespace Barkoder {
             resultLimit: number | undefined;
             continueScanningOnLimit: boolean | undefined;
             emitResultsAtSessionEndOnly: boolean | undefined;
+            returnOnlyMatchedResults: boolean | undefined;
+            displayOnlyMatchedResults: boolean | undefined;
             headerHeight: number | undefined;
             headerShowMode: BarkoderARHeaderShowMode | undefined;
             headerMaxTextHeight: number | undefined;
@@ -1376,6 +1455,8 @@ export declare namespace Barkoder {
         maximumResultsCount?: number;
         multicodeCachingDuration?: number;
         multicodeCachingEnabled?: boolean;
+        matchFilter?: string;
+        returnOnlyMatchedResults?: boolean;
         constructor(config: Partial<GeneralSettings>);
         toMap(): {
             [key: string]: any;
@@ -1405,6 +1486,7 @@ export declare namespace Barkoder {
             y: number;
         }[];
         sadlImageAsBase64?: string | null;
+        isMatched: boolean;
         constructor(resultMap: Record<string, any>);
         private convertToBase64;
     }

@@ -1,6 +1,6 @@
 {
   "name": "barkoder-react-native",
-  "version": "1.6.8",
+  "version": "1.7.1",
   "description": "React native support for Barkoder - a Barcode Scanner SDK for the modern enterprise.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -64,7 +64,10 @@
     "matrix",
     "pdf-417"
   ],
-  "repository": "https://barkoder.com",
+  "repository": {
+  "type": "git",
+  "url": "git+https://github.com/barKoderSDK/react-native-plugin.git"
+  },
   "author": "barkoder <admin@barkoder> (https://barkoder.com)",
   "license": "SEE LICENSE IN LICENSE.txt",
   "bugs": {

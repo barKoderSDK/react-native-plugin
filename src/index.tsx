@@ -423,6 +423,39 @@ export class Barkoder {
   }
 
   /**
+   * Sets the style of the visual marker drawn at the center of the Region of Interest (ROI).
+   * @param roiCenterMark - The ROI center mark style to set.
+   */
+  setRoiCenterMark(roiCenterMark: Barkoder.BarkoderRoiCenterMark) {
+    this._dispatchCommand('setRoiCenterMark', [roiCenterMark]);
+  }
+
+  /**
+   * Retrieves the style of the visual marker drawn at the center of the Region of Interest (ROI).
+   * @returns A promise that resolves with the ROI center mark style.
+   */
+  getRoiCenterMark(): Promise<Barkoder.BarkoderRoiCenterMark> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<Barkoder.BarkoderRoiCenterMark>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('getRoiCenterMark', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getRoiCenterMark(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
    * Sets the decoding speed for barcode scanning.
    */
   setDecodingSpeed(decodingSpeed: Barkoder.DecodingSpeed) {
@@ -442,6 +475,25 @@ export class Barkoder {
    */
   setEncodingCharacterSet(encodingCharacterSet: String) {
     this._dispatchCommand('setEncodingCharacterSet', [encodingCharacterSet]);
+  }
+
+  /**
+   * Defines the string match filter applied to decoded results.
+   * Results expose their match status through `isMatched`.
+   * @param matchFilter - The match filter string to set.
+   */
+  setMatchFilter(matchFilter: string) {
+    this._dispatchCommand('setMatchFilter', [matchFilter]);
+  }
+
+  /**
+   * Controls whether only results matching `matchFilter` are returned.
+   * If `false`, all decoded results are returned, including unmatched results.
+   * This option only applies when a match filter is active.
+   * @param enabled - A boolean indicating whether to return only matched results.
+   */
+  setReturnOnlyMatchedResults(enabled: boolean) {
+    this._dispatchCommand('setReturnOnlyMatchedResults', [enabled]);
   }
 
   /**
@@ -1069,6 +1121,56 @@ export class Barkoder {
       return promise;
     } else if (this.isIos()) {
       return NativeModules.BarkoderReactNativeViewManager.getEncodingCharacterSet(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves the string match filter applied to decoded results.
+   * @returns {Promise<string>} A promise that resolves with the match filter string.
+   */
+  getMatchFilter(): Promise<string> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<string>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('getMatchFilter', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getMatchFilter(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves whether only results matching `matchFilter` are returned.
+   * @returns {Promise<boolean>} A promise that resolves with a boolean indicating if only matched results are returned.
+   */
+  getReturnOnlyMatchedResults(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('getReturnOnlyMatchedResults', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getReturnOnlyMatchedResults(
         findNodeHandle(this._barkoderViewRef.current)
       );
     } else {
@@ -2264,6 +2366,26 @@ export class Barkoder {
   }
 
   /**
+   * When AR mode is `matchFilter`, controls whether only matched results are returned.
+   * If `false`, all detected results are returned, while unmatched results remain marked through `isMatched`.
+   * This option only applies when `arMode == matchFilter` and a match filter is active.
+   * @param value - Boolean indicating whether to return only matched results.
+   */
+  setARReturnOnlyMatchedResults(value: boolean) {
+    this._dispatchCommand('setARReturnOnlyMatchedResults', [value]);
+  }
+
+  /**
+   * When AR mode is `matchFilter`, controls whether only matched results are displayed.
+   * If `false`, all decoded results are displayed, including unmatched results.
+   * This option only applies when `arMode == matchFilter` and a match filter is active.
+   * @param value - Boolean indicating whether to display only matched results.
+   */
+  setARDisplayOnlyMatchedResults(value: boolean) {
+    this._dispatchCommand('setARDisplayOnlyMatchedResults', [value]);
+  }
+
+  /**
    * Sets height of the AR header label.
    * @param value - Header height.
    */
@@ -2507,6 +2629,13 @@ export class Barkoder {
    */
   selectVisibleBarcodes() {
       this._dispatchCommand('selectVisibleBarcodes', []);
+    }
+
+  /**
+   * Clears the current AR result cache and removes all rendered AR barcode overlays without stopping the camera, ending the scanning session, or emitting results.
+   */
+  resetARCache() {
+      this._dispatchCommand('resetARCache', []);
     }
 
   /**
@@ -2848,6 +2977,48 @@ export class Barkoder {
       throw new Error(OS_NOT_SUPPORTED);
     }
   }
+
+  /**
+   * Retrieves whether only matched results are returned in AR match filter mode.
+   * @returns A promise resolving to a boolean indicating if only matched results are returned.
+   */
+  getARReturnOnlyMatchedResults(): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<boolean>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARReturnOnlyMatchedResults', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARReturnOnlyMatchedResults(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Retrieves whether only matched results are displayed in AR match filter mode.
+   * @returns A promise resolving to a boolean indicating if only matched results are displayed.
+   */
+  getARDisplayOnlyMatchedResults(): Promise<boolean> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<boolean>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getARDisplayOnlyMatchedResults', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getARDisplayOnlyMatchedResults(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
   
   /**
    * Retrieves the header height above barcode in AR mode.
@@ -3071,6 +3242,27 @@ export class Barkoder {
     this._dispatchCommand('setPowerSavingMode', [powerSavingMode]);
   }
 
+  /**
+  * Retrieves the Device ID.
+  * @returns A promise that resolves with the Device ID.
+  */
+  getDeviceId(): Promise<string> {
+    if (this.isAndroid()) {
+      const promiseRequestId = ++this._promiseRequestId;
+      const promise = new Promise<string>((resolve, reject) => {
+        this._promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+      this._dispatchCommand('getDeviceId', [promiseRequestId]);
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.getDeviceId(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
   showLogMessages(show: boolean) {
     this._dispatchCommand('showLogMessages', [show]);
   }
@@ -3100,6 +3292,7 @@ export namespace Barkoder {
     gs1,
     aamva,
     sadl,
+    bcbp,
   }
 
   export enum MsiChecksumType {
@@ -3134,11 +3327,18 @@ export namespace Barkoder {
     UHD,
   }
 
+  export enum BarkoderRoiCenterMark {
+    none,
+    crosshair,
+    point,
+  }
+
   export enum BarkoderARMode {
     off,
     interactiveDisabled,
     interactiveEnabled,
-    nonInteractive
+    nonInteractive,
+    matchFilter
   }
   
   export enum BarkoderAROverlayRefresh {
@@ -3214,11 +3414,13 @@ export namespace Barkoder {
     scanningIndicatorAlwaysVisible?: boolean;
     closeSessionOnResultEnabled?: boolean;
     imageResultEnabled?: boolean;
+    barcodeThumbnailOnResult?: boolean;
     locationInImageResultEnabled?: boolean;
     locationInPreviewEnabled?: boolean;
     pinchToZoomEnabled?: boolean;
     regionOfInterestVisible?: boolean;
     barkoderResolution?: BarkoderResolution;
+    roiCenterMark?: BarkoderRoiCenterMark;
     powerSavingMode?: number;
     beepOnSuccessEnabled?: boolean;
     vibrateOnSuccessEnabled?: boolean;
@@ -3242,11 +3444,13 @@ export namespace Barkoder {
         "scanningIndicatorAlwaysVisible": this.scanningIndicatorAlwaysVisible,
         "closeSessionOnResultEnabled": this.closeSessionOnResultEnabled,
         "imageResultEnabled": this.imageResultEnabled,
+        "barcodeThumbnailOnResult": this.barcodeThumbnailOnResult,
         "locationInImageResultEnabled": this.locationInImageResultEnabled,
         "locationInPreviewEnabled": this.locationInPreviewEnabled,
         "pinchToZoomEnabled": this.pinchToZoomEnabled,
         "regionOfInterestVisible": this.regionOfInterestVisible,
         "barkoderResolution": this.barkoderResolution,
+        "roiCenterMark": this.roiCenterMark,
         "powerSavingMode": this.powerSavingMode,
         "beepOnSuccessEnabled": this.beepOnSuccessEnabled,
         "vibrateOnSuccessEnabled": this.vibrateOnSuccessEnabled,
@@ -3372,6 +3576,8 @@ export namespace Barkoder {
     resultLimit?: number;
     continueScanningOnLimit?: boolean;
     emitResultsAtSessionEndOnly?: boolean;
+    returnOnlyMatchedResults?: boolean;
+    displayOnlyMatchedResults?: boolean;
     headerHeight?: number;
     headerShowMode?: BarkoderARHeaderShowMode;
     headerMaxTextHeight?: number;
@@ -3403,6 +3609,8 @@ export namespace Barkoder {
         "resultLimit": this.resultLimit,
         "continueScanningOnLimit": this.continueScanningOnLimit,
         "emitResultsAtSessionEndOnly": this.emitResultsAtSessionEndOnly,
+        "returnOnlyMatchedResults": this.returnOnlyMatchedResults,
+        "displayOnlyMatchedResults": this.displayOnlyMatchedResults,
         "headerHeight": this.headerHeight,
         "headerShowMode": this.headerShowMode,
         "headerMaxTextHeight": this.headerMaxTextHeight,
@@ -3631,6 +3839,8 @@ export namespace Barkoder {
     maximumResultsCount?: number;
     multicodeCachingDuration?: number;
     multicodeCachingEnabled?: boolean;
+    matchFilter?: string;
+    returnOnlyMatchedResults?: boolean;
 
     constructor(config: Partial<GeneralSettings>) {
       Object.assign(this, config);
@@ -3650,7 +3860,9 @@ export namespace Barkoder {
         "enableMisshaped1D": this.enableMisshaped1D,
         "maximumResultsCount": this.maximumResultsCount,
         "multicodeCachingDuration": this.multicodeCachingDuration,
-        "multicodeCachingEnabled": this.multicodeCachingEnabled
+        "multicodeCachingEnabled": this.multicodeCachingEnabled,
+        "matchFilter": this.matchFilter,
+        "returnOnlyMatchedResults": this.returnOnlyMatchedResults
       }
 
       return map;
@@ -3700,6 +3912,7 @@ export namespace Barkoder {
     mrzImagesAsBase64?: { name: string; base64: string }[];
     locationPoints?: { x: number; y: number }[];
     sadlImageAsBase64?: string | null;
+    isMatched: boolean;
 
     constructor(resultMap: Record<string, any>) {
       this.barcodeType = resultMap['barcodeType'];
@@ -3721,6 +3934,7 @@ export namespace Barkoder {
       this.sadlImageAsBase64 = this.convertToBase64(
         resultMap['sadlImageAsBase64'],
       );
+      this.isMatched = resultMap['isMatched'];
     }
 
       private convertToBase64(data: string | null | undefined): string | null {

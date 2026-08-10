@@ -156,5 +156,17 @@ class BarkoderReactNativeCommands {
   public static final int IS_QR_MULTI_PART_MERGE_ENABLED = 152;
   public static final int SET_POWER_SAVING_MODE = 153;
   public static final int GET_POWER_SAVING_MODE = 154;
+  public static final int GET_DEVICE_ID = 155;
+  public static final int RESET_AR_CACHE = 156;
+  public static final int SET_AR_RETURN_ONLY_MATCHED_RESULTS = 157;
+  public static final int GET_AR_RETURN_ONLY_MATCHED_RESULTS = 158;
+  public static final int SET_AR_DISPLAY_ONLY_MATCHED_RESULTS = 159;
+  public static final int GET_AR_DISPLAY_ONLY_MATCHED_RESULTS = 160;
+  public static final int SET_MATCH_FILTER = 161;
+  public static final int GET_MATCH_FILTER = 162;
+  public static final int SET_RETURN_ONLY_MATCHED_RESULTS = 163;
+  public static final int GET_RETURN_ONLY_MATCHED_RESULTS = 164;
+  public static final int SET_ROI_CENTER_MARK = 165;
+  public static final int GET_ROI_CENTER_MARK = 166;
 
 }

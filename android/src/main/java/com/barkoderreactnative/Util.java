@@ -35,6 +35,7 @@ class Util {
         resultJson.put("barcodeTypeName", decoderResult.barcodeTypeName);
         resultJson.put("binaryDataAsBase64", Base64.encodeToString(decoderResult.binaryData, Base64.NO_WRAP));
         resultJson.put("textualData", decoderResult.textualData);
+        resultJson.put("isMatched", decoderResult.isMatched);
 
         if (!TextUtils.isEmpty(decoderResult.characterSet)) {
           resultJson.put("characterSet", decoderResult.characterSet);
