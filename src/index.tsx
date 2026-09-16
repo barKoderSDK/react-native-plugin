@@ -972,6 +972,39 @@ export class Barkoder {
   }
 
   /**
+   * Retrieves whether the front camera preview is horizontally mirrored.
+   * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether the preview is mirrored.
+   */
+  isPreviewMirrored(): Promise<boolean> {
+    if (this.isAndroid()) {
+      let promisesMap = this._promisesMap;
+      let promiseRequestId = ++this._promiseRequestId;
+
+      let promise = new Promise<boolean>((resolve, reject) => {
+        promisesMap.set(promiseRequestId, [resolve, reject]);
+      });
+
+      this._dispatchCommand('isPreviewMirrored', [promiseRequestId]);
+
+      return promise;
+    } else if (this.isIos()) {
+      return NativeModules.BarkoderReactNativeViewManager.isPreviewMirrored(
+        findNodeHandle(this._barkoderViewRef.current)
+      );
+    } else {
+      throw new Error(OS_NOT_SUPPORTED);
+    }
+  }
+
+  /**
+   * Controls whether the front camera preview is horizontally mirrored.
+   * @param enabled - True to mirror the preview, false to disable mirroring.
+   */
+  setPreviewMirrored(enabled: boolean) {
+    this._dispatchCommand('setPreviewMirrored', [enabled]);
+  }
+
+  /**
    * Checks if pinch to zoom is enabled.
    * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether pinch to zoom is enabled.
    */
@@ -3834,8 +3867,8 @@ export namespace Barkoder {
     roiHeight?: number;
     formattingType?: FormattingType;
     encodingCharacterSet?: string;
-    upcEanDeblur?: number;
-    enableMisshaped1D?: number;
+    upcEanDeblur?: boolean;
+    enableMisshaped1D?: boolean;
     maximumResultsCount?: number;
     multicodeCachingDuration?: number;
     multicodeCachingEnabled?: boolean;

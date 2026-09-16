@@ -119,6 +119,8 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
     commandsMap.put("setThreadsLimit", BarkoderReactNativeCommands.SET_THREADS_LIMIT);
     commandsMap.put("isLocationInPreviewEnabled", BarkoderReactNativeCommands.IS_LOCATION_IN_PREVIEW_ENABLED);
     commandsMap.put("setLocationInPreviewEnabled", BarkoderReactNativeCommands.SET_LOCATION_IN_PREVIEW_ENABLED);
+    commandsMap.put("isPreviewMirrored", BarkoderReactNativeCommands.IS_PREVIEW_MIRRORED);
+    commandsMap.put("setPreviewMirrored", BarkoderReactNativeCommands.SET_PREVIEW_MIRRORED);
     commandsMap.put("isPinchToZoomEnabled", BarkoderReactNativeCommands.IS_PINCH_TO_ZOOM_ENABLED);
     commandsMap.put("setPinchToZoomEnabled", BarkoderReactNativeCommands.SET_PINCH_TO_ZOOM_ENABLED);
     commandsMap.put("isRegionOfInterestVisible", BarkoderReactNativeCommands.IS_REGION_OF_INTEREST_ENABLED);
@@ -383,6 +385,12 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
         break;
       case "setLocationInPreviewEnabled":
         setLocationInPreviewEnabled(root, args.getBoolean(0));
+        break;
+      case "isPreviewMirrored":
+        isPreviewMirrored(root, args.getInt(0));
+        break;
+      case "setPreviewMirrored":
+        setPreviewMirrored(root, args.getBoolean(0));
         break;
       case "isPinchToZoomEnabled":
         isPinchToZoomEnabled(root, args.getInt(0));
@@ -1095,6 +1103,15 @@ public class BarkoderReactNativeViewManager extends SimpleViewManager<BarkoderRe
 
   private void setLocationInPreviewEnabled(BarkoderReactBarkoderView bkdView, boolean enabled) {
     bkdView.config.setLocationInPreviewEnabled(enabled);
+  }
+
+  private void isPreviewMirrored(BarkoderReactBarkoderView bkdView, int promiseRequestId) {
+    dispatchDataReturnedEvent(new SoftReference<>(eventDispatcher), bkdView.getId(), promiseRequestId,
+        bkdView.isPreviewMirrored());
+  }
+
+  private void setPreviewMirrored(BarkoderReactBarkoderView bkdView, boolean enabled) {
+    bkdView.setPreviewMirrored(enabled);
   }
 
   private void isPinchToZoomEnabled(BarkoderReactBarkoderView bkdView, int promiseRequestId) {

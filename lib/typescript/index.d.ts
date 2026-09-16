@@ -281,6 +281,16 @@ export declare class Barkoder {
      */
     setLocationInPreviewEnabled(enabled: boolean): void;
     /**
+     * Retrieves whether the front camera preview is horizontally mirrored.
+     * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether the preview is mirrored.
+     */
+    isPreviewMirrored(): Promise<boolean>;
+    /**
+     * Controls whether the front camera preview is horizontally mirrored.
+     * @param enabled - True to mirror the preview, false to disable mirroring.
+     */
+    setPreviewMirrored(enabled: boolean): void;
+    /**
      * Checks if pinch to zoom is enabled.
      * @returns {Promise<boolean>} A promise that resolves with a boolean indicating whether pinch to zoom is enabled.
      */
@@ -1450,8 +1460,8 @@ export declare namespace Barkoder {
         roiHeight?: number;
         formattingType?: FormattingType;
         encodingCharacterSet?: string;
-        upcEanDeblur?: number;
-        enableMisshaped1D?: number;
+        upcEanDeblur?: boolean;
+        enableMisshaped1D?: boolean;
         maximumResultsCount?: number;
         multicodeCachingDuration?: number;
         multicodeCachingEnabled?: boolean;

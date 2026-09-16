@@ -168,5 +168,7 @@ class BarkoderReactNativeCommands {
   public static final int GET_RETURN_ONLY_MATCHED_RESULTS = 164;
   public static final int SET_ROI_CENTER_MARK = 165;
   public static final int GET_ROI_CENTER_MARK = 166;
+  public static final int SET_PREVIEW_MIRRORED = 167;
+  public static final int IS_PREVIEW_MIRRORED = 168;
 
 }

@@ -170,6 +170,27 @@ class BarkoderReactNativeViewManager: RCTViewManager {
             barkoderView.setFlash(arg)
         }
     }
+
+    @objc
+    func setPreviewMirrored(
+      _ node: NSNumber,
+      arg: Bool
+    ) {
+      getBarkoderView(node: node) { barkoderView in
+         barkoderView.previewMirrored = arg
+      }
+    }
+
+    @objc
+    func isPreviewMirrored(
+      _ node: NSNumber,
+      resolver: @escaping RCTPromiseResolveBlock,
+      rejecter: @escaping RCTPromiseRejectBlock
+    ) {
+      getBarkoderView(node: node) { barkoderView in
+         resolver(barkoderView.previewMirrored)
+      }
+    }
     
     @objc
     func getMaxZoomFactor(

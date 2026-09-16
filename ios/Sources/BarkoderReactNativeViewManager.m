@@ -27,6 +27,13 @@ RCT_EXTERN_METHOD(isFlashAvailable:
 RCT_EXTERN_METHOD(setFlashEnabled:
                   (nonnull NSNumber *)node
                   arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(setPreviewMirrored:
+                  (nonnull NSNumber *)node
+                  arg:(nonnull BOOL)arg)
+RCT_EXTERN_METHOD(isPreviewMirrored:
+                  (nonnull NSNumber *)node
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(getMaxZoomFactor:
                   (nonnull NSNumber *)node
                   resolver:(RCTPromiseResolveBlock)resolve
